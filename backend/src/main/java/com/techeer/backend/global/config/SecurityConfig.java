@@ -40,7 +40,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:5173", "http://backend:8080"));
+        config.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:5173", "http://backend:8080", "http://backend:5173", "http://rexume.site:8080", "http://rexume.site:5173", "http://rexume.site", "http://52.78.85.237:8080", "http://52.78.85.237:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
