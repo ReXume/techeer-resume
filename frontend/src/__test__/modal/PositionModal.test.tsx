@@ -23,7 +23,7 @@ import useFilterStore from "../../store/useFilterStore"; // 올바른 스토어 
 
 describe("PositionModal 컴포넌트 테스트", () => {
   let onClose: ReturnType<typeof vi.fn>;
-  let setPositionsMock: any;
+  let setPositionsMock: any; // any 제거
 
   beforeEach(() => {
     onClose = vi.fn();
