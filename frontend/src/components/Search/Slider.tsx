@@ -1,8 +1,27 @@
 import * as React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 
-export default function ExperienceSlider() {
-  const [value, setValue] = React.useState<number[]>([0, 10]);
+interface ExperienceSliderProps {
+  minCareer: number;
+  maxCareer: number;
+  onChange: (newMin: number, newMax: number) => void;
+}
+
+export default function ExperienceSlider({
+  minCareer,
+  maxCareer,
+  onChange,
+}: ExperienceSliderProps) {
+  const [value, setValue] = React.useState<number[]>([minCareer, maxCareer]);
+
+  React.useEffect(() => {
+    setValue([minCareer, maxCareer]);
+  }, [minCareer, maxCareer]);
+
+  const handleValueChange = (newValue: number[]) => {
+    setValue(newValue);
+    onChange(newValue[0], newValue[1]); // 부모 컴포넌트에 새로운 경력 범위 전달
+  };
 
   return (
     <div className="w-full max-w-sm space-y-4">
@@ -13,7 +32,7 @@ export default function ExperienceSlider() {
       <SliderPrimitive.Root
         className="relative flex w-full touch-none select-none items-center"
         value={value}
-        onValueChange={setValue}
+        onValueChange={handleValueChange}
         max={10}
         step={1}
       >

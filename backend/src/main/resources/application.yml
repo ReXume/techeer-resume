@@ -14,7 +14,13 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
         dialect: org.hibernate.dialect.MySQLDialect
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE
 
   config:
     import: "optional:file:backend-secret.env[.properties]"
@@ -32,6 +38,14 @@ spring:
             scope:
               - email
               - profile
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope:
+              - user:email
+              - read:user
+            redirect-uri: ${GITHUB_REDIRECT_URI}
 
 logging:
   level:
@@ -65,3 +79,8 @@ jwt:
   refresh:
     expiration: 1209600000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 14(2주))
     header: Authorization-refresh
+
+chatgpt:
+  api:
+    key: ${GPT_API_KEY}
+    url: ${GPT_API_URL}

@@ -1,47 +1,44 @@
 import { useEffect, useRef, useState } from "react";
-import CategoryStore from "../../store/CategoryStore";
-import { useStore } from "zustand";
+import useFilterStore from "../../store/useFilterStore";
 
 interface PositionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onApply?: (position: string | null) => void; // onApply 콜백 추가
 }
 
-const positions = [
-  "개발 전체",
-  "소프트웨어 엔지니어",
-  "웹 개발자",
-  "서버 개발자",
-  "DevOps",
-  "프론트엔드 개발자",
-  "안드로이드 개발자",
-  "IOS 개발자",
-  "임베디드 개발자",
-  "데이터 엔지니어",
-];
-
-const PositionModal = ({ onClose }: PositionModalProps) => {
-  const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
+const PositionModal = ({ isOpen, onClose, onApply }: PositionModalProps) => {
+  const { positions, setPositions } = useFilterStore();
+  const [localSelectedPosition, setLocalSelectedPosition] = useState<
+    string | null
+  >(positions[0] || null); // 초기값을 상태에서 가져옴
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { positionCategory, setPositionCategory } = useStore(CategoryStore);
-
-  // 포지션 선택 시 상태 업데이트
-  const togglePosition = (position: string) => {
-    setSelectedPositions((prev) =>
-      prev.includes(position)
-        ? prev.filter((pos) => pos !== position)
-        : [...prev, position]
-    );
-  };
-
-  // 선택된 포지션을 zustand 스토어에 저장
-  const applyPositions = () => {
-    setPositionCategory(selectedPositions); // 스토어에 선택된 포지션 저장
+  const applyPosition = () => {
+    // 상태 업데이트 및 부모 컴포넌트로 값 전달
+    setPositions(localSelectedPosition ? [localSelectedPosition] : []);
+    if (onApply) onApply(localSelectedPosition);
     onClose();
   };
 
-  // 모달 외부 클릭 시 닫기
+  const availablePositions = [
+    "Frontend",
+    "Backend",
+    "FullStack",
+    "DevOps",
+    "Designer",
+    "AI",
+    "Android",
+    "IOS",
+    "Data",
+  ];
+
+  const selectPosition = (position: string) => {
+    setLocalSelectedPosition(
+      position === localSelectedPosition ? null : position
+    ); // 같은 포지션 클릭 시 해제
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -52,17 +49,16 @@ const PositionModal = ({ onClose }: PositionModalProps) => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onClose]);
+  }, [onClose, isOpen]);
 
-  // 선택된 포지션을 동기화
-  useEffect(() => {
-    setSelectedPositions(positionCategory); // 스토어의 선택된 포지션을 로컬 상태에 반영
-  }, [positionCategory]);
+  if (!isOpen) return null;
 
   return (
     <div
@@ -76,17 +72,15 @@ const PositionModal = ({ onClose }: PositionModalProps) => {
         &times;
       </button>
 
-      {/* 포지션 타이틀 */}
       <div className="text-black text-2xl font-semibold mb-6">포지션</div>
 
-      {/* 포지션 목록 */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        {positions.map((position, index) => (
+        {availablePositions.map((position, index) => (
           <div
             key={index}
-            onClick={() => togglePosition(position)}
+            onClick={() => selectPosition(position)}
             className={`flex items-center justify-between p-2 cursor-pointer rounded-lg hover:bg-gray-200 ${
-              selectedPositions.includes(position) ? "bg-gray-100" : "bg-white"
+              localSelectedPosition === position ? "bg-gray-100" : "bg-white"
             }`}
           >
             <span className="text-black text-base font-normal ml-2">
@@ -94,12 +88,12 @@ const PositionModal = ({ onClose }: PositionModalProps) => {
             </span>
             <div
               className={`w-6 h-6 rounded-full border-[1.5px] flex items-center justify-center mr-2 ${
-                selectedPositions.includes(position)
+                localSelectedPosition === position
                   ? "border-blue-500 bg-blue-500"
                   : "border-gray-300"
               }`}
             >
-              {selectedPositions.includes(position) && (
+              {localSelectedPosition === position && (
                 <div className="w-3 h-3 bg-white rounded-full" />
               )}
             </div>
@@ -107,16 +101,15 @@ const PositionModal = ({ onClose }: PositionModalProps) => {
         ))}
       </div>
 
-      {/* 하단 버튼 */}
       <div className="flex justify-between">
         <button
-          onClick={() => setSelectedPositions([])} // 초기화 버튼
+          onClick={() => setLocalSelectedPosition(null)} // 초기화 버튼
           className="text-black bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-300"
         >
           초기화
         </button>
         <button
-          onClick={applyPositions} // 적용 버튼
+          onClick={applyPosition} // 적용 버튼
           className="text-white bg-blue-500 px-4 py-2 rounded-lg shadow-sm"
         >
           적용

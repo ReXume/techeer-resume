@@ -1,23 +1,23 @@
 package com.techeer.backend.global.jwt.service;
-import com.techeer.backend.api.user.repository.UserRepository;
 
+import com.techeer.backend.api.user.domain.User;
+import com.techeer.backend.api.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import java.security.Key;
+import java.util.Date;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.security.Key;
-import java.util.Date;
-import java.util.Optional;
+import jakarta.servlet.http.Cookie;
 
 @Service
 @RequiredArgsConstructor
@@ -43,17 +43,18 @@ public class JwtService {
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String EMAIL_CLAIM = "email";
-    private static final String SOCIAL_TYPE_CLAIM = "socialType";
     private static final String BEARER = "Bearer ";
 
 
     private final UserRepository userRepository;
+
     private Key key;
 
     @PostConstruct
     public void init() {
         key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
+
     /**
      * AccessToken 생성 메소드
      */
@@ -65,6 +66,14 @@ public class JwtService {
                 .claim(EMAIL_CLAIM, email)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+
+    public String reIssueRefreshToken(User user) {
+        String reIssuedRefreshToken = this.createRefreshToken();
+        user.updateRefreshToken(reIssuedRefreshToken);
+        userRepository.saveAndFlush(user);
+        return reIssuedRefreshToken;
     }
 
     public String createRefreshToken() {
@@ -88,6 +97,19 @@ public class JwtService {
                 .map(refreshToken -> refreshToken.replace(BEARER, ""));
     }
 
+    public Optional<String> extractAccessTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("accessToken".equals(cookie.getName())) {
+                    log.info("Access Token이 쿠키에서 추출되었습니다: {}", cookie.getValue());
+                    return Optional.of(cookie.getValue());
+                }
+            }
+        }
+        log.warn("Access Token이 쿠키에서 발견되지 않았습니다.");
+        return Optional.empty();
+    }
+    
     public boolean isTokenValid(String token) {
         try {
             Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token);
@@ -98,38 +120,20 @@ public class JwtService {
         }
     }
 
-
     public Object[] extractEmailAndSocialType(String accessToken) {
-        try {
-            Claims claims = decodeAccessToken(accessToken);
-            if (claims != null) {
-                String email = claims.get("email", String.class);
-                //SocialType socialType = deserializeSocialType(claims.get("socialType", String.class));
-                return new Object[]{email};
-            }
-        } catch (Exception e) {
-            // 디코딩 실패 시 예외 처리
-            e.printStackTrace();
+        Claims claims = decodeAccessToken(accessToken);
+        if (claims != null) {
+            String email = claims.get("email", String.class);
+            return new Object[]{email};
         }
         return null;
     }
 
-    // Claims에서 추출할 때 문자열을 SocialType으로 변환
-//    private SocialType deserializeSocialType(String socialTypeString) {
-//        // 예시: 문자열을 Enum으로 변환
-//        return SocialType.valueOf(socialTypeString);
-//    }
-
     private Claims decodeAccessToken(String accessToken) {
-        try {
-            return Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(accessToken)
-                    .getBody();
-        } catch (ExpiredJwtException e) {
-            // 만료된 토큰 예외 처리
-            return e.getClaims();
-        }
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(accessToken)
+                .getBody();
     }
 }

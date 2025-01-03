@@ -1,19 +1,25 @@
 package com.techeer.backend.api.resume.repository;
 
 import com.techeer.backend.api.resume.domain.Resume;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
-
+import com.techeer.backend.api.user.domain.User;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface ResumeRepository extends JpaRepository<Resume, Long> {
+public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeRepositoryQueryDsl {
 
-    List<Resume> findByUsername(String username);
+    @Query("SELECT r FROM Resume r WHERE r.user.username = :username")
+    List<Resume> findResumesByUsername(@Param("username") String username);
+
     Optional<Resume> findByIdAndDeletedAtIsNull(Long resumeId);
+
+    Resume findFirstByUserOrderByCreatedAtDesc(User user);
+
+    Slice<Resume> findResumeByUser(User user);
 }

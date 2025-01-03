@@ -1,15 +1,19 @@
-import { useEffect, useRef } from "react";
-import Slider from "./Slider"; // 'Silder' 오타 수정
+import { useEffect, useRef, useState } from "react";
+import Slider from "./Slider";
+import useFilterStore from "../../store/useFilterStore";
 
-interface PositionModalProps {
+interface CareerModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onApply?: (minCareer: number, maxCareer: number) => void; // onApply 콜백 추가
 }
 
-const PositionModal = ({ isOpen, onClose }: PositionModalProps) => {
+const CareerModal = ({ isOpen, onClose, onApply }: CareerModalProps) => {
+  const { min_career, max_career, setCareerRange } = useFilterStore(); // 상태에서 min_career, max_career 가져오기
+  const [localMinCareer, setLocalMinCareer] = useState(min_career);
+  const [localMaxCareer, setLocalMaxCareer] = useState(max_career);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // 모달 외부 클릭 시 모달 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -19,13 +23,22 @@ const PositionModal = ({ isOpen, onClose }: PositionModalProps) => {
         onClose();
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [onClose]);
+
+  const handleSliderChange = (newMin: number, newMax: number) => {
+    setLocalMinCareer(newMin);
+    setLocalMaxCareer(newMax);
+  };
+
+  const applyFilter = () => {
+    setCareerRange(localMinCareer, localMaxCareer);
+    if (onApply) onApply(localMinCareer, localMaxCareer); // onApply 호출
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -40,20 +53,20 @@ const PositionModal = ({ isOpen, onClose }: PositionModalProps) => {
       >
         &times;
       </button>
-
-      {/* 경력 타이틀 */}
       <div className="text-black text-2xl font-semibold mb-6">경력</div>
       <div className="p-3 my-3 ml-3">
-        <Slider /> {/* 'Silder'가 아닌 'Slider'로 오타 수정 */}
+        <Slider
+          minCareer={localMinCareer}
+          maxCareer={localMaxCareer}
+          onChange={handleSliderChange}
+        />
       </div>
-
-      {/* 하단 버튼 */}
       <div className="flex justify-between">
         <button className="w-24 h-10 border border-gray-300 rounded-lg flex items-center justify-center text-black text-base font-medium">
           초기화
         </button>
         <button
-          onClick={onClose}
+          onClick={applyFilter}
           className="w-24 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white text-base font-medium"
         >
           적용
@@ -63,4 +76,4 @@ const PositionModal = ({ isOpen, onClose }: PositionModalProps) => {
   );
 };
 
-export default PositionModal;
+export default CareerModal;

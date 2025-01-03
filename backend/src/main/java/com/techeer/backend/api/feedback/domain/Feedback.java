@@ -1,16 +1,27 @@
 package com.techeer.backend.api.feedback.domain;
 
+import com.techeer.backend.api.feedback.dto.request.FeedbackCreateRequest;
 import com.techeer.backend.api.resume.domain.Resume;
+import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.global.common.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.math.BigDecimal;
 
 @Getter
 @Entity
 @Table(name = "FEEDBACK")
+@Builder
+@AllArgsConstructor
 public class Feedback extends BaseEntity {
 
     @Id
@@ -25,27 +36,36 @@ public class Feedback extends BaseEntity {
     @Column(nullable = false, length = 255)
     private String content;
 
-    @Column(precision = 10, scale = 6)
-    private BigDecimal xCoordinate;
+    @Column(nullable = false)
+    private Double xCoordinate;
 
-    @Column(nullable = false,precision = 10, scale = 6)
-    private BigDecimal yCoordinate;
+    @Column(nullable = false)
+    private Double yCoordinate;
+
+    @Column(nullable = false)
+    private int pageNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     // 기본 생성자
     protected Feedback() {
     }
 
-    // 모든 필드를 포함한 생성자
-    public Feedback(Resume resume, String content, BigDecimal xCoordinate, BigDecimal yCoordinate) {
-        this.resume = resume;
-        this.content = content;
-        this.xCoordinate = xCoordinate;
-        this.yCoordinate = yCoordinate;
-    }
-
     // Builder 패턴을 사용한 생성자
     @Builder
-    public static Feedback createFeedback(Resume resume, String content, BigDecimal xCoordinate, BigDecimal yCoordinate) {
-        return new Feedback(resume, content, xCoordinate, yCoordinate);
+    public static Feedback of(User user, Resume resume, FeedbackCreateRequest feedbackCreateRequest) {
+        if (feedbackCreateRequest.getPageNumber() <= 0) {
+            throw new IllegalArgumentException("페이지번호는 양수입니다.");
+        }
+        return Feedback.builder()
+                .user(user)
+                .resume(resume)
+                .content(feedbackCreateRequest.getContent())
+                .xCoordinate(feedbackCreateRequest.getXCoordinate())
+                .yCoordinate(feedbackCreateRequest.getYCoordinate())
+                .pageNumber(feedbackCreateRequest.getPageNumber())
+                .build();
     }
 }

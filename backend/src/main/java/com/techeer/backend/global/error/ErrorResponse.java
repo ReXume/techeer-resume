@@ -1,43 +1,61 @@
 package com.techeer.backend.global.error;
 
+import jakarta.validation.ConstraintViolation;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Getter
 public class ErrorResponse {
     private HttpStatus httpStatus;
     private String code;
     private String errorMessage;
-    private List<FieldError> errors =new ArrayList<>();
+    private List<FieldError> errors;
 
 
-    public ErrorResponse(HttpStatus status, String s) {
-        this.errorMessage = s;
-        this.httpStatus = status;
+    public ErrorResponse(ErrorCode ErrorCode) {
+        this.errorMessage = ErrorCode.getMessage();
+        this.httpStatus = ErrorCode.getHttpStatus();
+        this.code = ErrorCode.getCode();
     }
 
-    public ErrorResponse(ErrorCode code) {
-        this.errorMessage = code.getMessage();
-        this.httpStatus = code.getStatus();
-        this.code = code.getCode();
-    }
-
-    public ErrorResponse(ErrorCode code, List<FieldError> fieldErrors) {
-        this.httpStatus = code.getStatus();
-        this.code = code.getCode();
-        this.errorMessage = code.getMessage();
+    public ErrorResponse(ErrorCode ErrorCode, final List<FieldError> fieldErrors) {
+        this.httpStatus = ErrorCode.getHttpStatus();
+        this.code = ErrorCode.getCode();
+        this.errorMessage = ErrorCode.getMessage();
         this.errors = fieldErrors;
     }
 
-    public static ErrorResponse of(final ErrorCode code, final BindingResult bindingResult) {
-        return new ErrorResponse(code, FieldError.of(bindingResult));
+
+    public static ErrorResponse of(final ErrorCode code, final Set<ConstraintViolation<?>> constraintViolations) {
+        return new ErrorResponse(code, FieldError.of(constraintViolations));
+    }
+
+    public static ErrorResponse of(final ErrorCode code, String errorMessage) {
+        return new ErrorResponse(code, FieldError.of("", "", errorMessage));
+    }
+
+    public static ErrorResponse of(final ErrorCode code, String errorMessage, final String missingParameterName) {
+        return new ErrorResponse(code, FieldError.of(missingParameterName, "", "parameter가 필요합니다"));
+    }
+
+    public static ErrorResponse of(final ErrorCode code) {
+        return new ErrorResponse(code);
+    }
+
+    public static ErrorResponse of(final ErrorCode code, final List<FieldError> errors) {
+        return new ErrorResponse(code, errors);
+    }
+
+
+    public static ErrorResponse of(final ErrorCode ErrorCode, final BindingResult bindingResult) {
+        return new ErrorResponse(ErrorCode, FieldError.of(bindingResult));
     }
 
     @Getter
@@ -53,16 +71,33 @@ public class ErrorResponse {
             this.reason = reason;
         }
 
+        public static List<FieldError> of(final String field, final String value, final String reason) {
+            final List<FieldError> fieldErrors = new ArrayList<>();
+            fieldErrors.add(new FieldError(field, value, reason));
+            return fieldErrors;
+        }
+
         private static List<FieldError> of(final BindingResult bindingResult) {
-            final List<org.springframework.validation.FieldError> fieldErrors =
-                    bindingResult.getFieldErrors();
+            final List<org.springframework.validation.FieldError> fieldErrors = bindingResult.getFieldErrors();
             return fieldErrors.stream()
-                    .map(
-                            error ->
-                                    new FieldError(
-                                            error.getField(),
-                                            error.getRejectedValue() == null ? "" : error.getRejectedValue().toString(),
-                                            error.getDefaultMessage()))
+                    .map(error -> new FieldError(
+                            error.getField(),
+                            error.getRejectedValue() == null ? "" : error.getRejectedValue().toString(),
+                            error.getDefaultMessage()))
+                    .collect(Collectors.toList());
+        }
+
+
+        private static List<FieldError> of(final Set<ConstraintViolation<?>> constraintViolations) {
+            final List<ConstraintViolation<?>> lists = new ArrayList<>(constraintViolations);
+            return lists.stream()
+                    .map(error -> {
+                        final String invalidValue =
+                                error.getInvalidValue() == null ? "" : error.getInvalidValue().toString();
+                        final int index = error.getPropertyPath().toString().indexOf(".");
+                        final String propertyPath = error.getPropertyPath().toString().substring(index + 1);
+                        return new FieldError(propertyPath, invalidValue, error.getMessage());
+                    })
                     .collect(Collectors.toList());
         }
     }

@@ -8,16 +8,16 @@ import com.techeer.backend.api.aifeedback.domain.AIFeedback;
 import com.techeer.backend.api.aifeedback.dto.AIFeedbackResponse;
 import com.techeer.backend.api.aifeedback.repository.AIFeedbackRepository;
 import com.techeer.backend.api.resume.domain.Resume;
+import com.techeer.backend.api.resume.domain.ResumePdf;
 import com.techeer.backend.api.resume.repository.ResumeRepository;
 import com.techeer.backend.global.error.ErrorCode;
 import com.techeer.backend.global.error.exception.BusinessException;
 import jakarta.transaction.Transactional;
+import java.io.IOException;
+import java.io.InputStream;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 @Service
 public class AIFeedbackService {
@@ -39,15 +39,24 @@ public class AIFeedbackService {
     public AIFeedbackResponse generateAIFeedbackFromS3(Long resumeId) {
         // 1. 이력서 정보 데이터베이스에서 조회
         Resume resume = resumeRepository.findById(resumeId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.RESUME_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESUME_NOT_FOUND));
 
-        // 2. S3에서 PDF 파일 가져오기
-        InputStream pdfInputStream = getPdfFileFromS3(resume.getS3BucketName(), resume.getS3Key());
+        // 2. ResumePdf 객체에서 S3 버킷 이름과 키 가져오기
+        ResumePdf resumePdf = resume.getResumePdf();
+        if (resumePdf == null) {
+            throw new BusinessException(ErrorCode.RESUME_PDF_NOT_FOUND);
+        }
 
-        // 3. PDF 파일을 텍스트로 변환
+        String bucketName = resumePdf.getPdf().getPdfUrl(); // Assuming pdfUrl contains the bucket name
+        String key = resumePdf.getPdf().getPdfUUID(); // Assuming pdfUUID contains the S3 key
+
+        // 3. S3에서 PDF 파일 가져오기
+        InputStream pdfInputStream = getPdfFileFromS3(bucketName, key);
+
+        // 4. PDF 파���을 텍스트로 변환
         String resumeText = extractTextFromPdf(pdfInputStream);
 
-        // 4. OpenAI GPT API 호출을 통한 피드백 생성
+        // 5. OpenAI GPT API 호출을 통한 피드백 생성
         String fullResponse;
         try {
             fullResponse = openAiService.getAIFeedback(resumeText);
@@ -56,14 +65,14 @@ public class AIFeedbackService {
             throw new BusinessException(ErrorCode.OPENAI_SERVER_ERROR);
         }
 
-        // 5. ai피드백에서 content만 추출
+        // 6. ai피드백에서 content만 추출
         String feedbackContent = extractContentFromOpenAIResponse(fullResponse);
 
-        // 6. AIFeedback 엔티티 생성 및 저장
+        // 7. AIFeedback 엔티티 생성 및 저장
         AIFeedback aiFeedback = AIFeedback.builder()
-            .resumeId(resumeId)
-            .feedback(feedbackContent)  // content만 저장
-            .build();
+                .resumeId(resumeId)
+                .feedback(feedbackContent)  // content만 저장
+                .build();
 
         AIFeedback savedFeedback = aiFeedbackRepository.save(aiFeedback);
 
@@ -95,8 +104,8 @@ public class AIFeedbackService {
         // Gson 또는 Jackson 등의 라이브러리로 JSON 파싱
         JsonObject jsonResponse = JsonParser.parseString(fullResponse).getAsJsonObject();
         return jsonResponse.getAsJsonArray("choices")
-            .get(0).getAsJsonObject()
-            .getAsJsonObject("message")
-            .get("content").getAsString();
+                .get(0).getAsJsonObject()
+                .getAsJsonObject("message")
+                .get("content").getAsString();
     }
 }

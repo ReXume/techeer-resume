@@ -1,37 +1,30 @@
 package com.techeer.backend.api.resume.dto.request;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.techeer.backend.api.resume.domain.Position;
-import com.techeer.backend.api.resume.domain.Resume;
-import jakarta.validation.constraints.NotBlank;
+import com.techeer.backend.api.tag.position.Position;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 //todo Getter 한번만 사용하기
 @Getter
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateResumeRequest {
-    // 나중에 로그인 생기면 수정해야 된다.
 
-    @NotBlank
-    private String username;
-
-    @NotNull
+    @NotNull(message = "position는 필수입니다.")
     private Position position;
 
-    @NotNull()
+    @NotNull(message = "career는 필수입니다.")
     private int career;
 
-    private List<String> applyingCompany;
+    private List<String> companyNames;
 
-    private List<String> techStack;
-
-    public Resume toEntity() {
-        return new Resume(this);
-    }
+    private List<String> techStackNames;
 
 }
 

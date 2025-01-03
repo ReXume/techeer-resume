@@ -1,144 +1,241 @@
-import { useState, useEffect } from "react";
-import AddComment from "../components/comment/AddComment.tsx";
-import CommentList from "../components/comment/CommentList.tsx";
-import MainContainer from "../components/resumeoverview/MainContainer.tsx";
+import { useEffect, useState } from "react";
+import Layout from "../components/Layout/Layout";
+import MainContainer from "../components/resumeoverview/MainContainer";
+import ResumeOverview from "../components/resumeoverview/ResumeOverview";
+import CommentSection from "../components/comment/CommentSection.tsx";
+import LoadingSpinner from "../components/UI/LoadingSpinner";
+import ErrorMessage from "../components/UI/ErrorMessage";
 import {
-  CommentType,
-  getComments,
-  addComment,
-  deleteComment as apiDeleteComment,
-  editComment as apiEditComment,
-} from "../mockApi";
-import ResumeOverview from "../components/resumeoverview/ResumeOverview.tsx";
-import Navbar from "../components/Navbar.tsx";
+  addFeedbackApi,
+  deleteFeedbackApi,
+  getResumeApi,
+  postAiFeedback,
+} from "../api/feedbackApi.ts";
+import { AddFeedbackPoint, FeedbackPoint, ResumeData } from "../types.ts";
+import useResumeStore from "../store/ResumeStore.ts";
+import { useParams } from "react-router-dom";
+import { Bookmark, BookmarkMinus } from "lucide-react";
+import { postBookmark, deleteBookmarkById } from "../api/bookMarkApi.ts";
 
 function ResumeFeedbackPage() {
-  const [comments, setComments] = useState<CommentType[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [resumeData, setResumeData] = useState<ResumeData | null>(null); //이력서 데이터를 관리
+  const [feedbackPoints, setFeedbackPoints] = useState<FeedbackPoint[]>([]); //피드백 데이터를 관리
+  const [hoveredCommentId, setHoveredCommentId] = useState<number | null>(null); //마우스 호버시 코멘트 아이디를 관리
+  const [loading, setLoading] = useState<boolean>(true); //로딩 상태를 관리
+  const [error, setError] = useState<string | null>(null); //에러 상태를 관리
+  const { setResumeUrl } = useResumeStore(); //이력서 아이디와 이력서 URL을 관리 -> 이게 왜 필요한지 모르겠음
+  const { id } = useParams(); // useParams로 URL의 id 파라미터 가져오기
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false); // 북마크 상태
+  const [bookmarkId, setBookmarkId] = useState<number | null>(null); // 북마크 ID 저장
 
-  // 초기 댓글 불러오기
   useEffect(() => {
-    setLoading(true);
-    getComments()
-      .then((data) => {
-        setComments(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError("댓글을 불러오는 데 실패했습니다.");
-        setLoading(false);
-        console.error(err);
-      });
-  }, []);
+    const fetchData = async () => {
+      console.log("api호출");
+      if (!id) {
+        setError("Resume ID is missing.");
+        return;
+      }
 
-  function addNewComment(newCommentText: string) {
-    setLoading(true);
-    addComment(newCommentText)
-      .then((newComment) => {
-        setComments([newComment, ...comments]);
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getResumeApi(Number(id)); //여기서 레쥬메 아이디로 관리를 해서 데이터를 불러옴
+        setResumeData(data);
+        // 북마크 상태 초기화
+        const bookmarkResponse = await postBookmark(Number(id)); // userId 제거, resumeId만 사용
+        if (bookmarkResponse) {
+          setIsBookmarked(true);
+          setBookmarkId(bookmarkResponse);
+        }
+        setResumeUrl(data.fileUrl);
+        console.log("id:", id);
+        setFeedbackPoints(data.feedbackResponses || []); // 관련된 설정들
+      } catch (error) {
+        console.error("Failed to fetch resume data", error);
+        setError("Failed to fetch resume data. Please try again later.");
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        setError("댓글을 추가하는 데 실패했습니다.");
-        setLoading(false);
-        console.error(err);
-      });
-  }
+      }
+    };
 
-  function deleteCommentHandler(id: number) {
-    setLoading(true);
-    apiDeleteComment(id)
-      .then(() => {
-        setComments(comments.filter((comment) => comment.id !== id));
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError("댓글을 삭제하는 데 실패했습니다.");
-        setLoading(false);
-        console.error(err);
-      });
-  }
+    fetchData();
+  }, [id]);
 
-  function editCommentHandler(id: number, newText: string) {
-    setLoading(true);
-    apiEditComment(id, newText)
-      .then((updatedComment) => {
-        setComments(
-          comments.map((comment) =>
-            comment.id === id ? updatedComment : comment
-          )
-        );
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError("댓글을 수정하는 데 실패했습니다.");
-        setLoading(false);
-        console.error(err);
-      });
-  }
-
-  // 에러 메시지 자동 사라지게 설정
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => setError(""), 3000); // Auto clear error after 3 seconds
-      return () => clearTimeout(timer);
+  // 북마크 토글 기능
+  const toggleBookmark = async () => {
+    if (!id) {
+      setError("Resume ID is missing.");
+      return;
     }
-  }, [error]);
+
+    try {
+      if (isBookmarked) {
+        // 북마크 해제
+        if (bookmarkId !== null) {
+          await deleteBookmarkById(bookmarkId);
+        }
+        setIsBookmarked(false);
+        setBookmarkId(null);
+      } else {
+        // 북마크 추가
+        const response = await postBookmark(Number(id)); // userId 제거, resumeId만 사용
+        console.log("포스트북마크 값", response);
+        setIsBookmarked(true);
+        setBookmarkId(response); // 서버로부터 받은 북마크 ID 저장
+        console.log("북마크 아이디 생성", response);
+      }
+    } catch (error) {
+      console.error("Failed to toggle bookmark", error);
+      alert("북마크 상태를 변경할 수 없습니다. 다시 시도해주세요.");
+    }
+  };
+
+  const handleAiFeedback = async () => {
+    setLoading(true);
+    try {
+      const aiFeedback = await postAiFeedback(Number(id));
+      setFeedbackPoints((prevPoints) => [
+        ...prevPoints,
+        ...aiFeedback.feedbacks,
+      ]);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      setError("Failed to retrieve AI feedback.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addFeedbackPoint = async (point: Omit<AddFeedbackPoint, "id">) => {
+    if (
+      !point.content ||
+      point.xCoordinate === undefined ||
+      point.yCoordinate === undefined
+    ) {
+      setError("All fields are required to add a feedback point.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const newPoint: AddFeedbackPoint = {
+        xCoordinate: point.xCoordinate,
+        yCoordinate: point.yCoordinate,
+        content: point.content,
+        pageNumber: 1,
+      };
+      await addFeedbackApi(Number(id), newPoint);
+      const updatedData = await getResumeApi(Number(id));
+      console.log("업데이트 데이터: ", updatedData);
+      setFeedbackPoints(updatedData.feedbackResponses);
+    } catch (error) {
+      console.error("Failed to add feedback point", error);
+      setError("Failed to add feedback point. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteFeedbackPoint = async (id: number) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // 피드백 점 삭제 API 호출
+      await deleteFeedbackApi(Number(id), id);
+
+      // 삭제 후 상태 갱신
+      setFeedbackPoints((prevComments) =>
+        (prevComments || []).filter((item) => item.id !== id)
+      );
+      console.log("Deleted feedback point: ", id);
+    } catch (error) {
+      console.error("Failed to delete feedback point", error);
+      setError("Failed to delete feedback point. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const editFeedbackPoint = (updatedItem: AddFeedbackPoint) => {
+    console.log("Edit feedback point: ", updatedItem);
+  };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <ErrorMessage message={error} />;
+  }
+
+  if (!resumeData) {
+    return <div>No resume data available.</div>;
+  }
 
   return (
-    <div className="pt-5">
-      <Navbar />
-      <div className="flex flex-row w-full h-screen bg-gray-100 mt-3">
-        {/* Left Column: MainContainer */}
-        <div className="w-2/3 h-full">
-          <MainContainer />
-        </div>
+    <div className="flex flex-col flex-grow ">
+      <Layout
+        sidebar={
+          <div className="flex flex-col justify-between bg-white p-2 mt-10">
+            {/* 북마크 버튼 */}
+            <button
+              onClick={toggleBookmark}
+              className={`flex items-center px-6 py-3 rounded-lg ${
+                isBookmarked
+                  ? "bg-yellow-100 text-yellow-900"
+                  : "text-gray-500 hover:bg-gray-50"
+              }`}
+            >
+              {isBookmarked ? (
+                <>
+                  <BookmarkMinus className="w-5 h-5 mr-2" />
+                  북마크 제거
+                </>
+              ) : (
+                <>
+                  <Bookmark className="w-5 h-5 mr-2" />
+                  북마크 추가
+                </>
+              )}
+            </button>
 
-        {/* Right Column: ResumeOverview and Comments */}
-        <div className="w-1/3 h-full flex flex-col p-4">
-          {/* Resume Overview */}
-          <ResumeOverview />
+            {/* Resume Overview */}
+            <ResumeOverview
+              userName={resumeData.userName}
+              position={resumeData.position}
+              career={resumeData.career}
+              techStackNames={resumeData.techStackNames}
+              fileUrl={resumeData.fileUrl}
+              isLoading={loading}
+            />
 
-          {/* Comments Section */}
-          <div className="flex-grow mt-4 overflow-y-auto">
-            {loading ? (
-              <div className="flex justify-center items-center">
-                <svg
-                  className="animate-spin h-5 w-5 mr-3 text-blue-500"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8H4z"
-                  ></path>
-                </svg>
-                Loading...
-              </div>
-            ) : (
-              <CommentList
-                comments={comments}
-                onDelete={deleteCommentHandler}
-                onEdit={editCommentHandler}
+            {/* Comment Section */}
+            <div className="overflow-y-auto mt-2">
+              <CommentSection
+                feedbackPoints={feedbackPoints}
+                addFeedbackPoint={addFeedbackPoint}
+                deleteFeedbackPoint={deleteFeedbackPoint}
+                editFeedbackPoint={editFeedbackPoint}
+                hoveredCommentId={hoveredCommentId}
+                handleAiFeedback={handleAiFeedback}
+                setHoveredCommentId={setHoveredCommentId}
               />
-            )}
+            </div>
           </div>
-
-          {/* Add Comment Input */}
-          <AddComment onAdd={addNewComment} disabled={loading} />
-        </div>
-      </div>
+        }
+      >
+        <MainContainer
+          feedbackPoints={feedbackPoints}
+          addFeedbackPoint={addFeedbackPoint}
+          deleteFeedbackPoint={deleteFeedbackPoint}
+          editFeedbackPoint={editFeedbackPoint}
+          hoveredCommentId={hoveredCommentId}
+          setHoveredCommentId={setHoveredCommentId}
+          laterResumeId={resumeData.laterResumeId}
+          previousResumeId={resumeData.previousResumeId}
+        />
+      </Layout>
     </div>
   );
 }

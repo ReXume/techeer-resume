@@ -1,84 +1,83 @@
 package com.techeer.backend.api.feedback.service;
 
-import com.techeer.backend.api.feedback.repository.FeedbackRepository;
-
-import com.techeer.backend.api.feedback.dto.FeedbackResponse;
+import com.techeer.backend.api.aifeedback.domain.AIFeedback;
+import com.techeer.backend.api.aifeedback.repository.AIFeedbackRepository;
+import com.techeer.backend.api.feedback.converter.FeedbackConverter;
 import com.techeer.backend.api.feedback.domain.Feedback;
-
+import com.techeer.backend.api.feedback.dto.request.FeedbackCreateRequest;
+import com.techeer.backend.api.feedback.repository.FeedbackRepository;
 import com.techeer.backend.api.resume.domain.Resume;
+import com.techeer.backend.api.resume.exception.ResumeNotFoundException;
 import com.techeer.backend.api.resume.repository.ResumeRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.techeer.backend.api.user.domain.User;
+import com.techeer.backend.global.error.ErrorCode;
+import com.techeer.backend.global.error.exception.BusinessException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class FeedbackService {
-
-    private static final String RESUME_NOT_FOUND_MESSAGE = "이력서를 찾을 수 없습니다.";
-    private static final String FEEDBACK_NOT_FOUND_MESSAGE = "피드백을 찾을 수 없습니다.";
-    private static final String INVALID_FEEDBACK_FOR_RESUME_MESSAGE = "이력서에 해당하는 피드백이 아닙니다";
-
     private final FeedbackRepository feedbackRepository;
     private final ResumeRepository resumeRepository;
+    private final AIFeedbackRepository aiFeedbackRepository;
 
     @Transactional
-    public FeedbackResponse createFeedback(Long resumeId, String content, BigDecimal xCoordinate, BigDecimal yCoordinate) {
+    public Feedback createFeedback(User user, Long resumeId, FeedbackCreateRequest feedbackCreateRequest) {
+
         Resume resume = resumeRepository.findByIdAndDeletedAtIsNull(resumeId)
-                .orElseThrow(() -> new EntityNotFoundException(RESUME_NOT_FOUND_MESSAGE));
+                .orElseThrow(ResumeNotFoundException::new);
 
-        log.info("이력서 ID: {} 에 피드백 생성 중", resumeId);
+        Feedback feedback = FeedbackConverter.toFeedbackEntity(user, resume, feedbackCreateRequest);
+        feedbackRepository.save(feedback);
 
-        Feedback feedback = Feedback.builder()
-                .resume(resume)
-                .content(content)
-                .xCoordinate(xCoordinate)
-                .yCoordinate(yCoordinate)
-                .build();
-
-        Feedback savedFeedback = feedbackRepository.save(feedback);
-
-        log.info("피드백 생성 완료: {}", savedFeedback);
-
-        return toFeedbackResponse(savedFeedback);
+        return feedback;
     }
 
     @Transactional
-    public void deleteFeedbackById(Long resumeId, Long feedbackId) {
+    public void deleteFeedbackById(User user, Long resumeId, Long feedbackId) {
 
-        // 이력서가 존재하는지 먼저 확인
         Resume resume = resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new EntityNotFoundException(RESUME_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESUME_NOT_FOUND));
 
-        // 피드백이 존재하고, 해당 이력서와 연관되어 있는지 확인
         Feedback feedback = feedbackRepository.findById(feedbackId)
-                .orElseThrow(() -> new IllegalArgumentException(FEEDBACK_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new BusinessException(ErrorCode.FEEDBACK_NOT_FOUND));
 
-        // 피드백이 이력서와 연관되어 있는지 확인
         if (!feedback.getResume().getId().equals(resume.getId())) {
-            throw new IllegalArgumentException(String.format(INVALID_FEEDBACK_FOR_RESUME_MESSAGE));
+            throw new BusinessException(ErrorCode.INVALID_FEEDBACK_FOR_RESUME);
+        }
+
+        if (!feedback.getUser().getId().equals(user.getId())) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
         log.info("피드백 삭제 중: 피드백 ID {} (이력서 ID {})", feedbackId, resumeId);
 
-        // 피드백 삭제
         feedbackRepository.delete(feedback);
     }
 
-    private FeedbackResponse toFeedbackResponse(Feedback feedback) {
-        return FeedbackResponse.of(
-                feedback.getId(),
-                feedback.getResume().getId(),
-                feedback.getContent(),
-                feedback.getXCoordinate(),
-                feedback.getYCoordinate()
-        );
+    public List<Feedback> getFeedbackByResumeId(Long resumeId) {
+        // 이력서 존재 확인
+        if (!resumeRepository.existsById(resumeId)) {
+            throw new BusinessException(ErrorCode.RESUME_NOT_FOUND);
+        }
+        // 이력서 id에 해당하는 모든 일반 피드백 가져옴
+        List<Feedback> feedbacks = feedbackRepository.findAllByResumeId(resumeId);
+
+        return feedbacks;
     }
 
+    public AIFeedback getAIFeedbackByResumeId(Long resumeId) {
+        // 이력서 id에 해당하는 ai 피드백 가져옴(없으면 빈배열 반환)
+        return aiFeedbackRepository.findByResumeId(resumeId)
+                .orElse(AIFeedback.empty());
+    }
 
+    public List<Feedback> getFeedbacksByResumeId(Long resumeId) {
+        return feedbackRepository.findAllByResumeId(resumeId);
+    }
 }

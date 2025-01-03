@@ -1,19 +1,33 @@
-import PersonalInfo from "./PersonalInfo";
-import TechStack from "./TechStack";
-import GoalCompany from "./GoalCompany";
-import ETC from "./ETC";
+import ResumeOverviewSection from "./ResumeOverviewSection.tsx";
 
-function ResumeOverview() {
+interface ResumeOverviewProps {
+  userName: string;
+  position: string;
+  career: number;
+  techStackNames: string[];
+  fileUrl: string;
+  isLoading: boolean;
+}
+
+function ResumeOverview({
+  userName,
+  position,
+  career,
+  techStackNames,
+  fileUrl,
+  isLoading,
+}: ResumeOverviewProps): React.ReactElement {
   return (
-    <div className="w-[534px] h-auto relative bg-white p-4">
+    <div className="w-[534px] h-auto  bg-white p-4 z-1">
       {/* Personal Info Section */}
-      <PersonalInfo />
-      {/* Tech Stack Section */}
-      <TechStack />
-      {/* Goal Company Section */}
-      <GoalCompany />
-      {/* ETC Section */}
-      <ETC />
+      <ResumeOverviewSection
+        userName={userName}
+        position={position}
+        career={career}
+        techStackNames={techStackNames}
+        fileUrl={fileUrl}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

@@ -1,0 +1,72 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  config:
+    import: "optional:file:backend-secret.env[.properties]"
+
+  profiles:
+    include: oauth
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: MockClientId
+            client-secret: MockClientSecret
+            scope:
+              - email
+              - profile
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
+cloud:
+  aws:
+    credentials:
+      access-key: MockAccessKey
+      secret-key: MockSecretKey
+    s3:
+      bucket: MockBucketName
+    region:
+      static: MockRegion
+    stack:
+      auto: false
+
+jwt:
+  secret: MockSecretKeysecretkeyforJWTnottooweekMockSecretKeysecretkeyforJWTnottooweek
+
+  access:
+    expiration: 36000000
+    header: Authorization
+
+  refresh:
+    expiration: 1209600000
+    header: Authorization-refresh
+
+chatgpt:
+  api:
+    key: MockKey
+    url: MOCK_URL
