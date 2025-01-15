@@ -15,23 +15,17 @@ public class SwaggerConfig {
         String jwt = "JWT";
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
         Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
-                .name(jwt)
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT")
+                .name("accessToken")
+                .type(SecurityScheme.Type.APIKEY)
+                .in(SecurityScheme.In.COOKIE)
         );
+
         return new OpenAPI()
                 .components(new Components())
                 .info(apiInfo())
                 .addSecurityItem(securityRequirement)
                 .components(components);
     }
-//    @Bean
-//    public OpenAPI openAPI() {
-//        return new OpenAPI()
-//                .components(new Components())
-//                .info(apiInfo());
-//    }
 
     private Info apiInfo() {
         return new Info()

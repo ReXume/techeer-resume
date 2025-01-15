@@ -30,6 +30,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String requestURI = request.getRequestURI();
+        log.info("requestURI: {}", requestURI);
+        // 특정 경로 이외에는 필터를 건너뜀
+        if (!requestURI.startsWith("/api/v1/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         checkAccessTokenAndAuthentication(request, response, filterChain);
     }
 
@@ -58,7 +65,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         log.warn("이메일 추출 실패. 반환된 배열 길이: {}", emailAndSocialType.length);
                     }
                 });
-
         filterChain.doFilter(request, response);
     }
 

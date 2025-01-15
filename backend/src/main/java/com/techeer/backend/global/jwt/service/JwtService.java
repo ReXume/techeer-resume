@@ -8,6 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
@@ -17,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import jakarta.servlet.http.Cookie;
 
 @Service
 @RequiredArgsConstructor
@@ -98,6 +98,7 @@ public class JwtService {
     }
 
     public Optional<String> extractAccessTokenFromCookie(HttpServletRequest request) {
+
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("accessToken".equals(cookie.getName())) {
@@ -106,10 +107,11 @@ public class JwtService {
                 }
             }
         }
+
         log.warn("Access Token이 쿠키에서 발견되지 않았습니다.");
         return Optional.empty();
     }
-    
+
     public boolean isTokenValid(String token) {
         try {
             Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token);
