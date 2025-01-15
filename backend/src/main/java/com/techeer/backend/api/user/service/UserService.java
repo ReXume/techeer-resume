@@ -93,4 +93,19 @@ public class UserService {
 
     }
 
+    public String mockSignup(String id) {
+        String accessToken = jwtService.createAccessToken(id);
+        String refreshToken = jwtService.createRefreshToken();
+
+        User user = User.builder()
+                .refreshToken(refreshToken)
+                .email(id)
+                .username("mock")
+                .role(Role.REGULAR)
+                .socialType(SocialType.GOOGLE)
+                .build();
+        userRepository.save(user);
+
+        return accessToken;
+    }
 }

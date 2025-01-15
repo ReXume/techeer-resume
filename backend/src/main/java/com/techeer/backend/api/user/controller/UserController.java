@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -54,5 +55,12 @@ public class UserController {
         response.setHeader("Access-Token", result.getAccessToken());
         response.setHeader("Refresh-Token", result.getRefreshToken());
         return CommonResponse.of(SuccessCode.TOKEN_REISSUE_OK, null);
+    }
+
+    @Operation(summary = "모의 유저 데이터 생성")
+    @PostMapping("/mock/signup")
+    public CommonResponse<String> mockSignup(@RequestParam(name = "id") String id) {
+        String accessToken = userService.mockSignup(id);
+        return CommonResponse.of(SuccessCode.OK, accessToken);
     }
 }

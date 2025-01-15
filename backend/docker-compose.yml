@@ -6,19 +6,19 @@ services:
       - "3306:3306"
     env_file:
       - backend-secret.env
-      
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile-develop
-    container_name: backend
-    restart: always
-    depends_on:
-      - db
-    env_file:
-      - backend-secret.env
-    ports:
-      - "8080:8080"
-    volumes:
-      - .:/app
-#      - ./logs:/var/log/spring-boot
+
+#  backend:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-develop
+#    container_name: backend
+#    restart: always
+#    depends_on:
+#      - db
+#    env_file:
+#      - backend-secret.env
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - .:/app
+##      - ./logs:/var/log/spring-boot
