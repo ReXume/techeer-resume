@@ -1,5 +1,5 @@
 import { MouseEventHandler } from "react";
-import avatar from "../../assets/avatar.png";
+import avatar from "../../assets/avatar.webp";
 import baggage from "../../assets/baggage3.svg";
 import pngegg from "../../assets/pngegg2.svg";
 

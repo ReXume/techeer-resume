@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import chevronLeft from "../../assets/chevron-left.png";
-import chevronRight from "../../assets/chevron-right.png";
+import chevronLeft from "../../assets/chevron-left.webp";
+import chevronRight from "../../assets/chevron-right.webp";
 
 interface FooterProps {
   laterResumeId: number | null;
