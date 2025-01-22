@@ -7,3 +7,18 @@ export type PostCardsType = {
   resume_id: Key;
   tech_stack_names: string[];
 };
+
+export type ResumeType = {
+  id: number;
+  version: string;
+  date: string;
+};
+
+export type BookmarkType = {
+  id: number;
+  resume_id: number;
+  bookmark_id: number;
+  user_name: string;
+  title: string;
+  date: string;
+};
