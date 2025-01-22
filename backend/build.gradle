@@ -75,6 +75,9 @@ dependencies {
 
     // Apache PDFBox for extracting text from PDF files
     implementation 'org.apache.pdfbox:pdfbox:2.0.24'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {

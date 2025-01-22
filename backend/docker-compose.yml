@@ -7,6 +7,12 @@ services:
     env_file:
       - backend-secret.env
 
+  redis:
+    image: redis:6.0
+    container_name: redis
+    ports:
+      - "6379:6379"
+
   backend:
     build:
       context: .
