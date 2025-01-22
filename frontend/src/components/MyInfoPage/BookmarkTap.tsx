@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import BookmarkItem from "../../components/MyInfoPage/BookmarkItem.tsx";
 import { getBookmarkById } from "../../api/bookMarkApi.ts";
 import { BookmarkType } from "../../dataType.ts";
@@ -8,7 +7,6 @@ function BookmarkTap() {
   const [bookmarks, setBookmarks] = useState<BookmarkType[]>([]);
 
   const userId = 1; // 임시. 지금 userId 필요 없음
-  const navigate = useNavigate();
 
   // 북마크 조회 API 호출
   const fetchBookmarks = async () => {
@@ -20,13 +18,14 @@ function BookmarkTap() {
     }
   };
 
+  // 북마크가 변경될 때 호출
+  const handleBookmarkUpdate = () => {
+    fetchBookmarks();
+  };
+
   useEffect(() => {
     fetchBookmarks();
-  });
-
-  const handleBookmarkClick = (resumeId: number) => {
-    navigate(`/feedback/${resumeId}`);
-  };
+  }, []);
 
   return (
     <div className="flex gap-8">
@@ -36,9 +35,11 @@ function BookmarkTap() {
           <div className="space-y-4">
             {bookmarks.length > 0 ? (
               bookmarks.map((bookmark) => (
-                <div onClick={() => handleBookmarkClick(bookmark.resume_id)}>
-                  <BookmarkItem bookmark={bookmark} />
-                </div>
+                <BookmarkItem
+                  key={bookmark.bookmark_id}
+                  bookmark={bookmark}
+                  onUpdate={handleBookmarkUpdate}
+                />
               ))
             ) : (
               <div className="text-center text-gray-500 py-8">

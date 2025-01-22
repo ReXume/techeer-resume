@@ -1,28 +1,70 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Bookmark } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Bookmark, Trash } from "lucide-react";
+import Swal from "sweetalert2";
 import { BookmarkType } from "../../dataType";
+import { deleteBookmarkById } from "../../api/bookMarkApi";
 
 type BookmarkItemProps = {
   bookmark: BookmarkType;
+  onUpdate: () => void; // 북마크 변경 시 호출되는 콜백
 };
 
-//북마크 된 이력서 추가정보 반영되면 주석 풀어서 사용
-function BookmarkItem({ bookmark }: BookmarkItemProps) {
+function BookmarkItem({ bookmark, onUpdate }: BookmarkItemProps) {
+  const navigate = useNavigate();
+
+  const handleBookmarkClick = () => {
+    navigate(`/feedback/${bookmark.resume_id}`);
+  };
+
+  const handleDeleteBookmark = async () => {
+    const result = await Swal.fire({
+      title: "북마크를 제거하시겠습니까?",
+      text: "이 작업은 되돌릴 수 없습니다.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "네, 제거합니다.",
+      cancelButtonText: "취소",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteBookmarkById(bookmark.bookmark_id);
+        Swal.fire(
+          "삭제 완료",
+          "북마크가 성공적으로 제거되었습니다.",
+          "success"
+        );
+        onUpdate(); // 북마크 변경 콜백 호출
+      } catch (error) {
+        console.error("북마크 삭제 오류:", error);
+        Swal.fire("오류", "북마크를 제거하는 데 실패했습니다.", "error");
+      }
+    }
+  };
+
   return (
     <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-      <div className="flex items-center space-x-4">
-        <Bookmark className="w-5 h-5 text-gray-500" />
-        <div>
-          {/* <h4 className="font-medium">{bookmark.title}</h4> */}
-          <h4 className="font-medium">2024 테커 상반기 채용 이력서</h4>
-
-          {/* <p className="text-sm text-gray-500">{bookmark.user_name}</p> */}
-          <p className="text-sm text-gray-500">정유진</p>
+      <div className="flex items-center" onClick={handleBookmarkClick}>
+        <div className="flex items-center space-x-4">
+          <Bookmark className="w-5 h-5 text-gray-500 mx-2" />
+          <div>
+            <h4 className="font-medium">2024 테커 상반기 채용 이력서</h4>
+            <p className="text-sm text-gray-500">정유진</p>
+          </div>
         </div>
       </div>
-      <div className="flex items-center space-x-4">
-        {/* <span className="text-sm text-gray-500">{bookmark.date}</span> */}
+
+      <div className="flex items-center space-x-4 ml-10">
         <span className="text-sm text-gray-500">2025-01-11</span>
+      </div>
+      <div
+        className="flex items-center justify-center w-20 h-10 hover:scale-125 cursor-pointer"
+        onClick={handleDeleteBookmark}
+      >
+        <Trash className="w-5 h-5 text-gray-500" />
       </div>
     </div>
   );
