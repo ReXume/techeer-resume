@@ -63,25 +63,25 @@ public class SecurityConfig {
 //                        .requestMatchers("/api/v1/resumes/**").hasAnyRole("ADMIN", "REGULAR") // resume
 //                        .anyRequest().permitAll()
 //                )
-//                .authorizeHttpRequests(requests ->
-//                        requests.anyRequest().permitAll() // 모든 요청을 모든 사용자에게 허용
-//                )
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/oauth2/**",
-                                "/oauth2/authorization/google",
-                                "/index.html",
-                                "/swagger/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui/index.html/**",
-                                "/api-docs/**",
-                                "/signup.html",
-                                "/api/v1/reissue",
-                                "/api/v1/mock/signup"
-                        ).permitAll()
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(requests ->
+                        requests.anyRequest().permitAll() // 모든 요청을 모든 사용자에게 허용
                 )
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers(
+//                                "/v3/api-docs/**",
+//                                "/oauth2/**",
+//                                "/oauth2/authorization/google",
+//                                "/index.html",
+//                                "/swagger/**",
+//                                "/swagger-ui/**",
+//                                "/swagger-ui/index.html/**",
+//                                "/api-docs/**",
+//                                "/signup.html",
+//                                "/api/v1/reissue",
+//                                "/api/v1/mock/signup"
+//                        ).permitAll()
+//                        .anyRequest().authenticated()
+//                )
                 // 로그아웃 성공 시 / 주소로 이동
 //          .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/"))
                 .oauth2Login(oauth2Login -> oauth2Login
@@ -90,10 +90,6 @@ public class SecurityConfig {
                         .successHandler(oAuth2LoginSuccessHandler) // 2.
                         .failureHandler(oAuth2LoginFailureHandler) // 3.
                 )
-//          .exceptionHandling(authenticationManager ->authenticationManager
-//                  .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-//                  .accessDeniedHandler(jwtAccessDeniedHandler)
-//          )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtService, userRepository),
                         UsernamePasswordAuthenticationFilter.class);
         return http.build();

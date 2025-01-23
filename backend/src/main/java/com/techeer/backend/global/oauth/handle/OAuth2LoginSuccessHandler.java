@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -30,11 +31,12 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
             String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
-            String refreshToken = jwtService.createRefreshToken();
 
             // 이메일로 사용자가 이미 있는지 확인
             userRepository.findByUsernameAndSocialType(oAuth2User.getName(), oAuth2User.getSocialType())
                     .ifPresent(user -> {
+                        // 유저
+                        String refreshToken = jwtService.createRefreshToken();
                         // 기존 유저는 RefreshToken 업데이트
                         user.updateRefreshToken(refreshToken);
                         userRepository.saveAndFlush(user);
@@ -44,6 +46,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
                         // 쿠키에 accessToken과 refreshToken 저장
                         addTokenCookies(response, accessToken, refreshToken);
+
 
                         // 로그인 성공 처리
                         String redirectUrl = "http://localhost:5173";
@@ -79,5 +82,4 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
     }
-
 }
