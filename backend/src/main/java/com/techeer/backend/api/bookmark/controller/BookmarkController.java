@@ -29,10 +29,14 @@ public class BookmarkController {
     private final UserService userService;
 
     @Operation(summary = "북마크 등록", description = "관심있는 이력서를 북마크로 등록합니다.")
-    @PostMapping("/{resumeId}")
-    public CommonResponse<BookmarkResponse> addBookmark(@PathVariable Long resumeId) {
+    @PostMapping("/{resume_id}")
+    public CommonResponse<BookmarkResponse> addBookmark(@PathVariable("resumeId") Long resumeId) {
         User user = userService.getLoginUser();
-        BookmarkResponse response = bookmarkService.addBookmark(user, resumeId);
+
+        Bookmark bookmark = bookmarkService.addBookmark(user, resumeId);
+
+        BookmarkResponse response = BookmarkConverter.toBookmarkResponse(bookmark);
+
         return CommonResponse.of(SuccessCode.OK, response);
     }
 
