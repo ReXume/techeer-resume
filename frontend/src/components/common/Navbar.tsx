@@ -4,7 +4,7 @@ import profile from "../../assets/profile.svg";
 import logo from "../../assets/logo.svg";
 import search from "../../assets/search-normal.svg";
 import useSearchStore from "../../store/SearchStore.ts";
-import useLoginStatus from "../../store/LoginStore";
+import { useLoginStatus } from "../../store/LoginStore";
 import axios from "../../utils/axiosInstance";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
