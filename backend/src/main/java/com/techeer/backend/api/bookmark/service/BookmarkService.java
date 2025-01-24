@@ -2,7 +2,6 @@ package com.techeer.backend.api.bookmark.service;
 
 import com.techeer.backend.api.bookmark.converter.BookmarkConverter;
 import com.techeer.backend.api.bookmark.domain.Bookmark;
-import com.techeer.backend.api.bookmark.dto.BookmarkResponse;
 import com.techeer.backend.api.bookmark.repository.BookmarkRepository;
 import com.techeer.backend.api.resume.domain.Resume;
 import com.techeer.backend.api.resume.repository.ResumeRepository;
@@ -22,18 +21,13 @@ public class BookmarkService {
     private final ResumeRepository resumeRepository;
 
     @Transactional
-    public BookmarkResponse addBookmark(User user, Long resumeId) {
+    public Bookmark addBookmark(User user, Long resumeId) {
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESUME_NOT_FOUND));
-
-        // 북마크 엔티티 생성
+        
         Bookmark bookmark = BookmarkConverter.toBookmarkEntity(user, resume);
 
-        // DB에 저장
-        Bookmark savedBookmark = bookmarkRepository.save(bookmark);
-
-        // 저장된 bookmark를 DTO로 변환
-        return BookmarkConverter.toBookmarkResponse(savedBookmark);
+        return bookmarkRepository.save(bookmark);
     }
 
 
