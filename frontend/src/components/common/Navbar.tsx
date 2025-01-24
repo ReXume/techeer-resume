@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import profile from "../../assets/profile.svg";
 import logo from "../../assets/logo.svg";
 import search from "../../assets/search-normal.svg";
 import useSearchStore from "../../store/SearchStore.ts";
 import { useLoginStatus } from "../../store/LoginStore";
 import axios from "../../utils/axiosInstance";
+
+import { User } from "lucide-react";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -113,12 +114,15 @@ function Navbar() {
         <div className="flex items-center pr-10">
           {loginStatus === 1 ? (
             <>
-              <img
+              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                <User className="w-8 h-8 text-gray-400" onClick={moveMyPage} />
+              </div>
+              {/* <img
                 src={profile}
                 alt="profile"
                 className="w-12 h-12 hover:cursor-pointer"
                 onClick={moveMyPage}
-              />
+              /> */}
               <p
                 className="hidden sm:block ml-3 mb-[1px] text-base lg:text-[1.2rem] hover:cursor-pointer"
                 onClick={moveMyPage}
