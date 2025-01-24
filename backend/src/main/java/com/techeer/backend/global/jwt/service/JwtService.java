@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -50,6 +50,7 @@ public class JwtService {
     private static final String BEARER = "Bearer ";
 
     private final UserRepository userRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
     private Key key;
 
@@ -91,18 +92,14 @@ public class JwtService {
                 .setExpiration(new Date(now.getTime() + refreshTokenExpirationPeriod))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
+        return newRefreshToken;
     }
 
-    public Optional<String> extractRefreshToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(refreshHeader))
-                .filter(refreshToken -> refreshToken.startsWith(BEARER))
-                .map(refreshToken -> refreshToken.replace(BEARER, ""));
-    }
-
-    public Optional<String> extractAccessToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(accessHeader))
-                .filter(refreshToken -> refreshToken.startsWith(BEARER))
-                .map(refreshToken -> refreshToken.replace(BEARER, ""));
+    private void CacheRefreshToken(String refreshToken) {
+        String key = "refreshToken:" + refreshToken;
+        // 리프레시 토큰을 Redis에 저장 (예: 7일 만료)
+        redisTemplate.opsForValue().set(key, refreshToken, Duration.ofDays(7));
     }
 
     public Optional<String> extractAccessTokenFromCookie(HttpServletRequest request) {

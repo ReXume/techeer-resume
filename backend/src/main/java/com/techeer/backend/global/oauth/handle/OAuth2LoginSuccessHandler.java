@@ -45,7 +45,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                         // 쿠키에 accessToken과 refreshToken 저장
                         jwtService.addTokenCookies(response, accessToken, refreshToken);
 
-
                         // 로그인 성공 처리
                         String redirectUrl = "http://localhost:5173";
                         try {
