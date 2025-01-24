@@ -30,23 +30,20 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         try {
             CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
-            String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
-
             // 이메일로 사용자가 이미 있는지 확인
             userRepository.findByUsernameAndSocialType(oAuth2User.getName(), oAuth2User.getSocialType())
                     .ifPresent(user -> {
-                        // 유저
-                        String refreshToken = jwtService.createRefreshToken();
-                        // 기존 유저는 RefreshToken 업데이트
-                        user.updateRefreshToken(refreshToken);
-                        userRepository.saveAndFlush(user);
+                        // AccessToken 생성
+                        String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
+
+                        // DB  RefreshToken 업데이트
+                       String refreshToken = jwtService.reIssueRefreshToken(user);
 
                         response.setContentType("application/json");
                         response.setCharacterEncoding("UTF-8");
 
                         // 쿠키에 accessToken과 refreshToken 저장
-                        addTokenCookies(response, accessToken, refreshToken);
-
+                        jwtService.addTokenCookies(response, accessToken, refreshToken);
 
                         // 로그인 성공 처리
                         String redirectUrl = "http://localhost:5173";
@@ -61,25 +58,5 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             throw e;
         }
 
-    }
-
-    private void addTokenCookies(HttpServletResponse response, String accessToken, String refreshToken) {
-        // Access Token 쿠키 생성
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setHttpOnly(true); // 클라이언트에서 자바스크립트를 통해 접근하지 못하도록 설정
-        // accessTokenCookie.setSecure(true); // HTTPS에서만 전송되도록 설정 (개발 환경에서는 필요에 따라 설정)
-        accessTokenCookie.setPath("/"); // 쿠키가 모든 경로에 적용되도록 설정
-        accessTokenCookie.setMaxAge(60 * 60); // 쿠키의 만료 시간 설정 (예: 1시간)
-
-        // Refresh Token 쿠키 생성
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        // refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7); // 예: 7일
-
-        // 응답에 쿠키 추가
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
     }
 }

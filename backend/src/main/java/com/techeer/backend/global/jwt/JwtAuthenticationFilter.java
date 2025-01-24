@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                                   FilterChain filterChain) throws ServletException, IOException {
         log.info("checkAccessTokenAndAuthentication() 호출");
         jwtService.extractAccessTokenFromCookie(request)
-                .filter(jwtService::isTokenValid)
+                .filter(jwtService::isAccessTokenValid)
                 .ifPresent(accessToken -> {
                     log.info("유효한 Access Token이 발견되었습니다: {}", accessToken);
 

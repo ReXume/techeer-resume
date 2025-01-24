@@ -82,7 +82,7 @@ jwt:
     header: Authorization
 
   refresh:
-    expiration: 1209600000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 14(2주))
+    expiration: 604800000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 7(1주))
     header: Authorization-refresh
 
 chatgpt:

@@ -11,10 +11,10 @@ import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.jwt.JwtToken;
 import com.techeer.backend.global.jwt.service.JwtService;
 import java.util.Map;
-import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final RedisTemplate<String, String> redisTemplate;
 
     public void signup(SignUpRequest signUpReq) {
         User user = this.getLoginUser();
@@ -61,37 +62,16 @@ public class UserService {
     }
 
     @Transactional
-    public JwtToken reissueToken(String accessToken, String refreshToken) {
+    public JwtToken reissueAccessToken(String refreshToken) {
+
         // Refresh Token 검증
-        if (!jwtService.isTokenValid(refreshToken)) {
-            throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
-        }
+        if (!jwtService.isRefreshTokenValid(refreshToken)) {return null;}
 
-        Object[] emailAndSocialType = jwtService.extractEmailAndSocialType(accessToken);
-
-        if (emailAndSocialType.length < 1) {
-            throw new BusinessException(ErrorCode.USER_NOT_AUTHENTICATED);
-        }
-
-        String email = (String) emailAndSocialType[0];
-
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isEmpty()) {
-            throw new BusinessException(ErrorCode.USER_NOT_AUTHENTICATED);
-        }
-
-        String userRefreshToken = user.get().getRefreshToken();
-
-        // db에 리프레시 토큰 없을 경우(logout)
-        if (userRefreshToken == null || !userRefreshToken.equals(refreshToken)) {
-            throw new BusinessException(ErrorCode.USER_NOT_AUTHENTICATED);
-        }
-
+        User user = this.getLoginUser();
         return JwtToken.builder()
-                .accessToken(jwtService.createAccessToken(email))
-                .refreshToken(jwtService.reIssueRefreshToken(user.orElse(null)))
+                .accessToken(jwtService.createAccessToken(user.getEmail()))
+                .refreshToken(jwtService.reIssueRefreshToken(user))
                 .build();
-
     }
 
     public String mockSignup(String id) {
