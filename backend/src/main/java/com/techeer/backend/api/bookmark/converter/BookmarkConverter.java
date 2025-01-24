@@ -14,6 +14,9 @@ public class BookmarkConverter {
         return BookmarkResponse.builder()
                 .bookmarkId(bookmark.getId())
                 .resumeId(bookmark.getResume().getId())
+                .resumeTitle(bookmark.getResume().getName())
+                .resumeAuthor(bookmark.getResume().getUser().getUsername())
+                .createdAt(bookmark.getResume().getCreatedAt())
                 .build();
     }
 
