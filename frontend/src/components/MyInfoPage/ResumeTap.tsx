@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "../../utils/axiosInstance.ts";
+import axios from "axios";
 import ResumeItem from "../../components/MyInfoPage/ResumeItem.tsx";
 import { ResumeType } from "../../dataType.ts";
 

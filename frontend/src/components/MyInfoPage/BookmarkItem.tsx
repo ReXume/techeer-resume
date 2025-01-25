@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useNavigate } from "react-router-dom";
 import { Bookmark, Trash } from "lucide-react";
 import Swal from "sweetalert2";
