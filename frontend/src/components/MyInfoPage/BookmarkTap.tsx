@@ -31,7 +31,10 @@ function BookmarkTap() {
     <div className="flex gap-8">
       <div className="flex-1">
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h3 className="text-lg font-semibold mb-6">북마크한 이력서</h3>
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-semibold">북마크한 이력서</h3>
+            <p className="text-sm text-gray-500">{bookmarks.length}개</p>
+          </div>
           <div className="space-y-4">
             {bookmarks.length > 0 ? (
               bookmarks.map((bookmark) => (

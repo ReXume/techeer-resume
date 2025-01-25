@@ -20,7 +20,6 @@ function BookmarkItem({ bookmark, onUpdate }: BookmarkItemProps) {
   const handleDeleteBookmark = async () => {
     const result = await Swal.fire({
       title: "북마크를 제거하시겠습니까?",
-      text: "이 작업은 되돌릴 수 없습니다.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -37,7 +36,7 @@ function BookmarkItem({ bookmark, onUpdate }: BookmarkItemProps) {
           "북마크가 성공적으로 제거되었습니다.",
           "success"
         );
-        onUpdate(); // 북마크 변경 콜백 호출
+        onUpdate();
       } catch (error) {
         console.error("북마크 삭제 오류:", error);
         Swal.fire("오류", "북마크를 제거하는 데 실패했습니다.", "error");

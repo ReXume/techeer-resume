@@ -9,8 +9,9 @@ export type PostCardsType = {
 };
 
 export type ResumeType = {
-  id: number;
-  version: string;
+  resume_id: number;
+  resume_name: string;
+  user_name: string;
   date: string;
 };
 
