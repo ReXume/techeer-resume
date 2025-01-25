@@ -117,12 +117,6 @@ function Navbar() {
               <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
                 <User className="w-8 h-8 text-gray-400" onClick={moveMyPage} />
               </div>
-              {/* <img
-                src={profile}
-                alt="profile"
-                className="w-12 h-12 hover:cursor-pointer"
-                onClick={moveMyPage}
-              /> */}
               <p
                 className="hidden sm:block ml-3 mb-[1px] text-base lg:text-[1.2rem] hover:cursor-pointer"
                 onClick={moveMyPage}
