@@ -79,22 +79,6 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers(
-//                                "/v3/api-docs/**",
-//                                "/oauth2/**",
-//                                "/oauth2/authorization/google",
-//                                "/index.html",
-//                                "/swagger/**",
-//                                "/swagger-ui/**",
-//                                "/swagger-ui/index.html/**",
-//                                "/api-docs/**",
-//                                "/signup.html",
-//                                "/api/v1/reissue",
-//                                "/api/v1/mock/signup"
-//                        ).permitAll()
-//                        .anyRequest().authenticated()
-//                )
                 // 로그아웃 성공 시 / 주소로 이동
 //          .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/"))
                 .oauth2Login(oauth2Login -> oauth2Login
