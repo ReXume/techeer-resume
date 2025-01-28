@@ -70,7 +70,7 @@ public class UserService {
         User user = this.getLoginUser();
         return JwtToken.builder()
                 .accessToken(jwtService.createAccessToken(user.getEmail()))
-                .refreshToken(jwtService.reIssueRefreshToken(user))
+                .refreshToken(refreshToken)
                 .build();
     }
 

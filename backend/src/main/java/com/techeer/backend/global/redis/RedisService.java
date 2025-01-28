@@ -25,12 +25,14 @@ public class RedisService {
 
     public void cacheRefreshToken(String refreshToken) {
         String key = "refreshToken:" + refreshToken;
+        log.info("refresh token cache key: {}", key);
         // 리프레시 토큰을 Redis에 저장 (예: 7일 만료)
         redisTemplate.opsForValue().set(key, refreshToken, Duration.ofMillis(refreshTokenExpirationPeriod));
     }
 
     public void deleteCacheRefreshToken(String refreshToken) {
         String key = "refreshToken:" + refreshToken;
+        log.info("refresh token cache key: {}", key);
         redisTemplate.delete(key);
     }
 }
