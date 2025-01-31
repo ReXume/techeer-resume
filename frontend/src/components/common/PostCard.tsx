@@ -27,7 +27,7 @@ function PostCard({
       <div className="flex items-center space-x-4">
         {/* 프로필 사진 */}
         <img
-          className="w-15 h-11 bg-[#608dff] rounded-full"
+          className="w-12 h-12 bg-[#608dff] rounded-full"
           src={avatar}
           alt="avatar"
         />
@@ -41,7 +41,7 @@ function PostCard({
       <div className="flex flex-row mt-6 px-3">
         {/* 경력 */}
         <div className="flex items-center space-x-2">
-          <img className="w-6 h-auto" src={baggage} alt="baggage" />
+          <img className="w-6 h-6" src={baggage} alt="baggage" />
           <div className="text-gray-600 text-sm font-medium">
             {experience === 0 ? "신입" : `${experience}년`}
           </div>
@@ -49,7 +49,7 @@ function PostCard({
 
         {/* 학력 */}
         <div className="flex items-center space-x-2 ml-8">
-          <img className="w-6 h-auto" src={pngegg} alt="pngegg" />
+          <img className="w-6 h-6" src={pngegg} alt="pngegg" />
           <div className="text-gray-600 text-sm font-medium">{education}</div>
         </div>
       </div>

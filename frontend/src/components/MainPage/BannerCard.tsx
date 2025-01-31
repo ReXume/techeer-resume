@@ -43,7 +43,7 @@ function BannerCard({
           <img
             src={imgurl}
             alt="캐릭터 이미지"
-            className="w-20 md:w-40 lg:w-70 h-auto"
+            className="w-20 md:w-40 lg:w-72 h-60"
           />
         </div>
       </div>

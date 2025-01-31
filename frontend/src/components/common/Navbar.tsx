@@ -82,7 +82,7 @@ function Navbar() {
           <img
             src={logo}
             alt="logo"
-            className="w-auto h-6 hover:cursor-pointer"
+            className="w-32 h-6 hover:cursor-pointer"
             onClick={moveMainPage}
           />
         </div>
@@ -104,7 +104,7 @@ function Navbar() {
             <img
               src={search}
               alt="search"
-              className="mr-1 w-auto h-5 hover:cursor-pointer md:mr-0 sm:mr-0 mr-4"
+              className="mr-1 w-6 h-5 hover:cursor-pointer md:mr-0 sm:mr-0 mr-4"
               onClick={searchName}
             />
           </div>
