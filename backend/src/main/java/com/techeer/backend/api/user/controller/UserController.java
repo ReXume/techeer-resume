@@ -1,7 +1,6 @@
 package com.techeer.backend.api.user.controller;
 
 import com.techeer.backend.api.user.converter.UserConverter;
-import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.dto.request.SignUpRequest;
 import com.techeer.backend.api.user.dto.response.UserInfoResponse;
 import com.techeer.backend.api.user.service.UserService;
@@ -70,10 +69,4 @@ public class UserController {
         return CommonResponse.of(SuccessCode.TOKEN_REISSUE_OK, null);
     }
 
-    @Operation(summary = "모의 유저 데이터 생성")
-    @PostMapping("/mock/signup")
-    public CommonResponse<String> mockSignup(@RequestParam(name = "id") String id) {
-        String accessToken = userService.mockSignup(id);
-        return CommonResponse.of(SuccessCode.OK, accessToken);
-    }
 }

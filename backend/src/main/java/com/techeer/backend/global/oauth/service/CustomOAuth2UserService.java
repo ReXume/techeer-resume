@@ -39,7 +39,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // 소셜 로그인에서 API가 제공하는 userInfo의 Json 값(유저 정보들)
         Map<String, Object> attributes = oAuth2User.getAttributes();
-
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         extractAttributes = OAuthAttributes.of(registrationId, userNameAttributeName, attributes);
 
@@ -61,5 +60,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .email(email)
                 .socialType(extractAttributes.getSocialType())
                 .build();
+    }
+
+    private String emailExtractor(Map<String, Object> attributes, String registrationId) {
+        if (attributes.get("email") == null) {
+            throw new OAuth2AuthenticationException("email is null");
+        }
+
+
+        return null;
     }
 }
