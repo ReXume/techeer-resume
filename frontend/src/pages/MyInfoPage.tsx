@@ -1,9 +1,12 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Bookmark, FileText } from "lucide-react";
 import Navbar from "../components/common/Navbar.tsx";
-import BookmarkTap from "../components/MyInfoPage/BookmarkTap.tsx";
 import ResumeTap from "../components/MyInfoPage/ResumeTap.tsx";
 import UserInfo from "../components/MyInfoPage/UserInfo.tsx";
+
+const BookmarkTap = React.lazy(
+  () => import("../components/MyInfoPage/BookmarkTap.tsx")
+);
 
 function MyInfoPage() {
   const [activeTab, setActiveTab] = useState<"resume" | "bookmark">("resume");
@@ -13,7 +16,11 @@ function MyInfoPage() {
       case "resume":
         return <ResumeTap />;
       case "bookmark":
-        return <BookmarkTap />;
+        return (
+          <React.Suspense fallback={<div>Loading...</div>}>
+            <BookmarkTap />
+          </React.Suspense>
+        );
       default:
         return null;
     }
