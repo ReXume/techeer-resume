@@ -67,7 +67,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/oauth2/**",
-                                "/oauth2/authorization/google",
+                                "/oauth2/authorization/**",
                                 "/index.html",
                                 "/swagger/**",
                                 "/swagger-ui/**",
@@ -79,8 +79,6 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                // 로그아웃 성공 시 / 주소로 이동
-//          .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/"))
                 .oauth2Login(oauth2Login -> oauth2Login
                         .userInfoEndpoint(endpoint -> endpoint
                                 .userService(customOAuth2UserService))

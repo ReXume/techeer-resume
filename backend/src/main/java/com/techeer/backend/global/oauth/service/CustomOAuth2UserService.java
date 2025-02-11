@@ -3,7 +3,8 @@ package com.techeer.backend.global.oauth.service;
 import com.techeer.backend.api.user.domain.SocialType;
 import com.techeer.backend.api.user.repository.UserRepository;
 import com.techeer.backend.api.user.service.UserService;
-import com.techeer.backend.global.oauth.EmailFetcher.GitHubEmailFetcher;
+import com.techeer.backend.global.error.ErrorCode;
+import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.oauth.OAuthAttributes;
 import com.techeer.backend.global.oauth.oauth2user.CustomOAuth2User;
 import java.util.Collections;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    final private UserRepository userRepository;
     final private UserService userService;
 
     @Override
@@ -47,9 +47,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String username = extractAttributes.getSocialType().equals(SocialType.GITHUB) ? (String) attributes.get("login")
                 : (String) attributes.get("name");
 
+        SocialType socialType = socialTypeExtractor(attributes);
+        String username = usernameExtractor(attributes);
+        String email = emailExtractor(attributes);
         if (userRepository.findByEmailAndSocialType(email, extractAttributes.getSocialType()).isEmpty()) {
             userService.CreateRegularUser(email, username, extractAttributes.getSocialType());
         }
+
+        userService.CreateRegularUser( email, username, socialType);
 
         // DefaultOAuth2User를 구현한 CustomOAuth2User 객체를 생성해서 반환
         return CustomOAuth2User.builder()
@@ -62,12 +67,18 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .build();
     }
 
-    private String emailExtractor(Map<String, Object> attributes, String registrationId) {
-        if (attributes.get("email") == null) {
-            throw new OAuth2AuthenticationException("email is null");
-        }
+    private String emailExtractor(Map<String, Object> attributes) {
+        if (attributes.get("email") == null) { throw new BusinessException(ErrorCode.USER_NOT_FOUND_BY_EMAIL); }
+        return (String) attributes.get("email");
+    }
 
+    private SocialType socialTypeExtractor(Map<String, Object> attributes) {
+        if (attributes.get("login") == null) {return SocialType.GOOGLE;}
+        return SocialType.GITHUB;
+    }
 
-        return null;
+    private  String usernameExtractor(Map<String, Object> attributes) {
+        if (attributes.get("login") == null) {return (String) attributes.get("name");}
+        return (String) attributes.get("login");
     }
 }

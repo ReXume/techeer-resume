@@ -30,6 +30,8 @@ public enum ErrorCode {
     // User Error
     USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "USER_401", "로그인 정보가 없습니다."),
     USER_NOT_AUTHENTICATED(HttpStatus.UNAUTHORIZED, "USER_401", "로그인 하지 않았습니다."),
+    USER_NOT_FOUND_BY_EMAIL(HttpStatus.NOT_FOUND, "USER_404", "이메일 없는 계정입니다."),
+    USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER_409", "이미 가입된 사용자입니다."),
 
     // Token Error
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN_401", "리프레시 토큰이 유효하지 않습니다."),
@@ -43,9 +45,7 @@ public enum ErrorCode {
     INVALID_FEEDBACK_FOR_RESUME(HttpStatus.BAD_REQUEST, "FEEDBACK_400", "이력서에 해당하는 피드백이 아닙니다."),
 
     // AIFeedback Error
-    AIFEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "AIFEEDBACK_404", "AI 피드백을 찾을 수 없습니다."),
-
-    ;
+    AIFEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "AIFEEDBACK_404", "AI 피드백을 찾을 수 없습니다.");
 
 
     private final HttpStatus httpStatus;
