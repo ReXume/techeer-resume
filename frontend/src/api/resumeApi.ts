@@ -13,7 +13,7 @@ export const postResume = async (
     const formData = new FormData();
     formData.append("resume_file", resume_file);
 
-    // 🔥 Blob 없이 JSON 문자열 그대로 추가
+    // JSON 문자열 그대로 추가
     formData.append("resume", JSON.stringify(resume));
 
     // FormData 내부 확인
@@ -25,11 +25,7 @@ export const postResume = async (
     console.log("폼데이터 확인:", [...formData.entries()]);
 
     // API 요청 보내기
-    const response = await formAxios.post(`/resumes`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await formAxios.post(`/resumes`, formData);
 
     return response.data;
   } catch (error) {
