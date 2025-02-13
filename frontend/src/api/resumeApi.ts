@@ -1,10 +1,8 @@
 import { formAxios, jsonAxios, jsonFormAxios } from "./axios.config.ts";
 
-// 이력서 업로드 API
 export const postResume = async (
-  resume: File,
-  createResumeReq: {
-    // username: string;
+  resume_file: File,
+  resume: {
     position: string;
     career: number;
     company_names: string[];
@@ -13,10 +11,25 @@ export const postResume = async (
 ) => {
   try {
     const formData = new FormData();
-    formData.append("resume_file", resume);
-    formData.append("createResumeReq", JSON.stringify(createResumeReq));
+    formData.append("resume_file", resume_file);
 
-    const response = await formAxios.post(`/resumes`, formData, {});
+    // 🔥 Blob 없이 JSON 문자열 그대로 추가
+    formData.append("resume", JSON.stringify(resume));
+
+    // FormData 내부 확인
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    console.log("전송할 데이터:", resume);
+    console.log("폼데이터 확인:", [...formData.entries()]);
+
+    // API 요청 보내기
+    const response = await formAxios.post(`/resumes`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
     return response.data;
   } catch (error) {
@@ -24,7 +37,6 @@ export const postResume = async (
     throw error;
   }
 };
-
 // 이력서 검색
 export const searchResume = async (searchName: string) => {
   try {
