@@ -155,7 +155,7 @@ function Upload() {
 
   const handlePositionClick = (positionTag: string) => {
     setPosition((prevPosition) =>
-      prevPosition === positionTag.toUpperCase()
+      prevPosition.toUpperCase() === positionTag.toUpperCase()
         ? ""
         : positionTag.toUpperCase()
     );
@@ -251,7 +251,6 @@ function Upload() {
             </div>
           </div>
 
-         
           <div className="flex flex-col justify-start">
             {/* <div className="ml-2 md:ml-4"># 학력</div> */}
             {/* <div className="grid grid-cols-2 gap-4 mb-4">
