@@ -29,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -140,5 +141,14 @@ public class ResumeController {
                 .collect(Collectors.toList());
 
         return CommonResponse.of(SuccessCode.OK, pageableResumeResponse);
+    }
+
+    @Operation(summary = "이력서 삭제")
+    @DeleteMapping("/resumes/{resume_id}")
+    public CommonResponse<?> deleteResume(@PathVariable("resume_id") Long resumeId) {
+        User user = userService.getLoginUser();
+
+        resumeService.softDeleteResume(user, resumeId);
+        return CommonResponse.of(SuccessCode.RESUME_SOFT_DELETED, null);
     }
 }
