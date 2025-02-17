@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { BookmarkType } from "../dataType";
+import { BookmarkListType } from "../dataType";
 
 interface BookmarkStore {
-  bookmarks: BookmarkType[];
-  setBookmarks: (bookmarks: BookmarkType[]) => void;
+  bookmarks: BookmarkListType[];
+  setBookmarks: (bookmarks: BookmarkListType[]) => void;
   isBookmarked: (resumeId: number) => boolean;
 }
 
