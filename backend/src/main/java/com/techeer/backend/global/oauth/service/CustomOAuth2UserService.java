@@ -65,14 +65,4 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .socialType(extractAttributes.getSocialType())
                 .build();
     }
-
-    private SocialType socialTypeExtractor(Map<String, Object> attributes) {
-        if (attributes.get("login") == null) {return SocialType.GOOGLE;}
-        return SocialType.GITHUB;
-    }
-
-    private  String usernameExtractor(Map<String, Object> attributes) {
-        if (attributes.get("login") == null) {return (String) attributes.get("name");}
-        return (String) attributes.get("login");
-    }
 }
