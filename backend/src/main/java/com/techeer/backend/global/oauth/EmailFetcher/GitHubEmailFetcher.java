@@ -1,5 +1,7 @@
 package com.techeer.backend.global.oauth.EmailFetcher;
 
+import com.techeer.backend.global.error.ErrorCode;
+import com.techeer.backend.global.error.exception.BusinessException;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
@@ -16,8 +18,8 @@ public class GitHubEmailFetcher {
         headers.set("Accept", "application/json");
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<Map[]> response = restTemplate.exchange(GITHUB_EMAILS_URL, HttpMethod.GET, entity, Map[].class);
 
+        ResponseEntity<Map[]> response = restTemplate.exchange(GITHUB_EMAILS_URL, HttpMethod.GET, entity, Map[].class);
         if (response.getBody() != null) {
             for (Map<String, Object> emailInfo : response.getBody()) {
                 Boolean isPrimary = (Boolean) emailInfo.get("primary");
@@ -26,14 +28,13 @@ public class GitHubEmailFetcher {
                 }
             }
         }
-        return null;
+        throw new BusinessException(ErrorCode.USER_NOT_FOUND_BY_EMAIL);
     }
 
     // Github API 사용해서 이메일 가져오는 함수
     public static String getGitHubPrimaryEmail(OAuth2UserRequest userRequest){
         String accessToken = userRequest.getAccessToken().getTokenValue();
-        String email = getPrimaryEmail(accessToken);
-        return email;
+        return getPrimaryEmail(accessToken);
     }
 
 

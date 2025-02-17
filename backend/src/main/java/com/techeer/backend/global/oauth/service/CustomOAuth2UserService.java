@@ -52,7 +52,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String username = usernameExtractor(attributes);
         String email = emailExtractor(attributes);
         if (userRepository.findByEmailAndSocialType(email, extractAttributes.getSocialType()).isEmpty()) {
-            userService.CreateRegularUser(email, username, extractAttributes.getSocialType());
+            userService.createRegularUser(email, username, extractAttributes.getSocialType());
         }
 
         // DefaultOAuth2User를 구현한 CustomOAuth2User 객체를 생성해서 반환

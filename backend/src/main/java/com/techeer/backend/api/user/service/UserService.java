@@ -37,7 +37,7 @@ public class UserService {
         }
     }
 
-    public void CreateRegularUser(String email, String name, SocialType socialType) {
+    public void createRegularUser(String email, String name, SocialType socialType) {
         User user = User.builder()
                 .email(email)
                 .username(name)
