@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     final private UserService userService;
+    final private UserRepository userRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -54,8 +55,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             userService.CreateRegularUser(email, username, extractAttributes.getSocialType());
         }
 
-        userService.CreateRegularUser( email, username, socialType);
-
         // DefaultOAuth2User를 구현한 CustomOAuth2User 객체를 생성해서 반환
         return CustomOAuth2User.builder()
                 .authorities(Collections.emptyList())
@@ -65,11 +64,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .email(email)
                 .socialType(extractAttributes.getSocialType())
                 .build();
-    }
-
-    private String emailExtractor(Map<String, Object> attributes) {
-        if (attributes.get("email") == null) { throw new BusinessException(ErrorCode.USER_NOT_FOUND_BY_EMAIL); }
-        return (String) attributes.get("email");
     }
 
     private SocialType socialTypeExtractor(Map<String, Object> attributes) {
