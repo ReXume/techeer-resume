@@ -34,9 +34,11 @@ const PositionModal = ({ isOpen, onClose, onApply }: PositionModalProps) => {
   ];
 
   const selectPosition = (position: string) => {
+    const upperCasePosition = position.toUpperCase();
     setLocalSelectedPosition(
-      position === localSelectedPosition ? null : position
+      upperCasePosition === localSelectedPosition ? null : upperCasePosition
     ); // 같은 포지션 클릭 시 해제
+    console.log("포지션 선택:", upperCasePosition);
   };
 
   useEffect(() => {
@@ -78,22 +80,24 @@ const PositionModal = ({ isOpen, onClose, onApply }: PositionModalProps) => {
         {availablePositions.map((position, index) => (
           <div
             key={index}
-            onClick={() => selectPosition(position)}
+            onClick={() => selectPosition(position.toUpperCase())}
             className={`flex items-center justify-between p-2 cursor-pointer rounded-lg hover:bg-gray-200 ${
-              localSelectedPosition === position ? "bg-gray-100" : "bg-white"
+              localSelectedPosition === position.toUpperCase()
+                ? "bg-gray-100"
+                : "bg-white"
             }`}
           >
             <span className="text-black text-base font-normal ml-2">
-              {position}
+              {position.toUpperCase()}
             </span>
             <div
               className={`w-6 h-6 rounded-full border-[1.5px] flex items-center justify-center mr-2 ${
-                localSelectedPosition === position
+                localSelectedPosition === position.toUpperCase()
                   ? "border-blue-500 bg-blue-500"
                   : "border-gray-300"
               }`}
             >
-              {localSelectedPosition === position && (
+              {localSelectedPosition === position.toUpperCase() && (
                 <div className="w-3 h-3 bg-white rounded-full" />
               )}
             </div>
