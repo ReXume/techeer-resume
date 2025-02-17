@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getResumeList, viewResume, postFilter } from "../api/resumeApi";
+import { getResumeList, viewResume } from "../api/resumeApi";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
 import BannerCard from "../components/MainPage/BannerCard";
@@ -31,23 +31,14 @@ function MainPage() {
 
   const [isPositionOpen, setIsPositionOpen] = useState(false);
   const [isCareerOpen, setIsCareerOpen] = useState(false);
-  const [, setFilteredData] = useState<PostCardsType[] | null>(null); // 필터링된 데이터를 저장
+
   const [positionTitle, setPositionTitle] = useState("포지션"); // 카테고리에 표시될 포지션 제목
   const [careerTitle, setCareerTitle] = useState("경력"); // 경력 카테고리 제목
   const { positions, min_career, max_career, setCareerRange, setPositions } =
     useFilterStore();
-
-  const handleApplyPosition = (selectedPosition: string | null) => {
-    setPositions(selectedPosition ? [selectedPosition] : []); // 상태 업데이트
-    setPositionTitle(selectedPosition || "포지션"); // 선택된 포지션을 제목에 반영
-    setIsPositionOpen(false); // 모달 닫기
-  };
-
-  const handleApplyCareer = (min: number, max: number) => {
-    setCareerRange(min, max);
-    setCareerTitle(`${min}년 ~ ${max}년`); // 경력 범위를 제목에 반영
-    setIsCareerOpen(false); // 모달 닫기
-  };
+  const [filteredData, setFilteredData] = useState<PostCardsType[] | null>(
+    null
+  ); // 필터링된 데이터를 저장
 
   const fetchPostCards = async (page: number, size = 8) => {
     try {
@@ -59,35 +50,6 @@ function MainPage() {
     }
   };
 
-  const applyFilters = useCallback(async () => {
-    const filterData = {
-      dto: {
-        positions: positions.length > 0 ? positions : [],
-        min_career,
-        max_career,
-        tech_stack_names: [],
-        company_names: [],
-      },
-      pageable: {
-        page: 1,
-        size: 100, // 필터링은 전체 데이터 기반으로 수행
-      },
-    };
-    console.log("요청 데이터:", filterData);
-    try {
-      const response = await postFilter(filterData);
-      setFilteredData(response);
-      console.log("포스트필터 응답:", response);
-    } catch (error) {
-      console.error("필터링 오류:", error);
-    }
-  }, [positions, min_career, max_career]);
-
-  useEffect(() => {
-    applyFilters();
-  }, [positions, min_career, max_career, applyFilters]);
-
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ["postCards"],
@@ -104,6 +66,52 @@ function MainPage() {
       },
       initialPageParam: 0,
     });
+
+  const handleApplyPosition = (selectedPosition: string | null) => {
+    setPositions(selectedPosition ? [selectedPosition] : []); // 상태 업데이트
+    setPositionTitle(selectedPosition || "포지션"); // 선택된 포지션을 제목에 반영
+    setIsPositionOpen(false); // 모달 닫기
+  };
+
+  const handleApplyCareer = (min: number, max: number) => {
+    setCareerRange(min, max);
+    setCareerTitle(`${min}년 ~ ${max}년`); // 경력 범위를 제목에 반영
+    setIsCareerOpen(false); // 모달 닫기
+  };
+
+  const applyFilters = useCallback(() => {
+    if (!data?.pages) return; // data가 준비되지 않으면 필터링을 실행하지 않음
+
+    // positions, min_career, max_career에 따라 필터링
+    const filteredData = data.pages.flatMap((page) =>
+      page.filter((post: PostCardsType) => {
+        // 포지션 필터링
+        const positionMatch =
+          positions.length === 0 || positions.includes(post.position);
+
+        // 경력 필터링
+        const careerMatch =
+          post.career >= min_career && post.career <= max_career;
+
+        return positionMatch && careerMatch; // 두 조건 모두 만족하는 데이터만 반환
+      })
+    );
+
+    // 필터링된 데이터를 상태에 저장
+    setFilteredData(filteredData);
+  }, [data?.pages, positions, min_career, max_career]);
+
+  useEffect(() => {
+    if (data?.pages) {
+      applyFilters();
+    }
+  }, [data?.pages, positions, min_career, max_career, applyFilters]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [positions, min_career, max_career, applyFilters]);
+
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!hasNextPage || isFetchingNextPage) return;
@@ -184,29 +192,26 @@ function MainPage() {
 
           <div className="flex justify-center">
             <div className="grid grid-cols-1 min-[700px]:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 p-5">
-              {data?.pages && data.pages.length > 0
-                ? data.pages.map((page) =>
+              {filteredData && filteredData.length > 0
+                ? filteredData.map((post: PostCardsType) => (
+                    <PostCard
+                      key={post.resume_id}
+                      name={post.user_name}
+                      role={post.position}
+                      experience={post.career}
+                      skills={post.tech_stack_names}
+                      onClick={() => moveToResume(Number(post.resume_id))}
+                    />
+                  ))
+                : data?.pages?.flatMap((page) =>
                     page.map((post: PostCardsType) => (
                       <PostCard
                         key={post.resume_id}
                         name={post.user_name}
                         role={post.position}
                         experience={post.career}
-                        education="전공자"
                         skills={post.tech_stack_names}
                         onClick={() => moveToResume(Number(post.resume_id))}
-                      />
-                    ))
-                  )
-                : data?.pages.map((page) =>
-                    page.map((post: PostCardsType) => (
-                      <PostCard
-                        key={post.resume_id}
-                        name={post.user_name}
-                        role={post.position}
-                        experience={post.career}
-                        education="전공자"
-                        skills={post.tech_stack_names}
                       />
                     ))
                   )}

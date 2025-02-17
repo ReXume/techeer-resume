@@ -4,12 +4,14 @@ interface UploadBoxProps {
   resume_file: File | null;
   handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleCancel: () => void;
+  fileInputRef: React.RefObject<HTMLInputElement>;
 }
 
 function FileUploadBox({
   resume_file,
   handleFileChange,
   handleCancel,
+  fileInputRef,
 }: UploadBoxProps) {
   return (
     <div className="w-full py-[2rem] max-w-[60rem] h-auto flex-shrink-0 rounded-[0.3125rem] border border-[#CEDAF9] bg-[#F8FAFF]">
@@ -64,6 +66,7 @@ function FileUploadBox({
           id="uploadFile"
           className="hidden"
           onChange={handleFileChange}
+          ref={fileInputRef} // ref 할당
         />
         <p className="text-xs font-medium text-gray-400 mt-2">
           PDF is allowed.

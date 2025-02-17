@@ -1,20 +1,20 @@
 import { MouseEventHandler } from "react";
 import avatar from "../../assets/avatar.webp";
 import baggage from "../../assets/baggage3.svg";
-import pngegg from "../../assets/pngegg2.svg";
+// import pngegg from "../../assets/pngegg2.svg";
 
 function PostCard({
   name,
   role,
   experience,
-  education,
+  // education,
   skills,
   onClick,
 }: {
   name: string;
   role: string;
   experience: number | string;
-  education: string;
+  // education: string;
   skills: string[];
   onClick?: MouseEventHandler<HTMLDivElement>;
 }) {
@@ -48,10 +48,9 @@ function PostCard({
         </div>
 
         {/* 학력 */}
-        <div className="flex items-center space-x-2 ml-8">
-          <img className="w-6 h-6" src={pngegg} alt="pngegg" />
-          <div className="text-gray-600 text-sm font-medium">{education}</div>
-        </div>
+        {/* <div className="flex items-center space-x-2 ml-8">
+          <img className="w-6 h-6" src={pngegg} alt="pngegg" /> */}
+        {/* <div className="text-gray-600 text-sm font-medium">{education}</div> */}
       </div>
 
       {/* 기술 스택 */}
