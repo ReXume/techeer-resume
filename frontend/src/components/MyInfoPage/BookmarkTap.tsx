@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import BookmarkItem from "../../components/MyInfoPage/BookmarkItem.tsx";
 import { getBookmarkById } from "../../api/bookMarkApi.ts";
-import { BookmarkType } from "../../dataType.ts";
+import { useBookmarkStore } from "../../store/BookmarkStore.ts";
 
 function BookmarkTap() {
-  const [bookmarks, setBookmarks] = useState<BookmarkType[]>([]);
+  const { bookmarks, setBookmarks } = useBookmarkStore();
 
   const userId = 1; // 임시. 지금 userId 필요 없음
 

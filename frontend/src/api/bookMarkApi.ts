@@ -5,7 +5,6 @@ export const postBookmark = async (resumeId: number) => {
   try {
     console.log("아이디", resumeId);
     const response = await jsonAxios.post(`/bookmarks/${resumeId}`);
-    // 응답에서 bookmark_id를 받아옵니다
     const bookmarkId = response.data.result.bookmark_id;
     return bookmarkId;
   } catch (error) {
