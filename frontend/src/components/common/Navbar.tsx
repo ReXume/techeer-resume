@@ -3,10 +3,9 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.svg";
 import search from "../../assets/search-normal.svg";
 import useSearchStore from "../../store/SearchStore.ts";
-import { useLoginStatus } from "../../store/LoginStore";
-import axios from "../../utils/axiosInstance";
 
 import { User } from "lucide-react";
+import authStore from "../../store/authStore.ts";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -14,32 +13,11 @@ function Navbar() {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState<string>(""); // 검색어 상태 관리
   const { setSearchName } = useSearchStore();
-  const { loginStatus, setLoginStatus } = useLoginStatus();
-  const [userName, setUserName] = useState<string>("");
+  const { checkAuth, user, isAuthenticated } = authStore();
 
-  // 네비바에 useEffect로 인증 상태 관리하면 성능 부답있을 것 같은데. 흠,,
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/user`, {
-          withCredentials: true, // HTTP-Only 쿠키 포함
-        });
-
-        // 응답이 성공적일 경우 사용자 정보와 상태 설정
-        if (response.data?.code === "USER_200") {
-          setLoginStatus(1); // 로그인 상태 업데이트
-          setUserName(response.data?.result.username); // 사용자 이름 설정
-        } else {
-          setLoginStatus(0); // 로그인 상태 초기화
-        }
-      } catch (error) {
-        console.error("인증 요청 실패: ", error);
-        setLoginStatus(0); // 로그인 상태 초기화
-      }
-    };
-
     checkAuth();
-  }, [loginStatus]);
+  }, [checkAuth]);
 
   const moveMainPage = () => {
     navigate("/");
@@ -112,7 +90,7 @@ function Navbar() {
 
         {/* 프로필 */}
         <div className="flex items-center pr-10">
-          {loginStatus === 1 ? (
+          {isAuthenticated === true ? (
             <>
               <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
                 <User className="w-8 h-8 text-gray-400" onClick={moveMyPage} />
@@ -121,7 +99,7 @@ function Navbar() {
                 className="hidden sm:block ml-3 mb-[1px] text-base lg:text-[1.2rem] hover:cursor-pointer"
                 onClick={moveMyPage}
               >
-                {userName}
+                {user}
               </p>
             </>
           ) : (
