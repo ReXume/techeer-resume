@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import BookmarkItem from "../../components/MyInfoPage/BookmarkItem.tsx";
 import { getBookmarkById } from "../../api/bookMarkApi.ts";
 import { useBookmarkStore } from "../../store/BookmarkStore.ts";
+import BookmarkItem from "../../components/MyInfoPage/BookmarkItem.tsx";
 
 function BookmarkTap() {
   const { bookmarks, setBookmarks } = useBookmarkStore();
@@ -16,11 +16,6 @@ function BookmarkTap() {
     } catch (error) {
       console.error("북마크를 가져오는 데 실패했습니다.", error);
     }
-  };
-
-  // 북마크가 변경될 때 호출
-  const handleBookmarkUpdate = () => {
-    fetchBookmarks();
   };
 
   useEffect(() => {
@@ -41,7 +36,7 @@ function BookmarkTap() {
                 <BookmarkItem
                   key={bookmark.bookmark_id}
                   bookmark={bookmark}
-                  onUpdate={handleBookmarkUpdate}
+                  onUpdate={fetchBookmarks}
                 />
               ))
             ) : (

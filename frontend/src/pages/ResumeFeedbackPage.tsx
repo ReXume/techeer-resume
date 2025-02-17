@@ -85,15 +85,8 @@ function ResumeFeedbackPage() {
           confirmButtonText: "확인",
         });
       } else {
-        const newBookmarkId = await postBookmark(resumeId);
-        setBookmarks([
-          ...bookmarks,
-          {
-            bookmark_id: newBookmarkId,
-            resume_id: resumeId,
-            //임시
-          },
-        ]);
+        const newBookmark = await postBookmark(resumeId);
+        setBookmarks([...bookmarks, newBookmark]);
         Swal.fire({
           icon: "success",
           title: "북마크가 추가되었습니다.",

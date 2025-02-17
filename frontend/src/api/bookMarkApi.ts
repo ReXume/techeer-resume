@@ -3,10 +3,8 @@ import { jsonAxios } from "./axios.config.ts";
 // 북마크 추가
 export const postBookmark = async (resumeId: number) => {
   try {
-    console.log("아이디", resumeId);
     const response = await jsonAxios.post(`/bookmarks/${resumeId}`);
-    const bookmarkId = response.data.result.bookmark_id;
-    return bookmarkId;
+    return response.data.result;
   } catch (error) {
     console.error("북마크 추가 오류:", error);
     throw error;
