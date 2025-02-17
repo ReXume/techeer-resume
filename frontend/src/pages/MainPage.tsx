@@ -82,24 +82,31 @@ function MainPage() {
   const applyFilters = useCallback(() => {
     if (!data?.pages) return; // data가 준비되지 않으면 필터링을 실행하지 않음
 
-    // positions, min_career, max_career에 따라 필터링
     const filteredData = data.pages.flatMap((page) =>
       page.filter((post: PostCardsType) => {
-        // 포지션 필터링
+        // 포지션 필터링: 필터가 적용되었으면 해당 포지션에 일치해야 함
         const positionMatch =
-          positions.length === 0 || positions.includes(post.position);
+          positionTitle === "포지션" ? true : positions.includes(post.position);
 
-        // 경력 필터링
+        // 경력 필터링: 필터가 적용되었으면 경력 범위에 속해야 함
         const careerMatch =
-          post.career >= min_career && post.career <= max_career;
+          careerTitle === "경력"
+            ? true
+            : post.career >= min_career && post.career <= max_career;
 
-        return positionMatch && careerMatch; // 두 조건 모두 만족하는 데이터만 반환
+        return positionMatch && careerMatch;
       })
     );
 
-    // 필터링된 데이터를 상태에 저장
     setFilteredData(filteredData);
-  }, [data?.pages, positions, min_career, max_career]);
+  }, [
+    data?.pages,
+    positions,
+    min_career,
+    max_career,
+    positionTitle,
+    careerTitle,
+  ]);
 
   useEffect(() => {
     if (data?.pages) {
@@ -191,31 +198,24 @@ function MainPage() {
           </div>
 
           <div className="flex justify-center">
-            <div className="grid grid-cols-1 min-[700px]:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 p-5">
-              {filteredData && filteredData.length > 0
-                ? filteredData.map((post: PostCardsType) => (
-                    <PostCard
-                      key={post.resume_id}
-                      name={post.user_name}
-                      role={post.position}
-                      experience={post.career}
-                      skills={post.tech_stack_names}
-                      onClick={() => moveToResume(Number(post.resume_id))}
-                    />
-                  ))
-                : data?.pages?.flatMap((page) =>
-                    page.map((post: PostCardsType) => (
-                      <PostCard
-                        key={post.resume_id}
-                        name={post.user_name}
-                        role={post.position}
-                        experience={post.career}
-                        skills={post.tech_stack_names}
-                        onClick={() => moveToResume(Number(post.resume_id))}
-                      />
-                    ))
-                  )}
-            </div>
+            {filteredData && filteredData.length > 0 ? (
+              <div className="grid grid-cols-1 min-[700px]:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 p-5">
+                {filteredData.map((post: PostCardsType) => (
+                  <PostCard
+                    key={post.resume_id}
+                    name={post.user_name}
+                    role={post.position}
+                    experience={post.career}
+                    skills={post.tech_stack_names}
+                    onClick={() => moveToResume(Number(post.resume_id))}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="flex justify-center items-center text-center my-8 text-lg">
+                카테고리에 해당하는 이력서가 없습니다
+              </div>
+            )}
           </div>
 
           <div ref={loadMoreRef} className="h-1" />
