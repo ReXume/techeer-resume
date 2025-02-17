@@ -33,6 +33,9 @@ public class GitHubEmailFetcher {
 
     // Github API 사용해서 이메일 가져오는 함수
     public static String getGitHubPrimaryEmail(OAuth2UserRequest userRequest){
+        if (userRequest == null || userRequest.getAccessToken() == null) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST);
+        }
         String accessToken = userRequest.getAccessToken().getTokenValue();
         return getPrimaryEmail(accessToken);
     }
