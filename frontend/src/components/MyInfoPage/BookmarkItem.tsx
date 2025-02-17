@@ -3,6 +3,8 @@ import { Bookmark, Trash } from "lucide-react";
 import Swal from "sweetalert2";
 import { BookmarkType } from "../../dataType";
 import { deleteBookmarkById } from "../../api/bookMarkApi";
+import { useBookmarkStore } from "../../store/BookmarkStore.ts";
+import { getBookmarkById } from "../../api/bookMarkApi.ts";
 
 type BookmarkItemProps = {
   bookmark: BookmarkType;
@@ -11,6 +13,8 @@ type BookmarkItemProps = {
 
 function BookmarkItem({ bookmark, onUpdate }: BookmarkItemProps) {
   const navigate = useNavigate();
+  const { setBookmarks } = useBookmarkStore();
+  const userId = 1; // 임시. 지금 userId 필요 없음
 
   const handleBookmarkClick = () => {
     navigate(`/feedback/${bookmark.resume_id}`);
@@ -36,6 +40,8 @@ function BookmarkItem({ bookmark, onUpdate }: BookmarkItemProps) {
           "success"
         );
         onUpdate();
+        const response = await getBookmarkById(userId);
+        setBookmarks(response.result);
       } catch (error) {
         console.error("북마크 삭제 오류:", error);
         Swal.fire("오류", "북마크를 제거하는 데 실패했습니다.", "error");
