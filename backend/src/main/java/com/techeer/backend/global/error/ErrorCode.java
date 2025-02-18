@@ -32,6 +32,7 @@ public enum ErrorCode {
     USER_NOT_AUTHENTICATED(HttpStatus.UNAUTHORIZED, "USER_401", "로그인 하지 않았습니다."),
     USER_NOT_FOUND_BY_EMAIL(HttpStatus.NOT_FOUND, "USER_404", "이메일 없는 계정입니다."),
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER_409", "이미 가입된 사용자입니다."),
+    USER_REQUEST_NULL(HttpStatus.BAD_REQUEST, "USER_400", "사용자 정보가 없습니다."),
 
     // Token Error
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN_401", "리프레시 토큰이 유효하지 않습니다."),
