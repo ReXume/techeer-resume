@@ -45,7 +45,8 @@ public enum ErrorCode {
     INVALID_FEEDBACK_FOR_RESUME(HttpStatus.BAD_REQUEST, "FEEDBACK_400", "이력서에 해당하는 피드백이 아닙니다."),
 
     // AIFeedback Error
-    AIFEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "AIFEEDBACK_404", "AI 피드백을 찾을 수 없습니다.");
+    AIFEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "AIFEEDBACK_404", "AI 피드백을 찾을 수 없습니다."),
+    ;
 
 
     private final HttpStatus httpStatus;
