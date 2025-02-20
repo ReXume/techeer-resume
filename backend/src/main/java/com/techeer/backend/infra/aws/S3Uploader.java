@@ -33,6 +33,7 @@ public class S3Uploader {
         String s3PdfName = UUID.randomUUID().toString().substring(0, 10) + "_" + originalFileName;
         String s3Key = "resume/" + s3PdfName;
         String fileUrl = uploadToS3(multipartFile, s3Key);
+        log.info("resume_pdf_url length: {}", fileUrl.length());
         return fileUrl;
     }
 
