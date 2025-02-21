@@ -67,4 +67,10 @@ public class ResumeService {
     public Slice<Resume> getResumesByUser(User user) {
         return resumeRepository.findResumeByUser(user);
     }
+
+    public void softDeleteResume(User user, Long resumeId) {
+        Resume resume = resumeRepository.findByUserAndId(user, resumeId)
+                .orElseThrow(ResumeNotFoundException::new);
+        resume.softDelete();
+    }
 }

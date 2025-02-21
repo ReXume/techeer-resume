@@ -21,9 +21,9 @@ export default function App() {
               <Route path="/" element={<MainPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/search" element={<SearchPage />} />
+              <Route path="/feedback/:id" element={<ResumeFeedbackPage />} />
 
               <Route element={<ProtectedRoute />}>
-                <Route path="/feedback/:id" element={<ResumeFeedbackPage />} />
                 <Route path="/upload" element={<Upload />} />
                 <Route path="/myInfo" element={<MyInfoPage />} />
               </Route>

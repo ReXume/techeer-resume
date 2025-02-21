@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeRepositoryQueryDsl {
 
+    Optional<Resume> findByUserAndId(User user, Long id);
+
     @Query("SELECT r FROM Resume r WHERE r.user.username = :username")
     List<Resume> findResumesByUsername(@Param("username") String username);
 
