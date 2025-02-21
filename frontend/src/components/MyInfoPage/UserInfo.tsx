@@ -1,8 +1,8 @@
 import { User } from "lucide-react";
-import { useUserInfo } from "../../store/LoginStore";
+import useAuthStore from "../../store/authStore";
 
 function UserInfo() {
-  const { userData } = useUserInfo();
+  const { userData } = useAuthStore();
 
   return (
     <div>
