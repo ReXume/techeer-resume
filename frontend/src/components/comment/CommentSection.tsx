@@ -38,7 +38,7 @@ function CommentSection({
     } else {
       setIsLogin(true);
     }
-  }, []);
+  }, [isAuthenticated]);
   const handleAddComment = async (text: string) => {
     try {
       addFeedbackPoint({
