@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,7 @@ public class Resume extends BaseEntity {
 
     // 조회수
     @Column(name = "view_count")
-    private Long viewCount = 0L;
+    private Long viewCount;
 
     @Builder.Default
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)
@@ -81,6 +82,14 @@ public class Resume extends BaseEntity {
         this.career = career;
         this.position = position;
         this.resumePdf = resumePdf;
+        this.viewCount = 0L;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.viewCount == null) {
+            this.viewCount = 0L;
+        }
     }
 
     public void addResumeTechStack(ResumeTechStack resumeTechStack) {
