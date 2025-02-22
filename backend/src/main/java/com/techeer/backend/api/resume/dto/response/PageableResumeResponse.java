@@ -16,4 +16,5 @@ public class PageableResumeResponse {
     private List<String> companyNames;
     private int totalPage;
     private int currentPage;
+    private Long viewCount;
 }

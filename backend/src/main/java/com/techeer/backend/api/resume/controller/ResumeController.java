@@ -118,7 +118,7 @@ public class ResumeController {
                                                                       @RequestParam(name = "size") int size) {
         //ResumeService를 통해 페이지네이션된 이력서 목록을 가져옵니다.
         final Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
-        Page<Resume> resumes = resumeService.getResumePage(pageable);
+        Slice<Resume> resumes = resumeService.getResumePage(pageable);
 
         List<PageableResumeResponse> resumeResponses = resumes.stream()
                 .map(ResumeConverter::toPageableResumeResponse)
@@ -150,5 +150,19 @@ public class ResumeController {
 
         resumeService.softDeleteResume(user, resumeId);
         return CommonResponse.of(SuccessCode.RESUME_SOFT_DELETED, null);
+    }
+
+    @Operation(summary = "이력서 조회순으로 조회")
+    @GetMapping("/resumes/view")
+    public CommonResponse<List<PageableResumeResponse>> searchResumesByView(@RequestParam(name = "page") int page,
+                                                                            @RequestParam(name = "size") int size) {
+        final Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("viewCount")));
+        Slice<Resume> resumeList = resumeService.getResumePage(pageable);
+
+        List<PageableResumeResponse> pageableResumeResponse = resumeList.stream()
+                .map(ResumeConverter::toPageableResumeResponse)
+                .collect(Collectors.toList());
+
+        return CommonResponse.of(SuccessCode.OK, pageableResumeResponse);
     }
 }
