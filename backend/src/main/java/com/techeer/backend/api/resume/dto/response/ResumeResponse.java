@@ -14,4 +14,5 @@ public class ResumeResponse {
     private final String position;
     private final List<String> techStackNames;
     private List<String> companyNames;
+    private Long viewCount;
 }
