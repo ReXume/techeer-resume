@@ -30,8 +30,12 @@ public class ResumeService {
 
     // 이력서 개별 조회
     public Resume getResume(Long resumeId) {
-        return resumeRepository.findById(resumeId)
+        Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(ResumeNotFoundException::new);
+
+        // 이력서 조회수 증가
+        resume.increaseViewCount();
+        return resume;
     }
 
     // 유저 이름으로 이력서 조회
