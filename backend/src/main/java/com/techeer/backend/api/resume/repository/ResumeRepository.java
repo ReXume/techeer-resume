@@ -4,6 +4,7 @@ import com.techeer.backend.api.resume.domain.Resume;
 import com.techeer.backend.api.user.domain.User;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +25,6 @@ public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeRep
     Resume findFirstByUserOrderByCreatedAtDesc(User user);
 
     Slice<Resume> findResumeByUser(User user);
+
+    Slice<Resume> findResumesByDeletedAtIsNull(Pageable pageable);
 }
