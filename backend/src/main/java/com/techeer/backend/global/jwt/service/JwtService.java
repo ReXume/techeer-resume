@@ -13,14 +13,12 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.Key;
-import java.time.Duration;
 import java.util.Date;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 
@@ -48,10 +46,8 @@ public class JwtService {
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String EMAIL_CLAIM = "email";
-    private static final String BEARER = "Bearer ";
 
     private final UserRepository userRepository;
-    private final RedisTemplate<String, String> redisTemplate;
     private final RedisService redisService;
 
     private Key key;
@@ -77,9 +73,11 @@ public class JwtService {
 
     public String reIssueRefreshToken(User user) {
         String reIssuedRefreshToken = this.createRefreshToken();
-        String oldRefreshToken= user.updateRefreshToken(reIssuedRefreshToken);
+        String oldRefreshToken = user.updateRefreshToken(reIssuedRefreshToken);
 
-        if (oldRefreshToken != null) {redisService.deleteCacheRefreshToken(oldRefreshToken);}
+        if (oldRefreshToken != null) {
+            redisService.deleteCacheRefreshToken(oldRefreshToken);
+        }
         userRepository.saveAndFlush(user);
 
         redisService.cacheRefreshToken(reIssuedRefreshToken);
@@ -89,19 +87,13 @@ public class JwtService {
 
     public String createRefreshToken() {
         Date now = new Date();
-        String newRefreshToken=  Jwts.builder()
+        String newRefreshToken = Jwts.builder()
                 .setSubject(REFRESH_TOKEN_SUBJECT)
                 .setExpiration(new Date(now.getTime() + refreshTokenExpirationPeriod))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         return newRefreshToken;
-    }
-
-    private void CacheRefreshToken(String refreshToken) {
-        String key = "refreshToken:" + refreshToken;
-        // 리프레시 토큰을 Redis에 저장 (예: 7일 만료)
-        redisTemplate.opsForValue().set(key, refreshToken, Duration.ofDays(7));
     }
 
     public Optional<String> extractAccessTokenFromCookie(HttpServletRequest request) {
@@ -135,7 +127,9 @@ public class JwtService {
 
         // cache에 refreshToken이 유효성 검증
         String userRefreshToken = redisService.refreshTokenGet(refreshToken);
-        if (userRefreshToken != null) {return userRefreshToken.equals(refreshToken);}
+        if (userRefreshToken != null) {
+            return userRefreshToken.equals(refreshToken);
+        }
 
         // DB에 refreshToken이 유효성 검증
         Optional<User> user = userRepository.findByRefreshToken(refreshToken);
