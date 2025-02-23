@@ -13,6 +13,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.Key;
+import java.time.Duration;
 import java.util.Date;
 import java.util.Optional;
 import lombok.Getter;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -50,6 +52,7 @@ public class JwtService {
 
     private final UserRepository userRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private final RedisService redisService;
 
     private Key key;
 

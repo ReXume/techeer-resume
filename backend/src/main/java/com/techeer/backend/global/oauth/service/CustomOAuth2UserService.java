@@ -5,6 +5,7 @@ import com.techeer.backend.api.user.repository.UserRepository;
 import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.error.ErrorCode;
 import com.techeer.backend.global.error.exception.BusinessException;
+import com.techeer.backend.global.oauth.EmailFetcher.GitHubEmailFetcher;
 import com.techeer.backend.global.oauth.OAuthAttributes;
 import com.techeer.backend.global.oauth.oauth2user.CustomOAuth2User;
 import java.util.Collections;
