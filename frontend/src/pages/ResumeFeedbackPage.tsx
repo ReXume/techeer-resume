@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
 import MainContainer from "../components/resumeoverview/MainContainer";
 import ResumeOverview from "../components/resumeoverview/ResumeOverview";
@@ -11,95 +12,102 @@ import {
   getResumeApi,
   postAiFeedback,
 } from "../api/feedbackApi.ts";
+import {
+  postBookmark,
+  deleteBookmarkById,
+  getBookmarkById,
+} from "../api/bookMarkApi.ts";
 import { AddFeedbackPoint, FeedbackPoint, ResumeData } from "../types.ts";
 import useResumeStore from "../store/ResumeStore.ts";
-import { useParams } from "react-router-dom";
+import { useBookmarkStore } from "../store/BookmarkStore.ts";
 import { Bookmark, BookmarkMinus } from "lucide-react";
-import { postBookmark, deleteBookmarkById } from "../api/bookMarkApi.ts";
+import Swal from "sweetalert2";
 
 function ResumeFeedbackPage() {
-  const [resumeData, setResumeData] = useState<ResumeData | null>(null); //이력서 데이터를 관리
-  const [feedbackPoints, setFeedbackPoints] = useState<FeedbackPoint[]>([]); //피드백 데이터를 관리
-  const [hoveredCommentId, setHoveredCommentId] = useState<number | null>(null); //마우스 호버시 코멘트 아이디를 관리
-  const [loading, setLoading] = useState<boolean>(true); //로딩 상태를 관리
-  const [error, setError] = useState<string | null>(null); //에러 상태를 관리
-  const { setResumeUrl } = useResumeStore(); //이력서 아이디와 이력서 URL을 관리 -> 이게 왜 필요한지 모르겠음
-  const { id } = useParams(); // useParams로 URL의 id 파라미터 가져오기
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false); // 북마크 상태
-  const [bookmarkId, setBookmarkId] = useState<number | null>(null); // 북마크 ID 저장
+  const [resumeData, setResumeData] = useState<ResumeData | null>(null);
+  const [feedbackPoints, setFeedbackPoints] = useState<FeedbackPoint[]>([]);
+  const [hoveredCommentId, setHoveredCommentId] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const { id } = useParams();
+  const resumeId = Number(id);
+  const { setResumeUrl } = useResumeStore();
+  const { bookmarks, setBookmarks, isBookmarked } = useBookmarkStore();
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("api호출");
-      if (!id) {
+      if (!resumeId) {
         setError("Resume ID is missing.");
         return;
       }
-
       try {
         setLoading(true);
         setError(null);
-        const data = await getResumeApi(Number(id)); //여기서 레쥬메 아이디로 관리를 해서 데이터를 불러옴
+
+        const data = await getResumeApi(resumeId);
         setResumeData(data);
-        // 북마크 상태 초기화
-        const bookmarkResponse = await postBookmark(Number(id)); // userId 제거, resumeId만 사용
-        if (bookmarkResponse) {
-          setIsBookmarked(true);
-          setBookmarkId(bookmarkResponse);
-        }
+        setFeedbackPoints(data.feedbackResponses || []);
         setResumeUrl(data.fileUrl);
-        console.log("id:", id);
-        setFeedbackPoints(data.feedbackResponses || []); // 관련된 설정들
+
+        const userId = 1;
+        const bookmarksData = await getBookmarkById(userId);
+        setBookmarks(bookmarksData.result || []);
       } catch (error) {
-        console.error("Failed to fetch resume data", error);
-        setError("Failed to fetch resume data. Please try again later.");
+        console.error(error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, [id]);
+  }, [resumeId, setResumeUrl, setBookmarks]);
 
-  // 북마크 토글 기능
   const toggleBookmark = async () => {
-    if (!id) {
+    if (!resumeId) {
       setError("Resume ID is missing.");
       return;
     }
 
     try {
-      if (isBookmarked) {
-        // 북마크 해제
-        if (bookmarkId !== null) {
-          await deleteBookmarkById(bookmarkId);
-        }
-        setIsBookmarked(false);
-        setBookmarkId(null);
+      const existingBookmark = bookmarks.find(
+        (bk) => bk.resume_id === resumeId
+      );
+
+      if (existingBookmark) {
+        await deleteBookmarkById(existingBookmark.bookmark_id);
+        setBookmarks(
+          bookmarks.filter(
+            (bk) => bk.bookmark_id !== existingBookmark.bookmark_id
+          )
+        );
+        Swal.fire({
+          icon: "success",
+          title: "북마크가 해제되었습니다.",
+          confirmButtonText: "확인",
+        });
       } else {
-        // 북마크 추가
-        const response = await postBookmark(Number(id)); // userId 제거, resumeId만 사용
-        console.log("포스트북마크 값", response);
-        setIsBookmarked(true);
-        setBookmarkId(response); // 서버로부터 받은 북마크 ID 저장
-        console.log("북마크 아이디 생성", response);
+        const newBookmark = await postBookmark(resumeId);
+        setBookmarks([...bookmarks, newBookmark]);
+        Swal.fire({
+          icon: "success",
+          title: "북마크가 추가되었습니다.",
+          confirmButtonText: "확인",
+        });
       }
-    } catch (error) {
-      console.error("Failed to toggle bookmark", error);
-      alert("북마크 상태를 변경할 수 없습니다. 다시 시도해주세요.");
+    } catch {
+      Swal.fire({
+        icon: "error",
+        title: "북마크 상태를 변경할 수 없습니다. 다시 시도해주세요.",
+        confirmButtonText: "확인",
+      });
     }
   };
 
   const handleAiFeedback = async () => {
     setLoading(true);
     try {
-      const aiFeedback = await postAiFeedback(Number(id));
-      setFeedbackPoints((prevPoints) => [
-        ...prevPoints,
-        ...aiFeedback.feedbacks,
-      ]);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
+      const aiFeedback = await postAiFeedback(resumeId);
+      setFeedbackPoints((prev) => [...prev, ...aiFeedback.feedbacks]);
+    } catch {
       setError("Failed to retrieve AI feedback.");
     } finally {
       setLoading(false);
@@ -107,50 +115,35 @@ function ResumeFeedbackPage() {
   };
 
   const addFeedbackPoint = async (point: Omit<AddFeedbackPoint, "id">) => {
-    if (
-      !point.content ||
-      point.xCoordinate === undefined ||
-      point.yCoordinate === undefined
-    ) {
-      setError("All fields are required to add a feedback point.");
-      return;
-    }
-
     try {
+      if (
+        !point.content ||
+        point.xCoordinate === undefined ||
+        point.yCoordinate === undefined
+      ) {
+        setError("All fields are required to add a feedback point.");
+        return;
+      }
       setLoading(true);
-      const newPoint: AddFeedbackPoint = {
-        xCoordinate: point.xCoordinate,
-        yCoordinate: point.yCoordinate,
-        content: point.content,
-        pageNumber: 1,
-      };
-      await addFeedbackApi(Number(id), newPoint);
-      const updatedData = await getResumeApi(Number(id));
-      console.log("업데이트 데이터: ", updatedData);
+      const newPoint: AddFeedbackPoint = { ...point, pageNumber: 1 };
+      await addFeedbackApi(resumeId, newPoint);
+      const updatedData = await getResumeApi(resumeId);
       setFeedbackPoints(updatedData.feedbackResponses);
-    } catch (error) {
-      console.error("Failed to add feedback point", error);
+    } catch {
       setError("Failed to add feedback point. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
-  const deleteFeedbackPoint = async (id: number) => {
+  const deleteFeedbackPoint = async (feedbackId: number) => {
     try {
       setLoading(true);
-      setError(null);
-
-      // 피드백 점 삭제 API 호출
-      await deleteFeedbackApi(Number(id), id);
-
-      // 삭제 후 상태 갱신
-      setFeedbackPoints((prevComments) =>
-        (prevComments || []).filter((item) => item.id !== id)
+      await deleteFeedbackApi(resumeId, feedbackId);
+      setFeedbackPoints((prev) =>
+        prev.filter((item) => item.id !== feedbackId)
       );
-      console.log("Deleted feedback point: ", id);
-    } catch (error) {
-      console.error("Failed to delete feedback point", error);
+    } catch {
       setError("Failed to delete feedback point. Please try again later.");
     } finally {
       setLoading(false);
@@ -161,50 +154,37 @@ function ResumeFeedbackPage() {
     console.log("Edit feedback point: ", updatedItem);
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} />;
+  if (!resumeData) return <div>No resume data available.</div>;
 
-  if (error) {
-    return <ErrorMessage message={error} />;
-  }
-
-  if (!resumeData) {
-    return <div>No resume data available.</div>;
-  }
+  const bookmarked = isBookmarked(resumeId);
 
   return (
     <div className="flex flex-col flex-grow ">
       <Layout
         sidebar={
           <div className="flex flex-col justify-between bg-white p-2 mt-10">
-            {/* 북마크 버튼 */}
             <button
               onClick={toggleBookmark}
               className={`flex items-center px-6 py-3 rounded-lg ${
-                isBookmarked
+                bookmarked
                   ? "bg-yellow-100 text-yellow-900"
                   : "text-gray-500 hover:bg-gray-50"
               }`}
             >
-              {isBookmarked ? (
+              {bookmarked ? (
                 <>
-                  {/* <BookmarkMinus className="w-5 h-5 mr-2" />
-                  북마크 제거 */}
-                  <Bookmark className="w-5 h-5 mr-2" />
-                  북마크 추가
-                </>
-              ) : (
-                <>
-                  {/* <Bookmark className="w-5 h-5 mr-2" />
-                  북마크 추가 */}
                   <BookmarkMinus className="w-5 h-5 mr-2" />
                   북마크 제거
                 </>
+              ) : (
+                <>
+                  <Bookmark className="w-5 h-5 mr-2" />
+                  북마크 추가
+                </>
               )}
             </button>
-
-            {/* Resume Overview */}
             <ResumeOverview
               userName={resumeData.userName}
               position={resumeData.position}
@@ -213,8 +193,6 @@ function ResumeFeedbackPage() {
               fileUrl={resumeData.fileUrl}
               isLoading={loading}
             />
-
-            {/* Comment Section */}
             <div className="overflow-y-auto mt-2">
               <CommentSection
                 feedbackPoints={feedbackPoints}
