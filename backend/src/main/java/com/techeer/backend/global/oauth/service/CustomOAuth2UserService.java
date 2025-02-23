@@ -52,9 +52,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             username = (String) attributes.get("name");
         }
 
-        SocialType socialType = socialTypeExtractor(attributes);
-        String username = usernameExtractor(attributes);
-        String email = emailExtractor(attributes);
         if (userRepository.findByEmailAndSocialType(email, extractAttributes.getSocialType()).isEmpty()) {
             userService.createRegularUser(email, username, extractAttributes.getSocialType());
         }
