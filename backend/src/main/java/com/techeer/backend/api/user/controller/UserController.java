@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
     private final JwtService jwtService;
-    private final RedisTemplate<String, String> redisTemplate;
 
     @Operation(summary = "유저 정보")
     @GetMapping("/user")
@@ -55,20 +53,22 @@ public class UserController {
 
     @Operation(summary = "액세스 토큰 재발급")
     @PostMapping("/reissue")
-    public CommonResponse<Void> reGenerateAccessToken(@CookieValue(value = "refreshToken", required = false) String refreshToken,
-                                      HttpServletResponse response) throws IOException {
+    public CommonResponse<Void> reGenerateAccessToken(
+            @CookieValue(value = "refreshToken", required = false) String refreshToken,
+            HttpServletResponse response) throws IOException {
         // Cookie에 있는 Refresh Token을 이용하여 새로운 Access Token을 발급
         JwtToken token = userService.reissueAccessToken(refreshToken);
 
         // 토큰을 못 만들었으면 메인 화면으로 리다이렉트
-        if(token == null) {throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);}
+        if (token == null) {
+            throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
 
         // Access Token과 Refresh Token을 쿠키에 저장
         jwtService.addTokenCookies(response, token.getAccessToken(), token.getRefreshToken());
 
         return CommonResponse.of(SuccessCode.TOKEN_REISSUE_OK, null);
     }
-
 
     @Operation(summary = "모의 유저 데이터 생성")
     @PostMapping("/mock/signup")

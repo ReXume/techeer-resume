@@ -10,7 +10,6 @@ import com.techeer.backend.global.error.ErrorCode;
 import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.jwt.JwtToken;
 import com.techeer.backend.global.jwt.service.JwtService;
-import java.util.Map;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +59,7 @@ public class UserService {
         return userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
+
     @Transactional
     public JwtToken reissueAccessToken(String refreshToken) {
 

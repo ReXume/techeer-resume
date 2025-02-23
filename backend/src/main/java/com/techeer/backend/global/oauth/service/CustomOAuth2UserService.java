@@ -3,8 +3,6 @@ package com.techeer.backend.global.oauth.service;
 import com.techeer.backend.api.user.domain.SocialType;
 import com.techeer.backend.api.user.repository.UserRepository;
 import com.techeer.backend.api.user.service.UserService;
-import com.techeer.backend.global.error.ErrorCode;
-import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.oauth.EmailFetcher.GitHubEmailFetcher;
 import com.techeer.backend.global.oauth.OAuthAttributes;
 import com.techeer.backend.global.oauth.oauth2user.CustomOAuth2User;
@@ -44,11 +42,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         extractAttributes = OAuthAttributes.of(registrationId, userNameAttributeName, attributes);
 
-
-        if(extractAttributes.getSocialType().equals(SocialType.GITHUB)){
-            email= GitHubEmailFetcher.getGitHubPrimaryEmail(userRequest);
+        if (extractAttributes.getSocialType().equals(SocialType.GITHUB)) {
+            email = GitHubEmailFetcher.getGitHubPrimaryEmail(userRequest);
             username = (String) attributes.get("login");
-        }else{
+        } else {
             email = (String) attributes.get("email");
             username = (String) attributes.get("name");
         }
