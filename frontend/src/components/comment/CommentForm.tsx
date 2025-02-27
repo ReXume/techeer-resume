@@ -19,8 +19,10 @@ interface CommentFormProps {
   onCancel?: () => void; // 메인 영역용
   position?: Position; // 메인 영역용
   initialComment?: string; // 메인 영역용 (수정 시)
-  onAiFeedback?: () => void;
+  onAiFeedback?: () => void; // AI 피드백 버튼 클릭 시 부모로 넘길 콜백(필요하다면)
   disabled?: boolean;
+
+  resumeId?: number;
 }
 
 function CommentForm({
@@ -100,15 +102,15 @@ function CommentForm({
         top: `${position.y}%`,
         transform: "translate(0%, -100%)",
         width: "400px",
-        zIndex: 10, // 매우 높은 z-index 설정
-        /* 추가적인 오프셋 (필요 시) */
-        marginLeft: "10px", // 오른쪽으로 10px 오프셋
-        marginTop: "-10px", // 위로 10px 오프셋
+        zIndex: 10,
+        marginLeft: "10px",
+        marginTop: "-10px",
       }
     : {
         position: "relative",
-        zIndex: 10, // 사이드바보다 높은 z-index
+        zIndex: 10,
       };
+
   return (
     <div
       className="bg-white border rounded shadow-lg p-2 z-10 transition-transform duration-300 ease-in-out"
