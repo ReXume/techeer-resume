@@ -13,15 +13,8 @@ import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,7 +48,7 @@ public class UserController {
     @PostMapping("/reissue")
     public CommonResponse<Void> reGenerateAccessToken(
             @CookieValue(value = "refreshToken", required = false) String refreshToken,
-            HttpServletResponse response) throws IOException {
+            HttpServletResponse response) {
         // Cookie에 있는 Refresh Token을 이용하여 새로운 Access Token을 발급
         JwtToken token = userService.reissueAccessToken(refreshToken);
 
