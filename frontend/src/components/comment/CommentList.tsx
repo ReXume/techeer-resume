@@ -27,9 +27,21 @@ function CommentList({
           onMouseLeave={() => setHoveredCommentId(null)}
         >
           <div>
-            <p>
-              <strong>피드백:</strong> {item.content ?? "No feedback available"}
-            </p>
+            {/* 
+              AI피드백인지 일반 피드백인지 구분해서 보여주는 로직 추가
+              만약 content가 "AI피드백: ~"로 시작하면 AI피드백으로 표시
+            */}
+            {item.content.startsWith("AI피드백:") ? (
+              <p>
+                <strong>AI피드백:</strong>
+                {item.content.slice("AI피드백:".length)}
+              </p>
+            ) : (
+              <p>
+                <strong>피드백:</strong>{" "}
+                {item.content ?? "No feedback available"}
+              </p>
+            )}
             <p className="text-sm text-gray-500"></p>
           </div>
           <div className="flex space-x-2">
