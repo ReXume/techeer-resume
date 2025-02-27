@@ -29,16 +29,19 @@ function MainPage() {
     }
   };
 
+  // 정렬 옵션 상태 추가 (조회순 / 최신순)
+  const [sortOption, setSortOption] = useState("최신순");
+
   const [isPositionOpen, setIsPositionOpen] = useState(false);
   const [isCareerOpen, setIsCareerOpen] = useState(false);
 
-  const [positionTitle, setPositionTitle] = useState("포지션"); // 카테고리에 표시될 포지션 제목
-  const [careerTitle, setCareerTitle] = useState("경력"); // 경력 카테고리 제목
+  const [positionTitle, setPositionTitle] = useState("포지션");
+  const [careerTitle, setCareerTitle] = useState("경력");
   const { positions, min_career, max_career, setCareerRange, setPositions } =
     useFilterStore();
   const [filteredData, setFilteredData] = useState<PostCardsType[] | null>(
     null
-  ); // 필터링된 데이터를 저장
+  );
 
   const fetchPostCards = async (page: number, size = 8) => {
     try {
@@ -57,46 +60,48 @@ function MainPage() {
         return fetchPostCards(pageParam);
       },
       getNextPageParam: (lastPage, allPages) => {
-        // 응답 데이터가 빈 배열이 아니면 다음 페이지를 요청
         if (lastPage.length > 0) {
-          return allPages.length; // 다음 페이지 번호
+          return allPages.length;
         } else {
-          return undefined; // 더 이상 요청할 페이지 없음
+          return undefined;
         }
       },
       initialPageParam: 0,
     });
 
   const handleApplyPosition = (selectedPosition: string | null) => {
-    setPositions(selectedPosition ? [selectedPosition] : []); // 상태 업데이트
-    setPositionTitle(selectedPosition || "포지션"); // 선택된 포지션을 제목에 반영
-    setIsPositionOpen(false); // 모달 닫기
+    setPositions(selectedPosition ? [selectedPosition] : []);
+    setPositionTitle(selectedPosition || "포지션");
+    setIsPositionOpen(false);
   };
 
   const handleApplyCareer = (min: number, max: number) => {
     setCareerRange(min, max);
-    setCareerTitle(`${min}년 ~ ${max}년`); // 경력 범위를 제목에 반영
-    setIsCareerOpen(false); // 모달 닫기
+    setCareerTitle(`${min}년 ~ ${max}년`);
+    setIsCareerOpen(false);
   };
 
   const applyFilters = useCallback(() => {
-    if (!data?.pages) return; // data가 준비되지 않으면 필터링을 실행하지 않음
+    if (!data?.pages) return;
 
     const filteredData = data.pages.flatMap((page) =>
       page.filter((post: PostCardsType) => {
-        // 포지션 필터링: 필터가 적용되었으면 해당 포지션에 일치해야 함
         const positionMatch =
           positionTitle === "포지션" ? true : positions.includes(post.position);
-
-        // 경력 필터링: 필터가 적용되었으면 경력 범위에 속해야 함
         const careerMatch =
           careerTitle === "경력"
             ? true
             : post.career >= min_career && post.career <= max_career;
-
         return positionMatch && careerMatch;
       })
     );
+
+    // 정렬 로직 추가: sortOption에 따라 정렬
+    if (sortOption === "조회순") {
+      filteredData.sort((a, b) => b.view_count - a.view_count);
+    } else if (sortOption === "최신순") {
+      filteredData.sort((a, b) => b.resume_id - a.resume_id);
+    }
 
     setFilteredData(filteredData);
   }, [
@@ -106,6 +111,7 @@ function MainPage() {
     max_career,
     positionTitle,
     careerTitle,
+    sortOption,
   ]);
 
   useEffect(() => {
@@ -116,7 +122,7 @@ function MainPage() {
 
   useEffect(() => {
     applyFilters();
-  }, [positions, min_career, max_career, applyFilters]);
+  }, [positions, min_career, max_career, sortOption, applyFilters]);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -170,13 +176,20 @@ function MainPage() {
         <div className="p-6">
           <div className="max-w-screen-xl mx-auto py-6 relative">
             <div className="flex space-x-4">
-              <Category title="조회순" options={["인기순", "최신순"]} />
+              {/* 정렬 옵션 카테고리: 클릭 시 옵션 선택하여 정렬 상태 변경 */}
               <Category
-                title={positionTitle} // 선택한 포지션 반영
+                title={sortOption}
+                options={["조회순", "최신순"]}
+                onSelect={(selectedOption: string) =>
+                  setSortOption(selectedOption || "조회순")
+                }
+              />
+              <Category
+                title={positionTitle}
                 onClick={() => setIsPositionOpen(true)}
               />
               <Category
-                title={careerTitle} // 선택한 경력 범위 반영
+                title={careerTitle}
                 onClick={() => setIsCareerOpen(true)}
               />
             </div>
@@ -192,7 +205,7 @@ function MainPage() {
               <CareerModal
                 isOpen={isCareerOpen}
                 onClose={() => setIsCareerOpen(false)}
-                onApply={handleApplyCareer} // 선택된 경력 범위 처리
+                onApply={handleApplyCareer}
               />
             )}
           </div>
