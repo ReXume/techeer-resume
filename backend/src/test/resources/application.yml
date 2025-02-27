@@ -1,13 +1,20 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 200MB
+
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL
     username: sa
     password:
     driverClassName: org.h2.Driver
+
   h2:
     console:
       enabled: true
       path: /h2-console
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,6 +28,12 @@ spring:
 
   profiles:
     include: oauth
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
 
   security:
     oauth2:

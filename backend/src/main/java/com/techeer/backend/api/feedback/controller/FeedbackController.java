@@ -1,6 +1,7 @@
 package com.techeer.backend.api.feedback.controller;
 
 import com.techeer.backend.api.aifeedback.domain.AIFeedback;
+import com.techeer.backend.api.aifeedback.service.AIFeedbackService;
 import com.techeer.backend.api.feedback.converter.FeedbackConverter;
 import com.techeer.backend.api.feedback.domain.Feedback;
 import com.techeer.backend.api.feedback.dto.request.FeedbackCreateRequest;
@@ -34,6 +35,7 @@ public class FeedbackController {
 
     private final FeedbackService feedbackService;
     private final UserService userService;
+    private final AIFeedbackService aifeedbackService;
 
     @Operation(summary = "피드백 등록", description = "원하는 위치에 피드백을 작성합니다.")
     @PostMapping("/{resume_id}/feedbacks")
@@ -56,18 +58,23 @@ public class FeedbackController {
         return CommonResponse.of(SuccessCode.CREATED, feedbackResponse);
     }
 
-    @Operation(summary = "AI 피드백, 일반 피드백 조회", description = "해당 이력서에 대한 AI 피드백과 일반 피드백 조회")
-    @GetMapping("/{resume_id}/feedbacks")
-    public CommonResponse<AllFeedbackResponse> getFeedbackWithAIFeedback(@PathVariable("resume_id") Long resumeId) {
+    @Operation(summary = "AI 피드백, 일반 피드백 조회", description = "해당 이력서에 대한 일반 피드백과 특정 AI 피드백(aifeedbackId를 이용)을 조회합니다.")
+    @GetMapping("/{resume_id}/feedbacks/{aifeedback_id}")
+    public CommonResponse<AllFeedbackResponse> getFeedbackWithAIFeedback(
+            @PathVariable("resume_id") Long resumeId,
+            @PathVariable("aifeedback_id") Long aifeedbackId) {
 
-        // 엔티티, 리스트 반환
+        // 일반 피드백 조회 (이력서 ID 기준)
         List<Feedback> feedbacks = feedbackService.getFeedbackByResumeId(resumeId);
-        AIFeedback aiFeedback = feedbackService.getAIFeedbackByResumeId(resumeId);
+        // 특정 AI 피드백 조회 (AI 피드백 ID 기준)
+        AIFeedback aiFeedback = aifeedbackService.getFeedbackById(aifeedbackId);
 
+        // 두 결과를 하나의 DTO로 변환 (여기서는 원시 도메인 객체를 전달)
         AllFeedbackResponse response = FeedbackConverter.toAllFeedbackResponse(feedbacks, aiFeedback);
 
         return CommonResponse.of(SuccessCode.FEEDBACK_FETCH_OK, response);
     }
+
 
     @Operation(summary = "피드백 삭제")
     @DeleteMapping("/{resume_id}/feedbacks/{feedback_id}")
