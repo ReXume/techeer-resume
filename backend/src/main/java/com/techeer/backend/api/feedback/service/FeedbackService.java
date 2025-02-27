@@ -1,6 +1,5 @@
 package com.techeer.backend.api.feedback.service;
 
-import com.techeer.backend.api.aifeedback.domain.AIFeedback;
 import com.techeer.backend.api.aifeedback.repository.AIFeedbackRepository;
 import com.techeer.backend.api.feedback.converter.FeedbackConverter;
 import com.techeer.backend.api.feedback.domain.Feedback;
@@ -70,13 +69,7 @@ public class FeedbackService {
 
         return feedbacks;
     }
-
-    public AIFeedback getAIFeedbackByResumeId(Long resumeId) {
-        // 이력서 id에 해당하는 ai 피드백 가져옴(없으면 빈배열 반환)
-        return aiFeedbackRepository.findByResumeId(resumeId)
-                .orElse(AIFeedback.empty());
-    }
-
+    
     public List<Feedback> getFeedbacksByResumeId(Long resumeId) {
         return feedbackRepository.findAllByResumeId(resumeId);
     }

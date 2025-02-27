@@ -10,6 +10,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -64,6 +65,13 @@ public class SecurityConfig {
 //                        .anyRequest().permitAll()
 //                )
                 .authorizeHttpRequests(authorize -> authorize
+
+                        // 특정 엔드포인트에서 GET 요청만 허용
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/resumes",
+                                "/api/v1/resumes/view"
+                        ).permitAll()
+
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/oauth2/**",
@@ -75,7 +83,8 @@ public class SecurityConfig {
                                 "/api-docs/**",
                                 "/signup.html",
                                 "/login",
-                                "/api/v1/mock/signup"
+                                "/api/v1/mock/signup",
+                                "/api/v1/resumes/search"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
