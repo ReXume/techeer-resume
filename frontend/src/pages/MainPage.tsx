@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getResumeList, viewResume } from "../api/resumeApi";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
@@ -29,7 +29,7 @@ function MainPage() {
     }
   };
 
-  // 정렬 옵션 상태 추가 (조회순 / 최신순)
+  // 정렬 옵션 상태: "최신순"(최신 데이터) / "조회순"(인기 데이터)
   const [sortOption, setSortOption] = useState("최신순");
 
   const [isPositionOpen, setIsPositionOpen] = useState(false);
@@ -43,6 +43,7 @@ function MainPage() {
     null
   );
 
+  // 공통 데이터 fetch 함수
   const fetchPostCards = async (page: number, size = 8) => {
     try {
       const resumeList = await getResumeList(page, size);
@@ -53,21 +54,34 @@ function MainPage() {
     }
   };
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ["postCards"],
-      queryFn: async ({ pageParam = 0 }) => {
-        return fetchPostCards(pageParam);
-      },
-      getNextPageParam: (lastPage, allPages) => {
-        if (lastPage.length > 0) {
-          return allPages.length;
-        } else {
-          return undefined;
-        }
-      },
-      initialPageParam: 0,
-    });
+  // [최신 데이터] useInfiniteQuery: 무한 스크롤로 최신 이력서 목록을 가져옴
+  const latestQuery = useInfiniteQuery({
+    queryKey: ["latestResumes"],
+    queryFn: async ({ pageParam = 0 }) => {
+      return fetchPostCards(pageParam);
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.length > 0) {
+        return allPages.length;
+      } else {
+        return undefined;
+      }
+    },
+    initialPageParam: 0,
+  });
+
+  // [인기 데이터] useQuery: 조회순으로 인기 이력서를 가져오며, staleTime 10분으로 캐싱함
+  const popularQuery = useQuery({
+    queryKey: ["popularResumes"],
+    queryFn: async () => {
+      // 한 번에 많은 데이터를 가져와서 인기순으로 정렬 (필요에 따라 size 조절)
+      const data = await getResumeList(0, 100);
+      return data.sort(
+        (a: PostCardsType, b: PostCardsType) => b.view_count - a.view_count
+      );
+    },
+    staleTime: 10 * 60 * 1000, // 10분
+  });
 
   const handleApplyPosition = (selectedPosition: string | null) => {
     setPositions(selectedPosition ? [selectedPosition] : []);
@@ -81,31 +95,32 @@ function MainPage() {
     setIsCareerOpen(false);
   };
 
+  // 필터 및 정렬: 선택된 정렬 옵션에 따라 최신/인기 데이터 중 필터링 적용
   const applyFilters = useCallback(() => {
-    if (!data?.pages) return;
-
-    const filteredData = data.pages.flatMap((page) =>
-      page.filter((post: PostCardsType) => {
-        const positionMatch =
-          positionTitle === "포지션" ? true : positions.includes(post.position);
-        const careerMatch =
-          careerTitle === "경력"
-            ? true
-            : post.career >= min_career && post.career <= max_career;
-        return positionMatch && careerMatch;
-      })
-    );
-
-    // 정렬 로직 추가: sortOption에 따라 정렬
-    if (sortOption === "조회순") {
-      filteredData.sort((a, b) => b.view_count - a.view_count);
-    } else if (sortOption === "최신순") {
-      filteredData.sort((a, b) => b.resume_id - a.resume_id);
+    let rawData: PostCardsType[] = [];
+    if (sortOption === "최신순") {
+      if (latestQuery.data?.pages) {
+        rawData = latestQuery.data.pages.flatMap((page) => page);
+      }
+    } else if (sortOption === "조회순") {
+      if (popularQuery.data) {
+        // popularQuery.data는 이미 view_count 내림차순 정렬됨
+        rawData = [...popularQuery.data];
+      }
     }
-
-    setFilteredData(filteredData);
+    const filtered = rawData.filter((post: PostCardsType) => {
+      const positionMatch =
+        positionTitle === "포지션" ? true : positions.includes(post.position);
+      const careerMatch =
+        careerTitle === "경력"
+          ? true
+          : post.career >= min_career && post.career <= max_career;
+      return positionMatch && careerMatch;
+    });
+    setFilteredData(filtered);
   }, [
-    data?.pages,
+    latestQuery.data?.pages,
+    popularQuery.data,
     positions,
     min_career,
     max_career,
@@ -115,35 +130,42 @@ function MainPage() {
   ]);
 
   useEffect(() => {
-    if (data?.pages) {
-      applyFilters();
-    }
-  }, [data?.pages, positions, min_career, max_career, applyFilters]);
-
-  useEffect(() => {
     applyFilters();
-  }, [positions, min_career, max_career, sortOption, applyFilters]);
+  }, [
+    latestQuery.data?.pages,
+    popularQuery.data,
+    positions,
+    min_career,
+    max_career,
+    sortOption,
+    applyFilters,
+  ]);
 
+  // 무한 스크롤: 최신 데이터일 때만 Intersection Observer로 다음 페이지 요청
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage) return;
+    if (sortOption !== "최신순") return;
+    if (!latestQuery.hasNextPage || latestQuery.isFetchingNextPage) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          fetchNextPage();
+          latestQuery.fetchNextPage();
         }
       },
       { root: null, rootMargin: "0px", threshold: 0.1 }
     );
-
     const loadMoreCurrent = loadMoreRef.current;
     if (loadMoreCurrent) observer.observe(loadMoreCurrent);
-
     return () => {
       if (loadMoreCurrent) observer.unobserve(loadMoreCurrent);
     };
-  }, [hasNextPage, fetchNextPage, isFetchingNextPage]);
+  }, [
+    latestQuery,
+    latestQuery.hasNextPage,
+    latestQuery.fetchNextPage,
+    latestQuery.isFetchingNextPage,
+    sortOption,
+  ]);
 
   return (
     <div className="w-full bg-[#D7E1F5]">
@@ -176,7 +198,7 @@ function MainPage() {
         <div className="p-6">
           <div className="max-w-screen-xl mx-auto py-6 relative">
             <div className="flex space-x-4">
-              {/* 정렬 옵션 카테고리: 클릭 시 옵션 선택하여 정렬 상태 변경 */}
+              {/* 정렬 옵션: 인기(조회순) / 최신(최신순) */}
               <Category
                 title={sortOption}
                 options={["조회순", "최신순"]}
@@ -193,7 +215,6 @@ function MainPage() {
                 onClick={() => setIsCareerOpen(true)}
               />
             </div>
-
             {isPositionOpen && (
               <PositionModal
                 isOpen={isPositionOpen}
@@ -230,8 +251,7 @@ function MainPage() {
               </div>
             )}
           </div>
-
-          <div ref={loadMoreRef} className="h-1" />
+          {sortOption === "최신순" && <div ref={loadMoreRef} className="h-1" />}
         </div>
       </div>
     </div>
