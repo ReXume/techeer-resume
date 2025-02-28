@@ -1,10 +1,6 @@
 import { Outlet, Navigate } from "react-router-dom";
-import axios from "./axiosInstance";
-import { useEffect, useState } from "react";
-import { useLoginStatus, useUserInfo } from "../store/LoginStore";
+import { useEffect } from "react";
 import useAuthStore from "../store/authStore";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function ProtectedRoute() {
   // const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -36,7 +32,7 @@ function ProtectedRoute() {
     // };
     // checkAuth();
     checkAuth();
-  }, []);
+  }, [checkAuth]);
 
   if (isAuthenticated === null) {
     return <div>Loading...</div>;

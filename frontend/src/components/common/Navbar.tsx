@@ -7,8 +7,6 @@ import useSearchStore from "../../store/SearchStore.ts";
 import { User } from "lucide-react";
 import authStore from "../../store/authStore.ts";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 function Navbar() {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState<string>(""); // 검색어 상태 관리
