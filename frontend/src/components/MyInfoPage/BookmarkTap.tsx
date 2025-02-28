@@ -20,7 +20,7 @@ function BookmarkTap() {
 
   useEffect(() => {
     fetchBookmarks();
-  }, []);
+  }, [fetchBookmarks]);
 
   return (
     <div className="flex gap-8">

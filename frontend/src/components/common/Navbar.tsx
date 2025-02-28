@@ -11,7 +11,7 @@ function Navbar() {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState<string>(""); // 검색어 상태 관리
   const { setSearchName } = useSearchStore();
-  const { checkAuth, isAuthenticated } = authStore();
+  const { checkAuth, userData, isAuthenticated } = authStore();
 
   useEffect(() => {
     checkAuth();
@@ -97,7 +97,7 @@ function Navbar() {
                 className="hidden sm:block ml-3 mb-[1px] text-base lg:text-[1.2rem] hover:cursor-pointer"
                 onClick={moveMyPage}
               >
-                {user}
+                {userData?.username}
               </p>
             </>
           ) : (
