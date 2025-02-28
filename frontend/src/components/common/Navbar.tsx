@@ -11,7 +11,7 @@ function Navbar() {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState<string>(""); // 검색어 상태 관리
   const { setSearchName } = useSearchStore();
-  const { checkAuth, user, isAuthenticated } = authStore();
+  const { checkAuth, isAuthenticated } = authStore();
 
   useEffect(() => {
     checkAuth();
