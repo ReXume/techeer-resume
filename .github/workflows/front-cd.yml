@@ -2,11 +2,19 @@ name: 배포
 
 on:
   push:
-    branches: [ "develop" ]
+    branches:
+      - 'fe/**'  
+  pull_request:
+    branches:
+      - main
+      - develop
 
 jobs:
   deploy:
     runs-on: ubuntu-latest # 작업이 실행될 환경
+    defaults:
+      run:
+        working-directory: frontend
     steps:
     - name: 체크아웃
       uses: actions/checkout@v3
@@ -16,9 +24,9 @@ jobs:
         username: ${{ secrets.DOCKER_USER_NAME }}
         password: ${{ secrets.DOCKER_USER_PW }}
     - name: 이미지 빌드
-        run: docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-fe:latest .
-      - name: 도커허브에 이미지 푸시
-        run: docker push ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-fe:latest
+      run: docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-fe:latest .
+    - name: 도커허브에 이미지 푸시
+      run: docker push ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-fe:latest
     - name: AWS EC2에 ssh 접속 후 배포
       uses: appleboy/ssh-action@master
       with:
@@ -28,5 +36,7 @@ jobs:
         key: ${{ secrets.AWS_KEY }}
         script: |
           echo "AWS 연결"
+          sudo docker rm -f $(docker ps -qa)
           docker pull ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-fe:latest
           docker-compose --env-file .env.production up -d
+          docker image prune -f
