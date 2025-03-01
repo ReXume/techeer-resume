@@ -1,21 +1,20 @@
-// ../components/uploadpage/UploadBox.tsx
 import React from "react";
 
 interface UploadBoxProps {
-  resume: File | null;
+  resume_file: File | null;
   handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleCancel: () => void;
 }
 
 function FileUploadBox({
-  resume,
+  resume_file,
   handleFileChange,
   handleCancel,
 }: UploadBoxProps) {
   return (
-    <div className="w-full md:w-[50rem] h-auto md:h-[42rem] flex-shrink-0 rounded-[0.3125rem] border border-[#CEDAF9] bg-[#F8FAFF]">
-      {/* SVG 아이콘: lg 이상에서만 보임 */}
-      <div className="flex-shrink-0 ml-[2rem] md:ml-[5rem] mt-[4rem] relative hidden lg:block cursor-pointer">
+    <div className="w-full py-[2rem] max-w-[60rem] h-auto flex-shrink-0 rounded-[0.3125rem] border border-[#CEDAF9] bg-[#F8FAFF]">
+      {/* SVG 아이콘 */}
+      <div className="flex-shrink-0 ml-[2rem] md:ml-[5rem] mt-[4rem] relative cursor-pointer">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="w-[5rem] h-[5rem] md:w-[7rem] md:h-[7rem] fill-[#EFEFEF]"
@@ -31,7 +30,7 @@ function FileUploadBox({
       </div>
 
       {/* 텍스트: sm 이상에서만 보임 */}
-      <div className="ml-[2rem] md:ml-[5rem] mt-[1rem] hidden sm:block">
+      <div className="ml-[2rem] md:ml-[5rem] mt-[1rem] ">
         <div className="w-[12rem] md:w-[15rem] h-[2rem] text-black font-pretendard text-[1.2rem] md:text-[1.5rem] font-bold">
           첨부파일 업로드
         </div>
@@ -43,7 +42,7 @@ function FileUploadBox({
       {/* FileUpload 디자인 */}
       <label
         htmlFor="uploadFile"
-        className="bg-white text-gray-500 font-semibold text-base rounded w-[40rem] h-[18rem] flex flex-col items-center justify-center cursor-pointer border-2 border-gray-300 border-dashed mx-auto font-sans mt-[2rem]"
+        className="bg-white text-gray-500 font-semibold text-base rounded max-w-[56rem] h-[18rem] flex flex-col items-center justify-center cursor-pointer border-2 border-gray-300 border-dashed mx-[2rem] font-sans mt-[2rem]"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -72,21 +71,19 @@ function FileUploadBox({
       </label>
 
       {/* 파일명 및 취소 버튼 */}
-      <div className="w-[90%] md:w-[40rem] flex items-center mt-[1rem] ml-[2rem] md:ml-[5rem]">
-        {resume ? (
-          <div className="text-gray-600 font-medium overflow-hidden text-ellipsis whitespace-nowrap flex-1">
-            선택된 파일: {resume.name}
+      {resume_file && (
+        <div className="w-full md:w-[40rem] flex flex-col items-start mt-[1rem] ml-[2rem] ">
+          <div className="text-gray-600 font-medium overflow-hidden text-ellipsis whitespace-nowrap">
+            선택된 파일: {resume_file.name}
           </div>
-        ) : (
-          <div className="flex-1" />
-        )}
-        <button
-          className="w-[6rem] md:w-[7.5rem] h-[2.5rem] text-[#C5C5C5] font-pretendard text-[0.8rem] md:text-[1rem] bg-transparent border border-[#C5C5C5] rounded"
-          onClick={handleCancel}
-        >
-          Cancel
-        </button>
-      </div>
+          <button
+            className="mt-2 w-[6rem] md:w-[7.5rem] h-[2.5rem] text-[#C5C5C5] font-pretendard text-[0.8rem] md:text-[1rem] bg-transparent border border-[#C5C5C5] rounded"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 }

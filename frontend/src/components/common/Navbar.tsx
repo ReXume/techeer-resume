@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import profile from "../../assets/profile.svg";
 import logo from "../../assets/logo.svg";
 import search from "../../assets/search-normal.svg";
 import useSearchStore from "../../store/SearchStore.ts";
-import useLoginStatus from "../../store/LoginStore";
+import { useLoginStatus } from "../../store/LoginStore";
 import axios from "../../utils/axiosInstance";
+
+import { User } from "lucide-react";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -25,7 +26,7 @@ function Navbar() {
         });
 
         // 응답이 성공적일 경우 사용자 정보와 상태 설정
-        if (response.data?.message === "USER_200") {
+        if (response.data?.code === "USER_200") {
           setLoginStatus(1); // 로그인 상태 업데이트
           setUserName(response.data?.result.username); // 사용자 이름 설정
         } else {
@@ -38,7 +39,7 @@ function Navbar() {
     };
 
     checkAuth();
-  }, [setLoginStatus]);
+  }, [loginStatus]);
 
   const moveMainPage = () => {
     navigate("/");
@@ -81,7 +82,7 @@ function Navbar() {
           <img
             src={logo}
             alt="logo"
-            className="w-auto h-6 hover:cursor-pointer"
+            className="w-32 h-6 hover:cursor-pointer"
             onClick={moveMainPage}
           />
         </div>
@@ -103,7 +104,7 @@ function Navbar() {
             <img
               src={search}
               alt="search"
-              className="mr-1 w-auto h-5 hover:cursor-pointer md:mr-0 sm:mr-0 mr-4"
+              className="mr-1 w-6 h-5 hover:cursor-pointer md:mr-0 sm:mr-0 mr-4"
               onClick={searchName}
             />
           </div>
@@ -113,12 +114,9 @@ function Navbar() {
         <div className="flex items-center pr-10">
           {loginStatus === 1 ? (
             <>
-              <img
-                src={profile}
-                alt="profile"
-                className="w-12 h-12 hover:cursor-pointer"
-                onClick={moveMyPage}
-              />
+              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                <User className="w-8 h-8 text-gray-400" onClick={moveMyPage} />
+              </div>
               <p
                 className="hidden sm:block ml-3 mb-[1px] text-base lg:text-[1.2rem] hover:cursor-pointer"
                 onClick={moveMyPage}

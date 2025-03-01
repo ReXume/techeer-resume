@@ -14,9 +14,11 @@ export type ResumeData = {
   userName: string;
   position: string;
   career: number;
-  techStack: string[];
+  techStackNames: string[];
   fileUrl: string;
   feedbackResponses: FeedbackPoint[];
+  previousResumeId: number | null;
+  laterResumeId: number | null;
 };
 
 export type AddFeedbackPoint = {

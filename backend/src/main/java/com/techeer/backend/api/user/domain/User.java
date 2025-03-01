@@ -79,8 +79,10 @@ public class User extends BaseEntity {
         this.refreshToken = null;
     }
 
-    public void updateRefreshToken(String newRefreshToken) {
+    public String updateRefreshToken(String newRefreshToken) {
+        String oldRefreshToken = this.refreshToken;
         this.refreshToken = newRefreshToken;
+        return oldRefreshToken;
     }
 
     public void addResume(Resume resume) {

@@ -22,14 +22,14 @@ public class BookmarkService {
 
     @Transactional
     public Bookmark addBookmark(User user, Long resumeId) {
-
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESUME_NOT_FOUND));
-
+        
         Bookmark bookmark = BookmarkConverter.toBookmarkEntity(user, resume);
 
         return bookmarkRepository.save(bookmark);
     }
+
 
     @Transactional
     public void removeBookmark(User user, Long bookmarkId) {
@@ -50,5 +50,4 @@ public class BookmarkService {
     public List<Bookmark> getBookmarksByUserId(Long userId) {
         return bookmarkRepository.findAllByUserId(userId);
     }
-
 }

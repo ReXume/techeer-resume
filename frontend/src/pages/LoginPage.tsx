@@ -1,8 +1,8 @@
 import React from "react";
 import { GoogleLogin, GithubLogin } from "../api/auth.ts";
-import GoogleImg from "../assets/GoogleLogin.png";
-import GithubImg from "../assets/GithubLogin.png";
-import loginText from "../assets/loginText.png";
+import GoogleImg from "../assets/GoogleLogin.webp";
+import GithubImg from "../assets/GithubLogin.webp";
+import loginText from "../assets/loginText.webp";
 
 const LoginPage: React.FC = () => {
   return (

@@ -37,7 +37,6 @@ public class FeedbackConverter {
         return AllFeedbackResponse.builder()
                 .feedbackResponses(toFeedbackResponses(feedbacks))
                 .aiFeedbackContent(getAIFeedbackContent(aiFeedback))
-                .aiFeedbackId(getAIFeedbackId(aiFeedback))
                 .build();
     }
 

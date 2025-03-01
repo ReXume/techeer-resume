@@ -17,6 +17,7 @@ public class ResumeConverter {
                 .resumeId(resume.getId())
                 .resumeName(resume.getName())
                 .userName(resume.getUser().getUsername())
+                .viewCount(resume.getViewCount())
                 .resumeName(resume.getName())
                 .position(resume.getPosition().getValue())
                 .career(resume.getCareer())
@@ -54,6 +55,7 @@ public class ResumeConverter {
     public static ResumeResponse toResumeResponse(Resume resume) {
         return ResumeResponse.builder()
                 .resumeId(resume.getId())
+                .viewCount(resume.getViewCount())
                 .resumeName(resume.getName())
                 .userName(resume.getUser().getUsername())
                 .resumeName(resume.getName())

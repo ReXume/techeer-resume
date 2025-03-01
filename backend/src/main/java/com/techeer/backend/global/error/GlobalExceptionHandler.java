@@ -72,6 +72,7 @@ public class GlobalExceptionHandler {
     // 입력 값이 Bean Validation 제약 조건(예: @NotNull, @Size)을 위반한 경우 처리
     protected ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INPUT_VALUE_INVALID, e.getConstraintViolations());
+        log.warn(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -79,6 +80,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleMissingServletRequestPartException(
             MissingServletRequestPartException e) {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INPUT_VALUE_INVALID, e.getMessage(), e.getRequestPartName());
+        log.warn(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -86,6 +88,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleMissingServletRequestPartException(
             MissingRequestCookieException e) {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INPUT_VALUE_INVALID, e.getMessage(), e.getCookieName());
+        log.warn(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

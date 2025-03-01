@@ -1,4 +1,9 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 200MB
+
   application:
     name: backend
 
@@ -14,6 +19,9 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
         dialect: org.hibernate.dialect.MySQLDialect
 
   jackson:
@@ -25,6 +33,12 @@ spring:
   profiles:
     include: oauth
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+  
   security:
     oauth2:
       client:
@@ -74,7 +88,7 @@ jwt:
     header: Authorization
 
   refresh:
-    expiration: 1209600000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 14(2주))
+    expiration: 604800000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 7(1주))
     header: Authorization-refresh
 
 chatgpt:

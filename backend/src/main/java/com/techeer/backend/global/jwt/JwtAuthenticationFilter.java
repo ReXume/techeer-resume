@@ -30,6 +30,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String requestURI = request.getRequestURI();
+
+        // 특정 경로 이외에는 필터를 건너뜀
+        if (!requestURI.startsWith("/api/v1/")) {
+            //log.info("requestURI: {}", requestURI);
+            filterChain.doFilter(request, response);
+            return;
+        }
+        log.info("requestURI: {}", requestURI);
         checkAccessTokenAndAuthentication(request, response, filterChain);
     }
 
@@ -37,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                                   FilterChain filterChain) throws ServletException, IOException {
         log.info("checkAccessTokenAndAuthentication() 호출");
         jwtService.extractAccessTokenFromCookie(request)
-                .filter(jwtService::isTokenValid)
+                .filter(jwtService::isAccessTokenValid)
                 .ifPresent(accessToken -> {
                     log.info("유효한 Access Token이 발견되었습니다: {}", accessToken);
 
@@ -58,7 +67,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         log.warn("이메일 추출 실패. 반환된 배열 길이: {}", emailAndSocialType.length);
                     }
                 });
-
         filterChain.doFilter(request, response);
     }
 

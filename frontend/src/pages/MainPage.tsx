@@ -6,8 +6,8 @@ import Navbar from "../components/common/Navbar";
 import BannerCard from "../components/MainPage/BannerCard";
 import Category from "../components/MainPage/Category";
 import PostCard from "../components/common/PostCard";
-import man1 from "../assets/man1.png";
-import man2 from "../assets/man2.png";
+import man1 from "../assets/man1.webp";
+import man2 from "../assets/man2.webp";
 import PositionModal from "../components/Search/PositionModal";
 import CareerModal from "../components/Search/CareerModal";
 import useFilterStore from "../store/useFilterStore";
@@ -21,7 +21,7 @@ function MainPage() {
     try {
       const response = await viewResume(resumeId);
       setResumeId(response.resume_id);
-      navigate(`/feedback?${response.resume_id}`);
+      navigate(`/feedback/${response.resume_id}`);
       return response;
     } catch (error) {
       console.error("이력서 조회 오류:", error);

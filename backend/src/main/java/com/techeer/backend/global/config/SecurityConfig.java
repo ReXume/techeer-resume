@@ -10,6 +10,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -39,7 +40,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:5173"));
+        config.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:5173", "http://backend:8080"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
@@ -63,24 +64,30 @@ public class SecurityConfig {
 //                        .requestMatchers("/api/v1/resumes/**").hasAnyRole("ADMIN", "REGULAR") // resume
 //                        .anyRequest().permitAll()
 //                )
-                .authorizeHttpRequests(requests ->
-                        requests.anyRequest().permitAll() // 모든 요청을 모든 사용자에게 허용
+                .authorizeHttpRequests(authorize -> authorize
+
+                        // 특정 엔드포인트에서 GET 요청만 허용
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/resumes",
+                                "/api/v1/resumes/view"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/oauth2/**",
+                                "/oauth2/authorization/google",
+                                "/index.html",
+                                "/swagger/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui/index.html/**",
+                                "/api-docs/**",
+                                "/signup.html",
+                                "/login",
+                                "/api/v1/mock/signup",
+                                "/api/v1/resumes/search"
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 )
-//          .authorizeHttpRequests(authorize -> authorize
-//                  .requestMatchers(
-//                          "/v3/api-docs/**",
-//                          "/oauth2/**",
-//                          "/oauth2/authorization/google",
-//                          "/index.html",
-//                          "/swagger/**",
-//                          "/swagger-ui/**",
-//                          "/swagger-ui/index.html/**",
-//                          "/api-docs/**",
-//                          "/signup.html",
-//                          "/api/v1/reissue"
-//                  ).permitAll()
-//                  .anyRequest().authenticated()
-//          )
                 // 로그아웃 성공 시 / 주소로 이동
 //          .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/"))
                 .oauth2Login(oauth2Login -> oauth2Login
@@ -89,10 +96,6 @@ public class SecurityConfig {
                         .successHandler(oAuth2LoginSuccessHandler) // 2.
                         .failureHandler(oAuth2LoginFailureHandler) // 3.
                 )
-//          .exceptionHandling(authenticationManager ->authenticationManager
-//                  .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-//                  .accessDeniedHandler(jwtAccessDeniedHandler)
-//          )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtService, userRepository),
                         UsernamePasswordAuthenticationFilter.class);
         return http.build();

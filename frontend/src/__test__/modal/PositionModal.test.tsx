@@ -3,21 +3,14 @@ import { vi } from "vitest";
 import { create } from "zustand";
 
 // 1. CategoryStore 모킹
-vi.mock("../../store/CategoryStore", () => {
+vi.mock("../../store/useFilterStore", () => {
   const useMockStore = create((set) => ({
-    positionCategory: [],
-    careerCategory: [],
-    setPositionCategory: (positions: string[]) =>
-      set({ positionCategory: positions }),
-    setCareerCategory: (career: string[]) => set({ careerCategory: career }),
-    deleteCareer: () => set({ careerCategory: [] }),
-    deletePosition: () => set({ positionCategory: [] }),
+    positions: [],
+    setPositions: vi.fn((positions: string[]) => set({ positions })),
   }));
-  // 모킹하기 위해 생성
   return {
     __esModule: true,
     default: useMockStore,
-    //2. useMockStore 이름의 모듈로 반환
   };
 });
 
@@ -25,16 +18,21 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { describe, it, expect, beforeEach } from "vitest";
 import PositionModal from "../../components/Search/PositionModal";
-import useCategoryStore from "../../store/CategoryStore";
+import useFilterStore from "../../store/useFilterStore"; // 올바른 스토어 임포트
 // 1. 필요한 모듈 import
 
 describe("PositionModal 컴포넌트 테스트", () => {
   let onClose: ReturnType<typeof vi.fn>;
+  let setPositionsMock: ReturnType<
+    typeof useFilterStore.getState
+  >["setPositions"];
 
   beforeEach(() => {
     onClose = vi.fn();
+    setPositionsMock = useFilterStore.getState().setPositions;
+
     // 각 테스트 전에 스토어 상태를 초기화
-    useCategoryStore.setState({ positionCategory: [], careerCategory: [] });
+    useFilterStore.setState({ positions: [], setPositions: setPositionsMock });
   });
 
   it("모달 렌더링 확인", () => {
@@ -45,16 +43,15 @@ describe("PositionModal 컴포넌트 테스트", () => {
     expect(screen.getByText("포지션")).toBeInTheDocument();
 
     const positions = [
-      "개발 전체",
-      "소프트웨어 엔지니어",
-      "웹 개발자",
-      "서버 개발자",
+      "Frontend",
+      "Backend",
+      "FullStack",
       "DevOps",
-      "프론트엔드 개발자",
-      "안드로이드 개발자",
-      "IOS 개발자",
-      "임베디드 개발자",
-      "데이터 엔지니어",
+      "Designer",
+      "AI",
+      "Android",
+      "IOS",
+      "Data",
     ];
 
     positions.forEach((position) => {
@@ -66,7 +63,7 @@ describe("PositionModal 컴포넌트 테스트", () => {
     // Given: 모달이 열려있는 상태
     render(<PositionModal isOpen={true} onClose={onClose} />);
 
-    const positionToSelect = "웹 개발자";
+    const positionToSelect = "Frontend";
     const positionElement = screen.getByText(positionToSelect);
 
     // When: 포지션을 클릭
@@ -80,7 +77,7 @@ describe("PositionModal 컴포넌트 테스트", () => {
     // Given: 모달이 열려있는 상태
     render(<PositionModal isOpen={true} onClose={onClose} />);
 
-    const positionToSelect = "웹 개발자";
+    const positionToSelect = "Frontend";
     const positionElement = screen.getByText(positionToSelect);
     const resetButton = screen.getByText("초기화");
 
@@ -92,14 +89,14 @@ describe("PositionModal 컴포넌트 테스트", () => {
 
     // Then: 선택된 포지션의 배경색이 초기화되고 스토어 상태가 빈 배열인지 확인
     expect(positionElement.parentElement).toHaveClass("bg-white");
-    expect(useCategoryStore.getState().positionCategory).toEqual([]);
+    expect(useFilterStore.getState().positions).toEqual([]);
   });
 
   it("적용 버튼을 확인", () => {
     // Given: 모달이 열려있는 상태
     render(<PositionModal isOpen={true} onClose={onClose} />);
 
-    const positionToSelect = "웹 개발자";
+    const positionToSelect = "Frontend";
     const positionElement = screen.getByText(positionToSelect);
     const applyButton = screen.getByText("적용");
 
@@ -108,9 +105,8 @@ describe("PositionModal 컴포넌트 테스트", () => {
     fireEvent.click(applyButton);
 
     // Then: Zustand 스토어에 선택된 포지션이 저장되고 onClose가 호출되었는지 확인
-    expect(useCategoryStore.getState().positionCategory).toContain(
-      positionToSelect
-    );
+    expect(setPositionsMock).toHaveBeenCalledWith([positionToSelect]);
+
     expect(onClose).toHaveBeenCalled();
   });
 

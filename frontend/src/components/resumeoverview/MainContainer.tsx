@@ -9,6 +9,8 @@ type MainContainerProps = {
   editFeedbackPoint: (item: AddFeedbackPoint) => void;
   hoveredCommentId: number | null;
   setHoveredCommentId: (id: number | null) => void;
+  laterResumeId: number | null;
+  previousResumeId: number | null;
 };
 
 function MainContainer({
@@ -18,6 +20,8 @@ function MainContainer({
   editFeedbackPoint,
   hoveredCommentId,
   setHoveredCommentId,
+  laterResumeId,
+  previousResumeId,
 }: MainContainerProps) {
   return (
     <div className="w-full flex flex-col bg-white h-[90vh] ">
@@ -34,7 +38,10 @@ function MainContainer({
           setHoveredCommentId={setHoveredCommentId}
         />
       </div>
-      <Footer />
+      <Footer
+        laterResumeId={laterResumeId}
+        previousResumeId={previousResumeId}
+      />
     </div>
   );
 }
