@@ -2,12 +2,7 @@ name: 배포
 
 on:
   push:
-    branches:
-      - 'fe/**'  
-  pull_request:
-    branches:
-      - main
-      - develop
+    branches: [ "develop" ]
 
 jobs:
   deploy:
