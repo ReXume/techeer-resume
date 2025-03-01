@@ -5,11 +5,8 @@ import React, {
   useRef,
   useEffect,
 } from "react";
-<<<<<<< Updated upstream
-=======
 import { postAiFeedback } from "../../api/feedbackApi";
 import { useParams } from "react-router-dom";
->>>>>>> Stashed changes
 
 interface Position {
   x: number; // 백분율
@@ -29,7 +26,6 @@ interface CommentFormProps {
 function CommentForm({
   onAdd,
   onSubmit,
-  onAiFeedback,
   onCancel,
   position,
   initialComment = "",
@@ -63,8 +59,6 @@ function CommentForm({
     setComment("");
   };
 
-<<<<<<< Updated upstream
-=======
   const handleAiFeedback = async () => {
     console.log("AI 피드백 요청 중, resumeId:", resumeId);
     if (!resumeId) {
@@ -91,7 +85,6 @@ function CommentForm({
     }
   };
 
->>>>>>> Stashed changes
   // 컴포넌트가 마운트될 때 textarea에 포커스 설정
   useEffect(() => {
     if (textareaRef.current) {
@@ -157,7 +150,7 @@ function CommentForm({
           <button
             type="button"
             className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-            onClick={onAiFeedback}
+            onClick={handleAiFeedback}
             disabled={disabled}
           >
             AI 피드백
