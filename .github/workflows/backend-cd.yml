@@ -2,11 +2,19 @@ name: 배포
 
 on:
   push:
-    branches: [ "develop" ]
+    branches:
+      - 'be/**'
+  pull_request:
+    branches:
+      - main
+      - develop
 
 jobs:
   deploy:
     runs-on: ubuntu-latest # 작업이 실행될 환경
+    defaults:
+      run:
+        working-directory: backend
     steps:
       - name: 체크아웃
         uses: actions/checkout@v3
@@ -36,5 +44,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.AWS_KEY }}
           script: |
+            sudo docker rm -f $(docker ps -qa)
             docker pull ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-be:latest
             docker-compose --env-file .env.production up -d
+            docker image prune -f
