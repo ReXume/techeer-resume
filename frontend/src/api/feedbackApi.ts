@@ -1,4 +1,4 @@
-import { axiosInstance } from "./axios.config.ts";
+import { axiosInstance, jsonAxios } from "./axios.config.ts";
 import { AddFeedbackPoint, FeedbackPoint, ResumeData } from "../types.ts";
 
 /**
@@ -73,6 +73,6 @@ export const getResumeApi = async (resumeId: number): Promise<ResumeData> => {
  * @returns AI 피드백 데이터
  */
 export const postAiFeedback = async (resumeId: number) => {
-  const response = await axiosInstance.post(`/aifeedbacks/${resumeId}`, {});
-  return response.data;
+  const response = await jsonAxios.post(`/aifeedbacks/${resumeId}`, {});
+  return response;
 };

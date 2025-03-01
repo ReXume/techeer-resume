@@ -10,7 +10,6 @@ import {
   addFeedbackApi,
   deleteFeedbackApi,
   getResumeApi,
-  postAiFeedback,
 } from "../api/feedbackApi.ts";
 import {
   postBookmark,
@@ -102,18 +101,6 @@ function ResumeFeedbackPage() {
     }
   };
 
-  const handleAiFeedback = async () => {
-    setLoading(true);
-    try {
-      const aiFeedback = await postAiFeedback(resumeId);
-      setFeedbackPoints((prev) => [...prev, ...aiFeedback.feedbacks]);
-    } catch {
-      setError("Failed to retrieve AI feedback.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const addFeedbackPoint = async (point: Omit<AddFeedbackPoint, "id">) => {
     try {
       if (
@@ -200,8 +187,8 @@ function ResumeFeedbackPage() {
                 deleteFeedbackPoint={deleteFeedbackPoint}
                 editFeedbackPoint={editFeedbackPoint}
                 hoveredCommentId={hoveredCommentId}
-                handleAiFeedback={handleAiFeedback}
                 setHoveredCommentId={setHoveredCommentId}
+              
               />
             </div>
           </div>

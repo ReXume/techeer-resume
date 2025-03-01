@@ -5,6 +5,11 @@ import React, {
   useRef,
   useEffect,
 } from "react";
+<<<<<<< Updated upstream
+=======
+import { postAiFeedback } from "../../api/feedbackApi";
+import { useParams } from "react-router-dom";
+>>>>>>> Stashed changes
 
 interface Position {
   x: number; // 백분율
@@ -38,6 +43,8 @@ function CommentForm({
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
   };
+  const { id } = useParams();
+  const resumeId = Number(id);
 
   const handleSubmit = (
     e: FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
@@ -56,6 +63,35 @@ function CommentForm({
     setComment("");
   };
 
+<<<<<<< Updated upstream
+=======
+  const handleAiFeedback = async () => {
+    console.log("AI 피드백 요청 중, resumeId:", resumeId);
+    if (!resumeId) {
+      console.error("resumeId가 없습니다.");
+      return;
+    }
+
+    try {
+      console.log("AI 피드백 요청 중, resumeId:", resumeId);
+      const response = await postAiFeedback(resumeId);
+
+      if (!response?.data?.result?.feedback) {
+        console.log("AI 피드백 API 응답:", response);
+        console.error("AI 피드백 응답이 올바르지 않습니다.", response);
+        return;
+      }
+
+      const aiFeedbackContent = response.data.result.feedback;
+
+      // 기존 댓글 추가 방식과 동일하게 처리
+      onAdd?.(`AI피드백: ${aiFeedbackContent}`);
+    } catch (error) {
+      console.error("AI 피드백 요청 실패:", error);
+    }
+  };
+
+>>>>>>> Stashed changes
   // 컴포넌트가 마운트될 때 textarea에 포커스 설정
   useEffect(() => {
     if (textareaRef.current) {
