@@ -38,8 +38,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-
         config.setAllowCredentials(true);
+        //배포 github actions 테스트 주석 추가
         config.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:5173", "http://backend:8080", "http://backend:5173", "http://rexume.site:8080", "http://rexume.site:5173", "http://rexume.site", "http://52.78.85.237:8080", "http://52.78.85.237:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
