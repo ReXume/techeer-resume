@@ -5,7 +5,7 @@ COPY package.json yarn.lock ./
 
 RUN yarn install
 
-# COPY .env ./
+COPY .env ./
 COPY ./ ./
 
 RUN yarn run build
