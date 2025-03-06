@@ -59,6 +59,7 @@ public class ResumeController {
     public CommonResponse<?> resumeRegistration(@Valid @RequestPart("resume") CreateResumeRequest createResumeReq,
                                                 @RequestPart(name = "resume_file")
                                                 @Valid MultipartFile resumeFile) {
+        User user = userService.getLoginUser();
         // 파일 유효성 검사 -> 나중에 vaildtor로 변경해서 유효성 검사할 예정
         if (resumeFile.isEmpty()) {
             throw new BusinessException(ErrorCode.RESUME_FILE_EMPTY);
@@ -71,7 +72,7 @@ public class ResumeController {
         //        User registrar = null;
         //        if (registrars.isPresent()) {registrar = registrars.get();}
 
-        resumeCreateFacade.createResume(createResumeReq, resumeFile);
+        resumeCreateFacade.createResume(user, createResumeReq, resumeFile);
         return CommonResponse.of(SuccessCode.RESUME_CREATED, null);
     }
 
