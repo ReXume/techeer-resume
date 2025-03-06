@@ -3,6 +3,7 @@ import { AXIOS_BASE_URL, NETWORK } from "../constants/api.ts";
 import { handleAPIError } from "./interceptor.ts";
 import camelcaseKeys from "camelcase-keys";
 import decamelizeKeys from "decamelize-keys";
+import useAuthStore from "../store/authStore.ts";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const jsonAxios = axios.create({
@@ -35,6 +36,27 @@ export const axiosInstance = axios.create({
   withCredentials: true, // CORS 설정에 따라 true 또는 false
   // useAuth는 Axios의 기본 설정에 포함되지 않으므로 제거
 });
+
+//재발급 로직
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        // 토큰 갱신 요청
+        await axiosInstance.post(BASE_URL + "/reissue");
+        return axiosInstance(originalRequest);
+      } catch (error) {
+        const logout = useAuthStore.getState().logout;
+        logout();
+        return Promise.reject(error);
+      }
+    }
+  }
+);
 
 // 응답 인터셉터: 에러 핸들링
 axiosInstance.interceptors.response.use((response) => response, handleAPIError);

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CommentList from "./CommentList";
 import CommentForm from "./CommentForm";
 import ErrorMessage from "../UI/ErrorMessage.tsx";
 import LoadingSpinner from "../UI/LoadingSpinner.tsx";
 import { AddFeedbackPoint, FeedbackPoint } from "../../types.ts";
+import useAuthStore from "../../store/authStore.ts";
 
 interface CommentSectionProps {
   feedbackPoints: FeedbackPoint[];
@@ -29,6 +30,15 @@ function CommentSection({
   error = "",
 }: CommentSectionProps): React.ReactElement {
   // 일반 댓글 추가
+  const [isLogin, setIsLogin] = useState(false);
+  const { isAuthenticated } = useAuthStore();
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setIsLogin(false);
+    } else {
+      setIsLogin(true);
+    }
+  }, [isAuthenticated]);
   const handleAddComment = async (text: string) => {
     try {
       addFeedbackPoint({
@@ -67,7 +77,7 @@ function CommentSection({
         <CommentForm
           onAdd={handleAddComment}
           onAiFeedback={handleAiFeedback}
-          disabled={loading}
+          disabled={isLogin ? false : true}
         />
       </div>
     </div>
