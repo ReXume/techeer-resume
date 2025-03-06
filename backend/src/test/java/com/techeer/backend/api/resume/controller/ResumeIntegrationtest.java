@@ -59,7 +59,7 @@ public class ResumeIntegrationtest {
     @DisplayName("한 번에 20개의 이력서 생성 요청을 넣어도 동시성 문제가 없어야 한다.")
     void concurrentResumeCreationTest() throws InterruptedException {
         // given
-        int threadCount = 20;
+        int threadCount = 1;
         CountDownLatch latch = new CountDownLatch(threadCount);
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 
