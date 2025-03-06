@@ -42,7 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-class ResumeServiceIntegrationTest {
+class ResumeAcceptanceTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -74,7 +74,7 @@ class ResumeServiceIntegrationTest {
     }
 
     /**
-     * [테스트 1] 이력서 생성 통합 테스트 - 쿠키 기반 JWT & @RequestPart(JSON + 파일) 구조 - MockMvc를 통해 실제 API 엔드포인트(/api/v1/resumes)를 호출하여 테스트
+     * [테스트 1] 이력서 생성 통합 테스트 - 쿠키 기반 JWT & @RequestPart(JSON + 파일) 구조 MockMvc를 통해 실제 API 엔드포인트(/api/v1/resumes)를 호출하여 테스트
      */
     @Test
     @DisplayName("이력서 생성 통합 테스트 - 쿠키 기반 JWT & @RequestPart(JSON+파일)")
@@ -171,4 +171,5 @@ class ResumeServiceIntegrationTest {
         // assertTrue(savedResume.getTechStackNames().contains("Java"));
         // assertTrue(savedResume.getCompanyNames().contains("TechCompany"));
     }
+
 }
