@@ -43,6 +43,11 @@ public class ResumeService {
         return resumeRepository.findResumesByUsername(userName);
     }
 
+    // 유저 이름 일부로 이력서 조회
+    public List<Resume> searchResumesByUserNameContaining(String userName) {
+        return resumeRepository.findByUserNameContaining(userName);
+    }
+
     // 태그 조회
     public Page<Resume> searchByTages(ResumeSearchRequest req, Pageable pageable) {
         return resumeRepository.searchByCriteria(req, pageable);
