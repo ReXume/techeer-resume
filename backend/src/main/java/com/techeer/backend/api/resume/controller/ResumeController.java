@@ -81,7 +81,7 @@ public class ResumeController {
     public CommonResponse<List<ResumeResponse>> searchResumesByUserName(
             @Parameter(schema = @Schema(type = "string"))
             @RequestParam("user_name") String userName) {
-        List<Resume> resumes = resumeService.searchResumesByUserName(userName);
+        List<Resume> resumes = resumeService.searchResumesByUserNameContaining(userName);
 
         List<ResumeResponse> resumeResponse = resumes.stream()
                 .map(ResumeConverter::toResumeResponse)

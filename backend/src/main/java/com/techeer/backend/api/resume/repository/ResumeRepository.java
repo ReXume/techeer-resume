@@ -20,6 +20,9 @@ public interface ResumeRepository extends JpaRepository<Resume, Long>, ResumeRep
     @Query("SELECT r FROM Resume r WHERE r.user.username = :username")
     List<Resume> findResumesByUsername(@Param("username") String username);
 
+    @Query("SELECT r FROM Resume r WHERE r.user.username LIKE CONCAT('%', :username, '%')")
+    List<Resume> findByUserNameContaining(@Param("username") String username);
+
     Optional<Resume> findByIdAndDeletedAtIsNull(Long resumeId);
 
     Resume findFirstByUserOrderByCreatedAtDesc(User user);
