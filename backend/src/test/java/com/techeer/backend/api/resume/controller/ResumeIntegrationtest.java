@@ -35,6 +35,9 @@ import org.springframework.web.multipart.MultipartFile;
 @AutoConfigureMockMvc
 public class ResumeIntegrationtest {
 
+    // 동시성 이슈 테스트를 위해 생성할 스레드 수 (테스트 시 20개로 변경해야 함)
+    private static final int threadCount = 1;
+
     @Autowired
     private ResumeRepository resumeRepository;
 
@@ -59,7 +62,7 @@ public class ResumeIntegrationtest {
     @DisplayName("한 번에 20개의 이력서 생성 요청을 넣어도 동시성 문제가 없어야 한다.")
     void concurrentResumeCreationTest() throws InterruptedException {
         // given
-        int threadCount = 1;
+
         CountDownLatch latch = new CountDownLatch(threadCount);
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 
