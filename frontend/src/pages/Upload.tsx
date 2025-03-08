@@ -160,10 +160,6 @@ function Upload() {
     );
   };
 
-  // const [selectedEducation, setSelectedEducation] = useState<string | null>(
-  //   null
-  // );
-
   const handlePositionClick = (positionTag: string) => {
     setPosition((prevPosition) =>
       prevPosition.toUpperCase() === positionTag.toUpperCase()
@@ -172,13 +168,6 @@ function Upload() {
     );
     console.log("선택된 포지션:", positionTag.toUpperCase());
   };
-
-  // const handleEducationClick = (education: string) => {
-  //   setSelectedEducation((prevEducation) =>
-  //     prevEducation === education ? "" : education
-  //   );
-  //   console.log("선택된 학력:", education);
-  // };
 
   const handleCompanyClick = (company: string) => {
     setApplyingCompany((prevCompanies) =>
@@ -211,7 +200,6 @@ function Upload() {
 
   return (
     <div>
-      <div className="pt-5"></div>
       <Navbar />
       <div className="mt-[5rem] flex flex-col md:flex-row justify-between mx-4">
         {/* 업로드 박스 */}
@@ -263,19 +251,7 @@ function Upload() {
             </div>
           </div>
 
-          <div className="flex flex-col justify-start">
-            {/* <div className="ml-2 md:ml-4"># 학력</div> */}
-            {/* <div className="grid grid-cols-2 gap-4 mb-4">
-              {educationTags.map((education) => (
-                <TagSVG
-                  key={education}
-                  text={education}
-                  isSelected={selectedEducation === education}
-                  onClick={() => handleEducationClick(education)}
-                />
-              ))}
-            </div> */}
-          </div>
+          <div className="flex flex-col justify-start"></div>
 
           {/* 회사 */}
           <div className="flex flex-col justify-start">
