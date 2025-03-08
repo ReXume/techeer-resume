@@ -23,8 +23,8 @@ function CommentList({
           ? item.content.slice("AI피드백:".length)
           : item.content;
 
-        const username = (item as any).username || "익명";
-        const timestamp = (item as any).timestamp || "";
+        const username = "익명";
+        const timestamp = "";
         const initials = username.substring(0, 2);
 
         return (
@@ -71,7 +71,6 @@ function CommentList({
                   >
                     삭제
                   </button>
-                  {/* TODO: 수정 삭제 옵서넗하게 */}
                 </div>
               </div>
             </div>
