@@ -150,7 +150,7 @@ function SearchPage() {
                     name={post.user_name}
                     role={post.position}
                     experience={post.career}
-                    education="전공자"
+                    // education="전공자"
                     skills={post.tech_stack_names}
                   />
                 );
