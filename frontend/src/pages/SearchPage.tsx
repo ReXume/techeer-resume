@@ -33,6 +33,8 @@ function SearchPage() {
     null
   );
 
+  //와이러노
+
   useEffect(() => {
     const SearchResults = async () => {
       if (searchName.length > 0) {
