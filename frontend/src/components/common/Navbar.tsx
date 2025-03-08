@@ -6,7 +6,7 @@ import authStore from "../../store/authStore.ts";
 
 function Navbar() {
   const navigate = useNavigate();
-  const [searchText, setSearchText] = useState<string>(""); // 검색어 상태 관리
+  const [searchText, setSearchText] = useState<string>("");
   const { setSearchName } = useSearchStore();
   const { checkAuth, userData, isAuthenticated } = authStore();
 
@@ -52,10 +52,11 @@ function Navbar() {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         {/* 로고 */}
         <h1
-          className="text-2xl font-bold text-gray-800 hover:cursor-pointer"
+          className="text-3xl font-bold text-gray-800 hover:cursor-pointer"
           onClick={moveMainPage}
         >
-          <span className="text-blue-600">Re</span>Xume
+          Re
+          <span className="text-blue-600">X</span>ume
         </h1>
 
         {/* 검색 바 */}
