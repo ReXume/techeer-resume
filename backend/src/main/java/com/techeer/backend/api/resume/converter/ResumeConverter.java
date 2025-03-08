@@ -48,6 +48,7 @@ public class ResumeConverter {
                 .feedbackResponses(feedbacks.stream().map(FeedbackConverter::toFeedbackResponse).collect(Collectors.toList()))
                 .previousResumeId(Optional.ofNullable(resume.getPreviousResumeId()).orElse(null))
                 .laterResumeId(Optional.ofNullable(resume.getLaterResumeId()).orElse(null))
+                .pdfPageCount(resume.getResumePdf().getPageCount())
                 .build();
     }
 
