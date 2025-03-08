@@ -1,74 +1,64 @@
 import { MouseEventHandler } from "react";
-import avatar from "../../assets/avatar.webp";
-import baggage from "../../assets/baggage3.svg";
-// import pngegg from "../../assets/pngegg2.svg";
+import { Clock } from "lucide-react";
 
 function PostCard({
   name,
   role,
   experience,
-  // education,
   skills,
   onClick,
 }: {
   name: string;
   role: string;
   experience: number | string;
-  // education: string;
   skills: string[];
   onClick?: MouseEventHandler<HTMLDivElement>;
 }) {
   return (
     <div
+      className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden hover:cursor-pointer"
       onClick={onClick}
-      className="w-80 h-48 relative bg-white rounded-[7.01px] border border-[#aabdeb] p-6 "
     >
-      {/* Name & Role Section */}
-      <div className="flex items-center space-x-4">
-        {/* 프로필 사진 */}
-        <img
-          className="w-12 h-12 bg-[#608dff] rounded-full"
-          src={avatar}
-          alt="avatar"
-        />
-        {/* 이름 & 포지션 */}
-        <div>
-          <div className="text-black text-[22.42px] font-extrabold">{name}</div>
-          <div className="text-gray-600 text-sm font-medium">{role}</div>
-        </div>
-      </div>
-
-      <div className="flex flex-row mt-6 px-3">
-        {/* 경력 */}
-        <div className="flex items-center space-x-2">
-          <img className="w-6 h-6" src={baggage} alt="baggage" />
-          <div className="text-gray-600 text-sm font-medium">
-            {experience === 0 ? "신입" : `${experience}년`}
+      <div className="p-5">
+        <div className="flex items-center mb-3">
+          <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+            <span className="text-sm font-medium text-blue-600">
+              {name.substring(1, 3)}
+            </span>
           </div>
-        </div>
-
-        {/* 학력 */}
-        {/* <div className="flex items-center space-x-2 ml-8">
-          <img className="w-6 h-6" src={pngegg} alt="pngegg" /> */}
-        {/* <div className="text-gray-600 text-sm font-medium">{education}</div> */}
-      </div>
-
-      {/* 기술 스택 */}
-      <div className="flex space-x-2 mt-6">
-        {skills && skills.length > 0 ? (
-          skills.slice(0, 3).map((skill, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-center px-4 py-1 bg-[#d6e0f5] rounded-[14px] text-center text-[#2446b3] text-xs font-semibold"
-            >
-              {skill}
+          <div>
+            <h3 className="font-medium text-gray-900">{name}</h3>
+            <div className="flex items-center text-sm text-gray-500">
+              <span className="bg-blue-50 text-blue-700 px-2 py-0.5 mt-1 rounded text-xs font-medium">
+                {role}
+              </span>
             </div>
-          ))
-        ) : (
-          <div className="flex items-center justify-center px-4 py-1 bg-[#d6e0f5] rounded-[14px] text-center text-[#2446b3] text-xs font-semibold">
-            <p>NoSkill</p>
           </div>
-        )}
+        </div>
+
+        {/* 경력 */}
+        <div className="flex items-center text-sm text-gray-600 my-2">
+          <Clock size={14} className="mr-1" />
+          <span>{experience === 0 ? "신입" : `${experience}년`}</span>
+        </div>
+
+        {/* 기술 스택 */}
+        <div className="flex flex-wrap gap-1 mt-4 mb-4">
+          {skills && skills.length > 0 ? (
+            skills.slice(0, 3).map((skill, index) => (
+              <div
+                key={index}
+                className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded"
+              >
+                {skill}
+              </div>
+            ))
+          ) : (
+            <div className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
+              <p>NoSkill</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
