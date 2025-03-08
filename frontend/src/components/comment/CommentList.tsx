@@ -30,15 +30,13 @@ function CommentList({
         return (
           <li
             key={item.id}
-            className="mb-4"
+            className={`mb-4 ${
+              item.id === hoveredCommentId ? "bg-blue-100" : ""
+            }`}
             onMouseEnter={() => setHoveredCommentId(item.id)}
             onMouseLeave={() => setHoveredCommentId(null)}
           >
-            <div
-              className={`flex items-start p-2 rounded ${
-                item.id === hoveredCommentId ? "bg-blue-100" : ""
-              }`}
-            >
+            <div className={`flex items-start p-2 rounded `}>
               {/* 아바타 */}
               <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3 flex-shrink-0">
                 <span className="text-sm font-medium text-blue-600">
