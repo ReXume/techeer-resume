@@ -61,7 +61,7 @@ describe("CommentList 테스트 ", () => {
     );
 
     //When: 삭제 버튼을 클릭했을 떄
-    const deleteButtons = screen.getAllByText("Delete");
+    const deleteButtons = screen.getAllByText("삭제");
     //모든 delete 버튼을 찾아서 첫번째 버튼을 클릭
     // getAllByText를 사용하는 것이  data-testid="EditButton"를 사용하는 것보다 더 좋을까?
     //-> 텍스트에 변동이 생기는 경우가 아니면 getAllByText를 사용하는 것이 덜 번거롭다고 생각됨
@@ -84,7 +84,7 @@ describe("CommentList 테스트 ", () => {
     );
 
     //When: 수정 버튼을 클릭했을 때
-    const editButtons = screen.getAllByText("Edit");
+    const editButtons = screen.getAllByText("수정");
     fireEvent.click(editButtons[1]);
 
     //Then: editFeedbackPoint 함수가 호출

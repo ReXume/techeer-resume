@@ -43,15 +43,15 @@ describe("PositionModal 컴포넌트 테스트", () => {
     expect(screen.getByText("포지션")).toBeInTheDocument();
 
     const positions = [
-      "Frontend",
-      "Backend",
-      "FullStack",
-      "DevOps",
-      "Designer",
+      "FRONTEND",
+      "BACKEND",
+      "FULLSTACK",
+      "DEVOPS",
+      "DESIGNER",
       "AI",
-      "Android",
+      "ANDROID",
       "IOS",
-      "Data",
+      "DATA",
     ];
 
     positions.forEach((position) => {
@@ -63,7 +63,7 @@ describe("PositionModal 컴포넌트 테스트", () => {
     // Given: 모달이 열려있는 상태
     render(<PositionModal isOpen={true} onClose={onClose} />);
 
-    const positionToSelect = "Frontend";
+    const positionToSelect = "FRONTEND";
     const positionElement = screen.getByText(positionToSelect);
 
     // When: 포지션을 클릭
@@ -77,7 +77,7 @@ describe("PositionModal 컴포넌트 테스트", () => {
     // Given: 모달이 열려있는 상태
     render(<PositionModal isOpen={true} onClose={onClose} />);
 
-    const positionToSelect = "Frontend";
+    const positionToSelect = "FRONTEND";
     const positionElement = screen.getByText(positionToSelect);
     const resetButton = screen.getByText("초기화");
 
@@ -96,7 +96,7 @@ describe("PositionModal 컴포넌트 테스트", () => {
     // Given: 모달이 열려있는 상태
     render(<PositionModal isOpen={true} onClose={onClose} />);
 
-    const positionToSelect = "Frontend";
+    const positionToSelect = "FRONTEND";
     const positionElement = screen.getByText(positionToSelect);
     const applyButton = screen.getByText("적용");
 
