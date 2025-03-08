@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
+import { Search, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/logo.svg";
-import search from "../../assets/search-normal.svg";
 import useSearchStore from "../../store/SearchStore.ts";
-
-import { User } from "lucide-react";
 import authStore from "../../store/authStore.ts";
 
 function Navbar() {
@@ -30,7 +27,7 @@ function Navbar() {
   };
 
   const searchName = () => {
-    if (searchText === "") {
+    if (!searchText.trim()) {
       alert("검색어를 입력해주세요!");
       return;
     }
@@ -51,55 +48,51 @@ function Navbar() {
   };
 
   return (
-    <div className="w-full h-12 px-4 bg-transparent -mt-1 mb-2">
-      <div className="flex flex-row justify-between items-center">
+    <header className="bg-white shadow-sm sticky top-0 z-10">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         {/* 로고 */}
-        <div className="pl-10">
-          <img
-            src={logo}
-            alt="logo"
-            className="w-32 h-6 hover:cursor-pointer"
-            onClick={moveMainPage}
-          />
-        </div>
+        <h1
+          className="text-2xl font-bold text-gray-800 hover:cursor-pointer"
+          onClick={moveMainPage}
+        >
+          <span className="text-blue-600">Re</span>Xume
+        </h1>
 
         {/* 검색 바 */}
-        <div className="flex-grow max-w-lg mx-4">
-          <div className="mw-140 h-10 rounded-full bg-gray-100 hover:ring-2 hover:ring-blue-500 flex items-center px-4">
-            <input
-              id="search-box"
-              className="flex-1 bg-transparent text-gray-950 placeholder-gray-500 outline-none lg:text-base ml-2"
-              placeholder="검색어를 입력하세요."
-              aria-label="search-box"
-              autoComplete="off"
-              name="search"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              onKeyPress={handleKeyPress}
-            />
-            <img
-              src={search}
-              alt="search"
-              className="mr-1 w-6 h-5 hover:cursor-pointer md:mr-0 sm:mr-0 mr-4"
-              onClick={searchName}
-            />
-          </div>
+        <div className="relative ml-auto w-80">
+          <input
+            type="text"
+            placeholder="검색어를 입력하세요."
+            className="w-full px-4 py-2 pr-10 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            onKeyPress={handleKeyPress}
+          />
+          <button
+            className="absolute right-5 top-1/2 -translate-y-1/2"
+            onClick={searchName}
+          >
+            <Search className="w-5 h-5 text-gray-500" />
+          </button>
         </div>
 
-        {/* 프로필 */}
-        <div className="flex items-center pr-10">
-          {isAuthenticated === true ? (
-            <>
-              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                <User className="w-8 h-8 text-gray-400" onClick={moveMyPage} />
+        {/* 로그인 / 프로필 */}
+        <div className="ml-6 flex items-center">
+          {isAuthenticated ? (
+            <div
+              className="flex items-center gap-2 bg-slate-100 px-3 py-2 rounded-full cursor-pointer"
+              onClick={moveMyPage}
+            >
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                <User className="w-6 h-6 text-gray-600" />
               </div>
-              <p
-                className="hidden sm:block ml-3 mb-[1px] text-base lg:text-[1.2rem] hover:cursor-pointer"
+              <span
+                className="hidden sm:block text-sm font-medium"
                 onClick={moveMyPage}
               >
                 {userData?.username}
-              </p>
-            </>
+              </span>
+            </div>
           ) : (
             <button
               className="px-4 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
@@ -110,8 +103,7 @@ function Navbar() {
           )}
         </div>
       </div>
-      <div className="absolute mt-4 left-0 w-full h-[1px] bg-gray-300" />
-    </div>
+    </header>
   );
 }
 

@@ -168,30 +168,28 @@ function MainPage() {
   ]);
 
   return (
-    <div className="w-full bg-[#D7E1F5]">
-      <div className="pt-5">
-        <Navbar />
-        <div className="flex justify-center p-5 space-x-4 max-w-screen-xl mx-auto">
-          <BannerCard
-            title="내가 지원할 기업은?"
-            comment="채용 공고를 한 번에 볼 수 있습니다."
-            btncomment="지금 확인하기"
-            imgurl={man1}
-            pageurl=""
-          />
-          <BannerCard
-            title={
-              <>
-                이력서 피드백이 <br />
-                필요할때?
-              </>
-            }
-            comment="이력서를 등록하고 피드백을 받을 수 있습니다."
-            btncomment="등록하러 가기"
-            imgurl={man2}
-            pageurl="upload"
-          />
-        </div>
+    <div className="w-full">
+      <Navbar />
+      <div className="flex justify-center p-5 space-x-4 max-w-screen-xl mx-auto">
+        <BannerCard
+          title="내가 지원할 기업은?"
+          comment="채용 공고를 한 번에 볼 수 있습니다."
+          btncomment="지금 확인하기"
+          imgurl={man1}
+          pageurl=""
+        />
+        <BannerCard
+          title={
+            <>
+              이력서 피드백이 <br />
+              필요할때?
+            </>
+          }
+          comment="이력서를 등록하고 피드백을 받을 수 있습니다."
+          btncomment="등록하러 가기"
+          imgurl={man2}
+          pageurl="upload"
+        />
       </div>
 
       <div className="w-full bg-white relative">
