@@ -173,7 +173,7 @@ function ResumeFeedbackPage() {
                   : "text-gray-500 hover:bg-gray-50"
               }`}
             >
-              {bookmarked ? (
+              {/* {bookmarked ? (
                 <>
                   <BookmarkMinus className="w-5 h-5 mr-2" />
                   북마크 제거
@@ -183,7 +183,7 @@ function ResumeFeedbackPage() {
                   <Bookmark className="w-5 h-5 mr-2" />
                   북마크 추가
                 </>
-              )}
+              )} */}
             </button>
             <ResumeOverview
               userName={resumeData.userName}
