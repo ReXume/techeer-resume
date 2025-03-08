@@ -86,8 +86,8 @@ function CommentForm({
   // 폼이 메인 영역에 위치할 경우 스타일 적용
   const formStyles: React.CSSProperties = position
     ? {
-        position: "absolute",
         left: `${position.x}%`,
+        position: "absolute",
         top: `${position.y}%`,
         transform: "translate(0%, -100%)",
         width: "400px",
