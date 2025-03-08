@@ -42,7 +42,7 @@ function Category({ title, onClick, options, onSelect }: CategoryProps) {
   };
 
   return (
-    <div className="relative flex flex-col px-2" ref={dropdownRef}>
+    <div className="relative flex flex-col" ref={dropdownRef}>
       {/* 카테고리 버튼 */}
       <button
         onClick={() => {
@@ -52,7 +52,7 @@ function Category({ title, onClick, options, onSelect }: CategoryProps) {
             onClick(); // options가 없으면 모달 열기
           }
         }}
-        className="w-33 h-9 bg-white rounded-xl border-[1.5px] border-[#abbdec] flex justify-between items-center px-4"
+        className="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm flex items-center hover:shadow-md transition-shadow"
         aria-expanded={isOpen} // 접근성 속성 추가
         aria-haspopup={options ? "listbox" : undefined}
       >
@@ -71,7 +71,7 @@ function Category({ title, onClick, options, onSelect }: CategoryProps) {
       {/* 드롭다운 옵션 리스트 */}
       {isOpen && options && (
         <ul
-          className="absolute top-12 left-0 w-28 bg-white rounded-lg border-[1.5px] border-[#abbdec] mt-1 z-10"
+          className="absolute top-12 left-0 w-28 bg-white rounded-lg border-[1.5px] mt-1 z-10"
           role="listbox"
         >
           {options.map((option, index) => (
