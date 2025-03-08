@@ -29,16 +29,12 @@ function CommentSection({
   loading = false,
   error = "",
 }: CommentSectionProps): React.ReactElement {
-  // 일반 댓글 추가
   const [isLogin, setIsLogin] = useState(false);
   const { isAuthenticated } = useAuthStore();
   useEffect(() => {
-    if (!isAuthenticated) {
-      setIsLogin(false);
-    } else {
-      setIsLogin(true);
-    }
+    setIsLogin(isAuthenticated);
   }, [isAuthenticated]);
+
   const handleAddComment = async (text: string) => {
     try {
       addFeedbackPoint({
@@ -53,7 +49,9 @@ function CommentSection({
   };
 
   return (
-    <div className="flex flex-col h-full justify-between ">
+    <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">댓글</h3>
+
       {/* 에러 메시지 */}
       {error && <ErrorMessage message={error} />}
 
@@ -73,11 +71,12 @@ function CommentSection({
       </div>
 
       {/* 댓글 추가 입력 */}
-      <div className="mt-4">
+      <div className="mt-6">
+        <h4 className="text-md font-medium text-gray-700 mb-2">댓글 작성</h4>
         <CommentForm
           onAdd={handleAddComment}
           onAiFeedback={handleAiFeedback}
-          disabled={isLogin ? false : true}
+          disabled={!isLogin}
         />
       </div>
     </div>

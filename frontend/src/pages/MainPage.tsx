@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { getResumeList, viewResume, postFilter } from "../api/resumeApi";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { getResumeList, viewResume } from "../api/resumeApi";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
 import BannerCard from "../components/MainPage/BannerCard";
@@ -29,26 +29,21 @@ function MainPage() {
     }
   };
 
+  // 정렬 옵션 상태: "최신순"(최신 데이터) / "조회순"(인기 데이터)
+  const [sortOption, setSortOption] = useState("최신순");
+
   const [isPositionOpen, setIsPositionOpen] = useState(false);
   const [isCareerOpen, setIsCareerOpen] = useState(false);
-  const [, setFilteredData] = useState<PostCardsType[] | null>(null); // 필터링된 데이터를 저장
-  const [positionTitle, setPositionTitle] = useState("포지션"); // 카테고리에 표시될 포지션 제목
-  const [careerTitle, setCareerTitle] = useState("경력"); // 경력 카테고리 제목
+
+  const [positionTitle, setPositionTitle] = useState("포지션");
+  const [careerTitle, setCareerTitle] = useState("경력");
   const { positions, min_career, max_career, setCareerRange, setPositions } =
     useFilterStore();
+  const [filteredData, setFilteredData] = useState<PostCardsType[] | null>(
+    null
+  );
 
-  const handleApplyPosition = (selectedPosition: string | null) => {
-    setPositions(selectedPosition ? [selectedPosition] : []); // 상태 업데이트
-    setPositionTitle(selectedPosition || "포지션"); // 선택된 포지션을 제목에 반영
-    setIsPositionOpen(false); // 모달 닫기
-  };
-
-  const handleApplyCareer = (min: number, max: number) => {
-    setCareerRange(min, max);
-    setCareerTitle(`${min}년 ~ ${max}년`); // 경력 범위를 제목에 반영
-    setIsCareerOpen(false); // 모달 닫기
-  };
-
+  // 공통 데이터 fetch 함수
   const fetchPostCards = async (page: number, size = 8) => {
     try {
       const resumeList = await getResumeList(page, size);
@@ -59,70 +54,118 @@ function MainPage() {
     }
   };
 
-  const applyFilters = useCallback(async () => {
-    const filterData = {
-      dto: {
-        positions: positions.length > 0 ? positions : [],
-        min_career,
-        max_career,
-        tech_stack_names: [],
-        company_names: [],
-      },
-      pageable: {
-        page: 1,
-        size: 100, // 필터링은 전체 데이터 기반으로 수행
-      },
-    };
-    console.log("요청 데이터:", filterData);
-    try {
-      const response = await postFilter(filterData);
-      setFilteredData(response);
-      console.log("포스트필터 응답:", response);
-    } catch (error) {
-      console.error("필터링 오류:", error);
+  // [최신 데이터] useInfiniteQuery: 무한 스크롤로 최신 이력서 목록을 가져옴
+  const latestQuery = useInfiniteQuery({
+    queryKey: ["latestResumes"],
+    queryFn: async ({ pageParam = 0 }) => {
+      return fetchPostCards(pageParam);
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.length > 0) {
+        return allPages.length;
+      } else {
+        return undefined;
+      }
+    },
+    initialPageParam: 0,
+  });
+
+  // [인기 데이터] useQuery: 조회순으로 인기 이력서를 가져오며, staleTime 10분으로 캐싱함
+  const popularQuery = useQuery({
+    queryKey: ["popularResumes"],
+    queryFn: async () => {
+      // 한 번에 많은 데이터를 가져와서 인기순으로 정렬 (필요에 따라 size 조절)
+      const data = await getResumeList(0, 100);
+      return data.sort(
+        (a: PostCardsType, b: PostCardsType) => b.view_count - a.view_count
+      );
+    },
+    staleTime: 10 * 60 * 1000, // 10분
+  });
+
+  const handleApplyPosition = (selectedPosition: string | null) => {
+    setPositions(selectedPosition ? [selectedPosition] : []);
+    setPositionTitle(selectedPosition || "포지션");
+    setIsPositionOpen(false);
+  };
+
+  const handleApplyCareer = (min: number, max: number) => {
+    setCareerRange(min, max);
+    setCareerTitle(`${min}년 ~ ${max}년`);
+    setIsCareerOpen(false);
+  };
+
+  // 필터 및 정렬: 선택된 정렬 옵션에 따라 최신/인기 데이터 중 필터링 적용
+  const applyFilters = useCallback(() => {
+    let rawData: PostCardsType[] = [];
+    if (sortOption === "최신순") {
+      if (latestQuery.data?.pages) {
+        rawData = latestQuery.data.pages.flatMap((page) => page);
+      }
+    } else if (sortOption === "조회순") {
+      if (popularQuery.data) {
+        // popularQuery.data는 이미 view_count 내림차순 정렬됨
+        rawData = [...popularQuery.data];
+      }
     }
-  }, [positions, min_career, max_career]);
+    const filtered = rawData.filter((post: PostCardsType) => {
+      const positionMatch =
+        positionTitle === "포지션" ? true : positions.includes(post.position);
+      const careerMatch =
+        careerTitle === "경력"
+          ? true
+          : post.career >= min_career && post.career <= max_career;
+      return positionMatch && careerMatch;
+    });
+    setFilteredData(filtered);
+  }, [
+    latestQuery.data?.pages,
+    popularQuery.data,
+    positions,
+    min_career,
+    max_career,
+    positionTitle,
+    careerTitle,
+    sortOption,
+  ]);
 
   useEffect(() => {
     applyFilters();
-  }, [positions, min_career, max_career, applyFilters]);
+  }, [
+    latestQuery.data?.pages,
+    popularQuery.data,
+    positions,
+    min_career,
+    max_career,
+    sortOption,
+    applyFilters,
+  ]);
 
+  // 무한 스크롤: 최신 데이터일 때만 Intersection Observer로 다음 페이지 요청
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ["postCards"],
-      queryFn: async ({ pageParam = 0 }) => {
-        return fetchPostCards(pageParam);
-      },
-      getNextPageParam: (lastPage, allPages) => {
-        // 응답 데이터가 빈 배열이 아니면 다음 페이지를 요청
-        if (lastPage.length > 0) {
-          return allPages.length; // 다음 페이지 번호
-        } else {
-          return undefined; // 더 이상 요청할 페이지 없음
-        }
-      },
-      initialPageParam: 0,
-    });
-
   useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage) return;
+    if (sortOption !== "최신순") return;
+    if (!latestQuery.hasNextPage || latestQuery.isFetchingNextPage) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          fetchNextPage();
+          latestQuery.fetchNextPage();
         }
       },
       { root: null, rootMargin: "0px", threshold: 0.1 }
     );
-
     const loadMoreCurrent = loadMoreRef.current;
     if (loadMoreCurrent) observer.observe(loadMoreCurrent);
-
     return () => {
       if (loadMoreCurrent) observer.unobserve(loadMoreCurrent);
     };
-  }, [hasNextPage, fetchNextPage, isFetchingNextPage]);
+  }, [
+    latestQuery,
+    latestQuery.hasNextPage,
+    latestQuery.fetchNextPage,
+    latestQuery.isFetchingNextPage,
+    sortOption,
+  ]);
 
   return (
     <div className="w-full bg-[#D7E1F5]">
@@ -155,17 +198,23 @@ function MainPage() {
         <div className="p-6">
           <div className="max-w-screen-xl mx-auto py-6 relative">
             <div className="flex space-x-4">
-              <Category title="조회순" options={["인기순", "최신순"]} />
+              {/* 정렬 옵션: 인기(조회순) / 최신(최신순) */}
               <Category
-                title={positionTitle} // 선택한 포지션 반영
+                title={sortOption}
+                options={["조회순", "최신순"]}
+                onSelect={(selectedOption: string) =>
+                  setSortOption(selectedOption || "조회순")
+                }
+              />
+              <Category
+                title={positionTitle}
                 onClick={() => setIsPositionOpen(true)}
               />
               <Category
-                title={careerTitle} // 선택한 경력 범위 반영
+                title={careerTitle}
                 onClick={() => setIsCareerOpen(true)}
               />
             </div>
-
             {isPositionOpen && (
               <PositionModal
                 isOpen={isPositionOpen}
@@ -177,43 +226,32 @@ function MainPage() {
               <CareerModal
                 isOpen={isCareerOpen}
                 onClose={() => setIsCareerOpen(false)}
-                onApply={handleApplyCareer} // 선택된 경력 범위 처리
+                onApply={handleApplyCareer}
               />
             )}
           </div>
 
           <div className="flex justify-center">
-            <div className="grid grid-cols-1 min-[700px]:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 p-5">
-              {data?.pages && data.pages.length > 0
-                ? data.pages.map((page) =>
-                    page.map((post: PostCardsType) => (
-                      <PostCard
-                        key={post.resume_id}
-                        name={post.user_name}
-                        role={post.position}
-                        experience={post.career}
-                        education="전공자"
-                        skills={post.tech_stack_names}
-                        onClick={() => moveToResume(Number(post.resume_id))}
-                      />
-                    ))
-                  )
-                : data?.pages.map((page) =>
-                    page.map((post: PostCardsType) => (
-                      <PostCard
-                        key={post.resume_id}
-                        name={post.user_name}
-                        role={post.position}
-                        experience={post.career}
-                        education="전공자"
-                        skills={post.tech_stack_names}
-                      />
-                    ))
-                  )}
-            </div>
+            {filteredData && filteredData.length > 0 ? (
+              <div className="grid grid-cols-1 min-[700px]:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 p-5">
+                {filteredData.map((post: PostCardsType) => (
+                  <PostCard
+                    key={post.resume_id}
+                    name={post.user_name}
+                    role={post.position}
+                    experience={post.career}
+                    skills={post.tech_stack_names}
+                    onClick={() => moveToResume(Number(post.resume_id))}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="flex justify-center items-center text-center my-8 text-lg">
+                카테고리에 해당하는 이력서가 없습니다
+              </div>
+            )}
           </div>
-
-          <div ref={loadMoreRef} className="h-1" />
+          {sortOption === "최신순" && <div ref={loadMoreRef} className="h-1" />}
         </div>
       </div>
     </div>
