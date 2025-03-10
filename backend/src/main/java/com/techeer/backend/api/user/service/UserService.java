@@ -10,15 +10,19 @@ import com.techeer.backend.global.error.ErrorCode;
 import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.jwt.JwtToken;
 import com.techeer.backend.global.jwt.service.JwtService;
-import java.util.Map;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -47,15 +51,47 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void logout() {
+    public void logout(HttpServletResponse response) {
+        // 1.  쿠키 제거
+        removeCookie(response, "accessToken");
+        removeCookie(response, "refreshToken");
+
+        // 2. Refrash token caching 제거
+        
+
+        // 3. Refrash token 제거
         User user = this.getLoginUser();
         user.onLogout();
         userRepository.save(user);
+
+        SecurityContextHolder.clearContext();
+    }
+
+    private void removeCookie(HttpServletResponse response, String accessToken) {
+        ResponseCookie cookie = ResponseCookie.from(accessToken, "")
+                .maxAge(0)
+                .httpOnly(true)
+                .path("/")
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
     public User getLoginUser() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println("userDetails = " + userDetails);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        if (!(principal instanceof UserDetails)) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        UserDetails userDetails = (UserDetails) principal;
+
         // 유저 정보 조회
         return userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
@@ -65,7 +101,9 @@ public class UserService {
     public JwtToken reissueAccessToken(String refreshToken) {
 
         // Refresh Token 검증
-        if (!jwtService.isRefreshTokenValid(refreshToken)) {return null;}
+        if (!jwtService.isRefreshTokenValid(refreshToken)) {
+            return null;
+        }
 
         User user = this.getLoginUser();
         return JwtToken.builder()
