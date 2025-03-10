@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+
 import CommentList from "./CommentList";
 import CommentForm from "./CommentForm";
 import ErrorMessage from "../UI/ErrorMessage.tsx";
 import LoadingSpinner from "../UI/LoadingSpinner.tsx";
 import { AddFeedbackPoint, FeedbackPoint } from "../../types.ts";
 import useAuthStore from "../../store/authStore.ts";
-import { postAiFeedback } from "../../api/feedbackApi"; // API 호출 함수 임포트
+import { postAiFeedback } from "../../api/feedbackApi";
+
+import { useParams } from "react-router-dom";
 
 interface CommentSectionProps {
   feedbackPoints: FeedbackPoint[];
@@ -36,9 +38,6 @@ function CommentSection({
     setIsLogin(isAuthenticated);
   }, [isAuthenticated]);
 
-  const { id } = useParams();
-  const resumeId = Number(id);
-
   // 일반 댓글 추가 함수
   const handleAddComment = async (text: string) => {
     try {
@@ -52,29 +51,32 @@ function CommentSection({
       console.error("Failed to add comment", error);
     }
   };
+  const { id } = useParams();
+  const resumeId = Number(id);
 
-  // AI 피드백 추가 함수 (일반 댓글 추가 로직과 동일하게 작동)
   const handleAiFeedback = async () => {
-    if (!resumeId) {
-      console.error("resumeId가 없습니다.");
-      return;
-    }
     try {
+      console.log("AI 피드백 요청 시작:", resumeId); // 요청 시작 로그
+
       const response = await postAiFeedback(resumeId);
+
+      console.log("AI 피드백 응답:", response); // 응답 로그
+
       if (!response?.data?.result?.feedback) {
         console.error("AI 피드백 응답이 올바르지 않습니다.", response);
         return;
       }
-      const aiFeedbackContent = response.data.result.feedback;
-      // AI 피드백을 일반 댓글 추가와 동일한 방식으로 추가
+
       addFeedbackPoint({
-        content: `AI피드백: ${aiFeedbackContent}`,
+        content: `AI피드백: ${response.data.result.feedback}`,
         xCoordinate: 0,
         yCoordinate: 0,
         pageNumber: 1,
       });
+
+      console.log("AI 피드백 추가 성공!");
     } catch (error) {
-      console.error("Failed to fetch AI feedback:", error);
+      console.error("Failed to add AI feedback", error);
     }
   };
 
