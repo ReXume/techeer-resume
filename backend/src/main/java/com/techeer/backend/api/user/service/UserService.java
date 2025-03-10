@@ -10,11 +10,11 @@ import com.techeer.backend.global.error.ErrorCode;
 import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.jwt.JwtToken;
 import com.techeer.backend.global.jwt.service.JwtService;
+import com.techeer.backend.global.redis.RedisService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,7 +31,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisService redisService;
 
     public void signup(SignUpRequest signUpReq) {
         User user = this.getLoginUser();
@@ -52,19 +52,18 @@ public class UserService {
     }
 
     public void logout(HttpServletResponse response) {
-        // 1.  쿠키 제거
+        User user = this.getLoginUser();
+        String refreshToken = user.getRefreshToken();
+        // 1. Refrash token caching 제거
+        redisService.deleteCacheRefreshToken(refreshToken);
+
+        // 2.  쿠키 제거
         removeCookie(response, "accessToken");
         removeCookie(response, "refreshToken");
 
-        // 2. Refrash token caching 제거
-        
-
         // 3. Refrash token 제거
-        User user = this.getLoginUser();
         user.onLogout();
         userRepository.save(user);
-
-        SecurityContextHolder.clearContext();
     }
 
     private void removeCookie(HttpServletResponse response, String accessToken) {
