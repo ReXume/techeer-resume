@@ -81,6 +81,7 @@ function CommentForm({
       const aiFeedbackContent = response.data.result.feedback;
 
       // 기존 댓글 추가 방식과 동일하게 처리
+
       onAdd?.(`AI피드백: ${aiFeedbackContent}`);
     } catch (error) {
       console.error("AI 피드백 요청 실패:", error);
