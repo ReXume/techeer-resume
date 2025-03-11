@@ -161,10 +161,10 @@ function ResumeFeedbackPage() {
   const bookmarked = isBookmarked(resumeId);
 
   return (
-    <div className="flex flex-col flex-grow ">
+    <div className="flex flex-col flex-grow bg-[#F9FAFB]">
       <Layout
         sidebar={
-          <div className="flex flex-col justify-between bg-white p-2 mt-10">
+          <div className="flex flex-col justify-between bg-[#F9FAFB] p-2 mt-10">
             <button
               onClick={toggleBookmark}
               className={`flex items-center px-6 py-3 rounded-lg ${
