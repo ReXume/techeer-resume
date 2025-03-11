@@ -1,6 +1,7 @@
 package com.techeer.backend.api.user.controller;
 
 import com.techeer.backend.api.user.converter.UserConverter;
+import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.dto.request.SignUpRequest;
 import com.techeer.backend.api.user.dto.response.UserInfoResponse;
 import com.techeer.backend.api.user.service.UserService;
@@ -42,7 +43,8 @@ public class UserController {
     @Operation(summary = "로그아웃")
     @PostMapping("/logout")
     public CommonResponse<Void> logoutUser(HttpServletResponse response) {
-        userService.logout(response);
+        User result = userService.logout(response);
+        System.out.println(result.getEmail());
         return CommonResponse.of(SuccessCode.USER_LOGOUT_OK, null);
     }
 

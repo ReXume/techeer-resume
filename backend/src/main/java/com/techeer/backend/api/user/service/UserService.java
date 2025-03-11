@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,29 +50,19 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void logout(HttpServletResponse response) {
+    public User logout(HttpServletResponse response) {
         User user = this.getLoginUser();
         String refreshToken = user.getRefreshToken();
         // 1. Refrash token caching 제거
         redisService.deleteCacheRefreshToken(refreshToken);
 
         // 2.  쿠키 제거
-        removeCookie(response, "accessToken");
-        removeCookie(response, "refreshToken");
+        jwtService.removeCookie(response, "accessToken");
+        jwtService.removeCookie(response, "refreshToken");
 
         // 3. Refrash token 제거
         user.onLogout();
-        userRepository.save(user);
-    }
-
-    private void removeCookie(HttpServletResponse response, String accessToken) {
-        ResponseCookie cookie = ResponseCookie.from(accessToken, "")
-                .maxAge(0)
-                .httpOnly(true)
-                .path("/")
-                .build();
-
-        response.addHeader("Set-Cookie", cookie.toString());
+        return userRepository.save(user);
     }
 
     public User getLoginUser() {

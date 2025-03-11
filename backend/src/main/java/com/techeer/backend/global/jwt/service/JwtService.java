@@ -12,15 +12,16 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.security.Key;
-import java.util.Date;
-import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
+
+import java.security.Key;
+import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -74,9 +75,11 @@ public class JwtService {
 
     public String reIssueRefreshToken(User user) {
         String reIssuedRefreshToken = this.createRefreshToken();
-        String oldRefreshToken= user.updateRefreshToken(reIssuedRefreshToken);
+        String oldRefreshToken = user.updateRefreshToken(reIssuedRefreshToken);
 
-        if (oldRefreshToken != null) {redisService.deleteCacheRefreshToken(oldRefreshToken);}
+        if (oldRefreshToken != null) {
+            redisService.deleteCacheRefreshToken(oldRefreshToken);
+        }
         userRepository.saveAndFlush(user);
 
         redisService.cacheRefreshToken(reIssuedRefreshToken);
@@ -86,7 +89,7 @@ public class JwtService {
 
     public String createRefreshToken() {
         Date now = new Date();
-        String newRefreshToken=  Jwts.builder()
+        String newRefreshToken = Jwts.builder()
                 .setSubject(REFRESH_TOKEN_SUBJECT)
                 .setExpiration(new Date(now.getTime() + refreshTokenExpirationPeriod))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -94,7 +97,6 @@ public class JwtService {
 
         return newRefreshToken;
     }
-
 
 
     public Optional<String> extractAccessTokenFromCookie(HttpServletRequest request) {
@@ -128,7 +130,9 @@ public class JwtService {
 
         // cache에 refreshToken이 유효성 검증
         String userRefreshToken = redisService.refreshTokenGet(refreshToken);
-        if (userRefreshToken != null) {return userRefreshToken.equals(refreshToken);}
+        if (userRefreshToken != null) {
+            return userRefreshToken.equals(refreshToken);
+        }
 
         // DB에 refreshToken이 유효성 검증
         Optional<User> user = userRepository.findByRefreshToken(refreshToken);
@@ -172,19 +176,25 @@ public class JwtService {
         // Access Token 쿠키 생성
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setHttpOnly(true); // 클라이언트에서 자바스크립트를 통해 접근하지 못하도록 설정
-        // accessTokenCookie.setSecure(true); // HTTPS에서만 전송되도록 설정 (개발 환경에서는 필요에 따라 설정)
         accessTokenCookie.setPath("/"); // 쿠키가 모든 경로에 적용되도록 설정
         accessTokenCookie.setMaxAge(60 * 60); // 쿠키의 만료 시간 설정 (예: 1시간)
 
         // Refresh Token 쿠키 생성
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
-        // refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7); // 예: 7일
 
         // 응답에 쿠키 추가
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
+    }
+
+    public void removeCookie(HttpServletResponse response, String cookieName) {
+        Cookie cookie = new Cookie(cookieName, "");
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
     }
 }
