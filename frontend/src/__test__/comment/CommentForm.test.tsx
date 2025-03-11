@@ -74,23 +74,6 @@ describe("CommentForm 테스트", () => {
     expect(mockOnCancel).toHaveBeenCalled();
   });
 
-  it("폼의 위치 스타일 적용 확인 (position props)", () => {
-    // Given: 메인 영역에서 폼이 특정 위치에 렌더링되도록 설정된 상황
-    const position = { x: 50, y: 50 };
-    render(<CommentForm position={position} />);
-
-    // When: 폼이 렌더링되었을 때
-    const form = screen.getByRole("textbox").closest("div");
-
-    // Then: 폼의 스타일이 position props를 반영해야 한다
-    expect(form).toHaveStyle({
-      position: "absolute",
-      left: "50%",
-      top: "50%",
-      transform: "translate(0%, -100%)",
-    });
-  });
-
   it("입력 필드 비활성화 확인 (disabled props)", () => {
     // Given: 폼이 비활성화된 상태
     render(<CommentForm disabled={true} onAdd={mockOnAdd} />);

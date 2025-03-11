@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Slider from "@mui/material/Slider";
 import { postResume } from "../api/resumeApi";
 import FileUploadBox from "../components/UploadPage/UploadBox.tsx";
 import TagSVG from "../components/UploadPage/TagSVG.tsx";
 import Navbar from "../components/common/Navbar";
+import { useNavigate } from "react-router-dom";
 
 function Upload() {
   const [resume_file, setResumeFile] = useState<File | null>(null);
@@ -11,6 +12,10 @@ function Upload() {
   const [position, setPosition] = useState<string>("");
   const [applyingCompany, setApplyingCompany] = useState<string[]>([]);
   const [techStack, setTechStack] = useState<string[]>([]);
+
+  // 파일 입력 요소를 참조하기 위한 ref 생성
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -21,6 +26,9 @@ function Upload() {
 
   const handleCancel = () => {
     setResumeFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleUpload = async () => {
@@ -36,6 +44,9 @@ function Upload() {
       try {
         const response = await postResume(resume_file, resume);
         console.log("업로드성공:", response);
+        // 등록 성공 후 alert 띄우고 확인 버튼 누르면 메인페이지로 이동
+        alert("등록이 완료되었습니다");
+        navigate("/");
       } catch (error) {
         console.error("업로드 에러:", error);
       }
@@ -149,10 +160,6 @@ function Upload() {
     );
   };
 
-  // const [selectedEducation, setSelectedEducation] = useState<string | null>(
-  //   null
-  // );
-
   const handlePositionClick = (positionTag: string) => {
     setPosition((prevPosition) =>
       prevPosition.toUpperCase() === positionTag.toUpperCase()
@@ -161,13 +168,6 @@ function Upload() {
     );
     console.log("선택된 포지션:", positionTag.toUpperCase());
   };
-
-  // const handleEducationClick = (education: string) => {
-  //   setSelectedEducation((prevEducation) =>
-  //     prevEducation === education ? "" : education
-  //   );
-  //   console.log("선택된 학력:", education);
-  // };
 
   const handleCompanyClick = (company: string) => {
     setApplyingCompany((prevCompanies) =>
@@ -200,7 +200,6 @@ function Upload() {
 
   return (
     <div>
-      <div className="pt-5"></div>
       <Navbar />
       <div className="mt-[5rem] flex flex-col md:flex-row justify-between mx-4">
         {/* 업로드 박스 */}
@@ -209,6 +208,7 @@ function Upload() {
             resume_file={resume_file}
             handleFileChange={handleFileChange}
             handleCancel={handleCancel}
+            fileInputRef={fileInputRef}
           />
         </div>
 
@@ -251,19 +251,7 @@ function Upload() {
             </div>
           </div>
 
-          <div className="flex flex-col justify-start">
-            {/* <div className="ml-2 md:ml-4"># 학력</div> */}
-            {/* <div className="grid grid-cols-2 gap-4 mb-4">
-              {educationTags.map((education) => (
-                <TagSVG
-                  key={education}
-                  text={education}
-                  isSelected={selectedEducation === education}
-                  onClick={() => handleEducationClick(education)}
-                />
-              ))}
-            </div> */}
-          </div>
+          <div className="flex flex-col justify-start"></div>
 
           {/* 회사 */}
           <div className="flex flex-col justify-start">
