@@ -105,6 +105,8 @@ function CommentForm({
       className="bg-white border rounded shadow-lg p-2 z-10 transition-transform duration-300 ease-in-out"
       style={formStyles}
       onClick={(e) => e.stopPropagation()} // 이벤트 전파 중단
+      onMouseDown={(e) => e.stopPropagation()}
+      onMouseUp={(e) => e.stopPropagation()}
     >
       <form onSubmit={handleSubmit} className="flex flex-col">
         <div className="flex items-start">
