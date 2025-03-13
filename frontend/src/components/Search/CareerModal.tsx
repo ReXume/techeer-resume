@@ -44,7 +44,7 @@ const CareerModal = ({ isOpen, onClose, onApply }: CareerModalProps) => {
 
   return (
     <div
-      className="w-125 p-6 bg-white rounded-lg border shadow-xl relative"
+      className="absolute mt-24 w-125 p-6 bg-white rounded-lg border shadow-xl"
       ref={dropdownRef}
     >
       <button

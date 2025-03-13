@@ -18,6 +18,8 @@ import com.techeer.backend.global.error.ErrorCode;
 import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -77,10 +79,10 @@ public class ResumeController {
 
     @Operation(summary = "회원 이름으로 이력서 조회")
     @GetMapping("/resumes/search")
-    public CommonResponse<List<ResumeResponse>> searchResumesByUserName(@RequestParam("user_name") String userName) {
-        User user = userService.getLoginUser();
-
-        List<Resume> resumes = resumeService.searchResumesByUserName(userName);
+    public CommonResponse<List<ResumeResponse>> searchResumesByUserName(
+            @Parameter(schema = @Schema(type = "string"))
+            @RequestParam("user_name") String userName) {
+        List<Resume> resumes = resumeService.searchResumesByUserNameContaining(userName);
 
         List<ResumeResponse> resumeResponse = resumes.stream()
                 .map(ResumeConverter::toResumeResponse)
