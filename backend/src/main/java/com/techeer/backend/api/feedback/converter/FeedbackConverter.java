@@ -24,6 +24,7 @@ public class FeedbackConverter {
                 .xCoordinate(feedback.getXCoordinate())
                 .yCoordinate(feedback.getYCoordinate())
                 .pageNumber(feedback.getPageNumber())
+                .createdAt(feedback.getCreatedAt())
                 .build();
     }
 
