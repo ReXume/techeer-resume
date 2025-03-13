@@ -41,7 +41,9 @@ public class SecurityConfig {
 
         config.setAllowCredentials(true);
         // 백엔드 배포 테스트v1
-        config.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:5173", "http://backend:8080", "http://backend:5173", "http://rexume.site:8080", "http://rexume.site:5173", "http://rexume.site", "http://52.78.85.237:8080", "http://52.78.85.237:5173"));
+        config.setAllowedOrigins(
+                List.of("http://localhost:8080", "http://localhost:5173", "http://backend:8080", "http://backend:5173", "http://rexume.site:8080", "http://rexume.site:5173", "http://rexume.site",
+                        "http://52.78.85.237:8080", "http://52.78.85.237:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
@@ -70,7 +72,8 @@ public class SecurityConfig {
                         // 특정 엔드포인트에서 GET 요청만 허용
                         .requestMatchers(HttpMethod.GET,
                                 "/api/v1/resumes",
-                                "/api/v1/resumes/view"
+                                "/api/v1/resumes/view",
+                                "/api/v1/resumes/search/**"
                         ).permitAll()
 
                         .requestMatchers(
@@ -84,8 +87,7 @@ public class SecurityConfig {
                                 "/api-docs/**",
                                 "/signup.html",
                                 "/login",
-                                "/api/v1/mock/signup",
-                                "/api/v1/resumes/search"
+                                "/api/v1/mock/signup"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

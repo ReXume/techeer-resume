@@ -12,7 +12,6 @@ import com.techeer.backend.api.tag.techStack.domain.ResumeTechStack;
 import com.techeer.backend.api.tag.techStack.domain.TechStack;
 import com.techeer.backend.api.tag.techStack.service.TechStackService;
 import com.techeer.backend.api.user.domain.User;
-import com.techeer.backend.api.user.service.UserService;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
@@ -30,12 +29,10 @@ public class ResumeCreateFacade {
     private final CompanyService companyService;
     private final TechStackService techStackService;
     private final ResumePdfService resumePdfService;
-    private final UserService userService;
 
     // 이력서 생성
     @Transactional
-    public void createResume(CreateResumeRequest req, MultipartFile multipartFile) {
-        User user = userService.getLoginUser();
+    public void createResume(User user, CreateResumeRequest req, MultipartFile multipartFile) {
         // 관련 기술 처리
         List<TechStack> techStacks = techStackService.findOrCreateTechStacks(req.getTechStackNames());
 
@@ -51,6 +48,7 @@ public class ResumeCreateFacade {
                 .career(req.getCareer())
                 .name("Resume of " + user.getUsername() + " - " + LocalDate.now(ZoneId.of("Asia/Seoul")))
                 .previousResumeId(previousResume != null ? previousResume.getId() : null)
+                .viewCount(0L)
                 .build();
 
         resumeService.saveResume(resume);

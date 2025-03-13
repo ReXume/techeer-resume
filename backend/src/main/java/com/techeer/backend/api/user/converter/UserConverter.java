@@ -7,6 +7,7 @@ public class UserConverter {
 
     public static UserInfoResponse ofUserInfoResponse(User user) {
         return UserInfoResponse.builder()
+                .userId(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .role(user.getRole())

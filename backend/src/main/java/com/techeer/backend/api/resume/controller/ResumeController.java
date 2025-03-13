@@ -18,6 +18,8 @@ import com.techeer.backend.global.error.ErrorCode;
 import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -57,6 +59,7 @@ public class ResumeController {
     public CommonResponse<?> resumeRegistration(@Valid @RequestPart("resume") CreateResumeRequest createResumeReq,
                                                 @RequestPart(name = "resume_file")
                                                 @Valid MultipartFile resumeFile) {
+        User user = userService.getLoginUser();
         // 파일 유효성 검사 -> 나중에 vaildtor로 변경해서 유효성 검사할 예정
         if (resumeFile.isEmpty()) {
             throw new BusinessException(ErrorCode.RESUME_FILE_EMPTY);
@@ -69,17 +72,17 @@ public class ResumeController {
         //        User registrar = null;
         //        if (registrars.isPresent()) {registrar = registrars.get();}
 
-        resumeCreateFacade.createResume(createResumeReq, resumeFile);
+        resumeCreateFacade.createResume(user, createResumeReq, resumeFile);
         return CommonResponse.of(SuccessCode.RESUME_CREATED, null);
     }
 
 
     @Operation(summary = "회원 이름으로 이력서 조회")
     @GetMapping("/resumes/search")
-    public CommonResponse<List<ResumeResponse>> searchResumesByUserName(@RequestParam("user_name") String userName) {
-        User user = userService.getLoginUser();
-
-        List<Resume> resumes = resumeService.searchResumesByUserName(userName);
+    public CommonResponse<List<ResumeResponse>> searchResumesByUserName(
+            @Parameter(schema = @Schema(type = "string"))
+            @RequestParam("user_name") String userName) {
+        List<Resume> resumes = resumeService.searchResumesByUserNameContaining(userName);
 
         List<ResumeResponse> resumeResponse = resumes.stream()
                 .map(ResumeConverter::toResumeResponse)

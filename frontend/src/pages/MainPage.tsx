@@ -6,8 +6,6 @@ import Navbar from "../components/common/Navbar";
 import BannerCard from "../components/MainPage/BannerCard";
 import Category from "../components/MainPage/Category";
 import PostCard from "../components/common/PostCard";
-import man1 from "../assets/man1.webp";
-import man2 from "../assets/man2.webp";
 import PositionModal from "../components/Search/PositionModal";
 import CareerModal from "../components/Search/CareerModal";
 import useFilterStore from "../store/useFilterStore";
@@ -168,53 +166,33 @@ function MainPage() {
   ]);
 
   return (
-    <div className="w-full bg-[#D7E1F5]">
-      <div className="pt-5">
-        <Navbar />
-        <div className="flex justify-center p-5 space-x-4 max-w-screen-xl mx-auto">
-          <BannerCard
-            title="내가 지원할 기업은?"
-            comment="채용 공고를 한 번에 볼 수 있습니다."
-            btncomment="지금 확인하기"
-            imgurl={man1}
-            pageurl=""
-          />
-          <BannerCard
-            title={
-              <>
-                이력서 피드백이 <br />
-                필요할때?
-              </>
-            }
-            comment="이력서를 등록하고 피드백을 받을 수 있습니다."
-            btncomment="등록하러 가기"
-            imgurl={man2}
-            pageurl="upload"
-          />
-        </div>
-      </div>
+    <div className="min-h-screen bg-slate-50">
+      <Navbar />
+      <div className="container mx-auto px-4 py-8">
+        <BannerCard />
 
-      <div className="w-full bg-white relative">
-        <div className="p-6">
-          <div className="max-w-screen-xl mx-auto py-6 relative">
-            <div className="flex space-x-4">
-              {/* 정렬 옵션: 인기(조회순) / 최신(최신순) */}
-              <Category
-                title={sortOption}
-                options={["조회순", "최신순"]}
-                onSelect={(selectedOption: string) =>
-                  setSortOption(selectedOption || "조회순")
-                }
-              />
-              <Category
-                title={positionTitle}
-                onClick={() => setIsPositionOpen(true)}
-              />
-              <Category
-                title={careerTitle}
-                onClick={() => setIsCareerOpen(true)}
-              />
-            </div>
+        <div className="mt-12">
+          <div className="flex flex-wrap gap-3">
+            <h2 className="text-xl font-bold text-gray-800 w-full mb-2">
+              이력서 목록
+            </h2>
+            {/* 정렬 옵션: 인기(조회순) / 최신(최신순) */}
+            <Category
+              title={sortOption}
+              options={["조회순", "최신순"]}
+              onSelect={(selectedOption: string) =>
+                setSortOption(selectedOption || "조회순")
+              }
+            />
+            <Category
+              title={positionTitle}
+              onClick={() => setIsPositionOpen(true)}
+            />
+            <Category
+              title={careerTitle}
+              onClick={() => setIsCareerOpen(true)}
+            />
+            {/* </div> */}
             {isPositionOpen && (
               <PositionModal
                 isOpen={isPositionOpen}
@@ -231,28 +209,26 @@ function MainPage() {
             )}
           </div>
 
-          <div className="flex justify-center">
-            {filteredData && filteredData.length > 0 ? (
-              <div className="grid grid-cols-1 min-[700px]:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 p-5">
-                {filteredData.map((post: PostCardsType) => (
-                  <PostCard
-                    key={post.resume_id}
-                    name={post.user_name}
-                    role={post.position}
-                    experience={post.career}
-                    skills={post.tech_stack_names}
-                    onClick={() => moveToResume(Number(post.resume_id))}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="flex justify-center items-center text-center my-8 text-lg">
-                카테고리에 해당하는 이력서가 없습니다
-              </div>
-            )}
-          </div>
-          {sortOption === "최신순" && <div ref={loadMoreRef} className="h-1" />}
+          {filteredData && filteredData.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+              {filteredData.map((post: PostCardsType) => (
+                <PostCard
+                  key={post.resume_id}
+                  name={post.user_name}
+                  role={post.position}
+                  experience={post.career}
+                  skills={post.tech_stack_names}
+                  onClick={() => moveToResume(Number(post.resume_id))}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex justify-center items-center text-center my-8 text-lg">
+              카테고리에 해당하는 이력서가 없습니다
+            </div>
+          )}
         </div>
+        {sortOption === "최신순" && <div ref={loadMoreRef} className="h-1" />}
       </div>
     </div>
   );

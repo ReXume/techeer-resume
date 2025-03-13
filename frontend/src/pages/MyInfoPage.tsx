@@ -28,9 +28,7 @@ function MyInfoPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="pt-5 pb-2 bg-white">
-        <Navbar />
-      </div>
+      <Navbar />
 
       <div className="p-5 mt-5">
         <div className="p-5 mt-5 max-w-6xl mx-auto px-4 py-8 mt-10">
