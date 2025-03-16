@@ -5,7 +5,7 @@ import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 
 // PDF.js worker 설정
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface PdfUploadProps {
   // 파일이 선택되거나 삭제될 때 호출되는 콜백
@@ -28,10 +28,10 @@ function PdfUpload(props: PdfUploadProps) {
 
       const fileUrl = URL.createObjectURL(file);
       setPdfUrl(fileUrl);
-      console.log("fileUrl 이력서 url", fileUrl, "PDF URL", pdfUrl);
       onFileSelect(file);
     }
   }
+  console.log("이력서 PDF URL", pdfUrl);
 
   function handleFileDelete() {
     setSelectedFile(null);
@@ -108,7 +108,7 @@ function PdfUpload(props: PdfUploadProps) {
             <Document
               file={pdfUrl}
               onLoadSuccess={onDocumentLoadSuccess}
-              className="max-w-full"
+              // className="max-w-full"
             >
               <Page
                 pageNumber={pageNumber}
