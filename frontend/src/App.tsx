@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import ResumeFeedbackPage from "./pages/ResumeFeedbackPage";
 import SearchPage from "./pages/SearchPage";
-import Upload from "./pages/Upload";
+import Upload from "./pages/ResumeUpload";
 import Login from "./pages/LoginPage";
 import ProtectedRoute from "./utils/Token";
 import MyInfoPage from "./pages/MyInfoPage";
@@ -23,10 +23,10 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/feedback/:id" element={<ResumeFeedbackPage />} />
-              <Route element={<ProtectedRoute />}>
-                <Route path="/upload" element={<Upload />} />
-                <Route path="/myInfo" element={<MyInfoPage />} />
-              </Route>
+              {/* <Route element={<ProtectedRoute />}> */}
+              <Route path="/upload" element={<Upload />} />
+              <Route path="/myInfo" element={<MyInfoPage />} />
+              {/* </Route> */}
               <Route path="/Auth" element={<AuthCallback />} />
             </Routes>
           </div>

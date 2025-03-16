@@ -15,6 +15,7 @@ export const postResume = async (
 
     // JSON 문자열 그대로 추가
     formData.append("resume", JSON.stringify(resume));
+    console.log("resume", resume);
 
     // FormData 내부 확인
     for (const [key, value] of formData.entries()) {
