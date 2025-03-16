@@ -99,7 +99,6 @@ function ResumeUpload() {
       company_names: applyingCompany,
       tech_stack_names: techStack,
     };
-    console.log("resume 정보", resume);
 
     try {
       const response = await postResume(resume_file, resume);
@@ -111,8 +110,6 @@ function ResumeUpload() {
       alert("업로드 중 오류가 발생했습니다. 다시 시도해주세요.");
     }
   };
-
-  console.log("resume_file", resume_file);
 
   const handleFileSelect = (pdfUrl: File | null) => {
     setResumeFile(pdfUrl);
