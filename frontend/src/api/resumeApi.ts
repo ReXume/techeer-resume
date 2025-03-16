@@ -123,3 +123,13 @@ export const viewResume = async (resumeId: number) => {
     throw error;
   }
 };
+
+export const deleteResume = async (resumeId: number) => {
+  try {
+    const response = await jsonAxios.delete(`/resumes/${resumeId}`);
+    return response.data;
+  } catch (error) {
+    console.log("이력서 삭제 오류", error);
+    throw error;
+  }
+};
