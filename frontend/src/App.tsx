@@ -23,10 +23,10 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/feedback/:id" element={<ResumeFeedbackPage />} />
-              {/* <Route element={<ProtectedRoute />}> */}
-              <Route path="/upload" element={<Upload />} />
-              <Route path="/myInfo" element={<MyInfoPage />} />
-              {/* </Route> */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/upload" element={<Upload />} />
+                <Route path="/myInfo" element={<MyInfoPage />} />
+              </Route>
               <Route path="/Auth" element={<AuthCallback />} />
             </Routes>
           </div>
