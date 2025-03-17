@@ -74,16 +74,15 @@ public class Resume extends BaseEntity {
     @OneToOne(mappedBy = "resume", cascade = CascadeType.ALL)
     private ResumePdf resumePdf;// S3 키 (경로)
 
-
-    @Builder
-    public Resume(User user, String name, int career, Position position, ResumePdf resumePdf) {
-        this.user = user;
-        this.name = name;
-        this.career = career;
-        this.position = position;
-        this.resumePdf = resumePdf;
-        this.viewCount = 0L;
-    }
+//    @Builder
+//    public Resume(User user, String name, int career, Position position, ResumePdf resumePdf) {
+//        this.user = user;
+//        this.name = name;
+//        this.career = career;
+//        this.position = position;
+//        this.resumePdf = resumePdf;
+//        this.viewCount = 0L;
+//    }
 
     @PrePersist
     public void prePersist() {

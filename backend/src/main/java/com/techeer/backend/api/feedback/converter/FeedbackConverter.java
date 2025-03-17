@@ -6,6 +6,7 @@ import com.techeer.backend.api.feedback.dto.request.FeedbackCreateRequest;
 import com.techeer.backend.api.feedback.dto.response.AllFeedbackResponse;
 import com.techeer.backend.api.feedback.dto.response.FeedbackResponse;
 import com.techeer.backend.api.resume.domain.Resume;
+import com.techeer.backend.api.user.converter.UserConverter;
 import com.techeer.backend.api.user.domain.User;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ public class FeedbackConverter {
     // 엔티티 -> 응답 DTO 변환
     public static FeedbackResponse toFeedbackResponse(Feedback feedback) {
         return FeedbackResponse.builder()
+                .userInfoResponse(UserConverter.ofUserInfoResponse(feedback.getUser()))
                 .feedbackId(feedback.getId())
                 .resumeId(feedback.getResume().getId())
                 .content(feedback.getContent())
@@ -24,6 +26,7 @@ public class FeedbackConverter {
                 .x2(feedback.getX2())  // 추가
                 .y2(feedback.getY2())  // 추가
                 .pageNumber(feedback.getPageNumber())
+                .createdAt(feedback.getCreatedAt())
                 .build();
     }
 

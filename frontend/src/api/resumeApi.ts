@@ -15,6 +15,7 @@ export const postResume = async (
 
     // JSON 문자열 그대로 추가
     formData.append("resume", JSON.stringify(resume));
+    console.log("resume", resume);
 
     // FormData 내부 확인
     for (const [key, value] of formData.entries()) {
@@ -119,6 +120,16 @@ export const viewResume = async (resumeId: number) => {
     return response.data.result;
   } catch (error) {
     console.log("이력서 조회 오류", error);
+    throw error;
+  }
+};
+
+export const deleteResume = async (resumeId: number) => {
+  try {
+    const response = await jsonAxios.delete(`/resumes/${resumeId}`);
+    return response.data;
+  } catch (error) {
+    console.log("이력서 삭제 오류", error);
     throw error;
   }
 };

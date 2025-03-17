@@ -2,17 +2,14 @@ import { FileText, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ResumeType } from "../../dataType";
-import { deleteBookmarkById } from "../../api/bookMarkApi";
+import { deleteResume } from "../../api/resumeApi";
 
 type ResumeItemProps = {
   resume: ResumeType;
-  // onUpdate: () => void;
+  onUpdate: () => void;
 };
 
-function ResumeItem({
-  resume,
-  // onUpdate
-}: ResumeItemProps) {
+function ResumeItem({ resume, onUpdate }: ResumeItemProps) {
   const navigate = useNavigate();
 
   const handleResumeClick = () => {
@@ -32,17 +29,16 @@ function ResumeItem({
 
     if (result.isConfirmed) {
       try {
-        // 이거 아직 미구현. 일단 북마크 삭제 로직이라도 넣어둠
-        await deleteBookmarkById(resume.resume_id);
+        await deleteResume(resume.resume_id);
         Swal.fire(
           "삭제 완료",
           "이력서가 성공적으로 제거되었습니다.",
           "success"
         );
-        // onUpdate();
+        onUpdate();
       } catch (error) {
         console.error("이력서 삭제 오류:", error);
-        Swal.fire("오류", "북마크를 제거하는 데 실패했습니다.", "error");
+        Swal.fire("오류", "이력서를 제거하는 데 실패했습니다.", "error");
       }
     }
   };

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { getBookmarkById } from "../../api/bookMarkApi.ts";
 import { useBookmarkStore } from "../../store/BookmarkStore.ts";
 import BookmarkItem from "../../components/MyInfoPage/BookmarkItem.tsx";
@@ -9,14 +9,14 @@ function BookmarkTap() {
   const userId = 1; // 임시. 지금 userId 필요 없음
 
   // 북마크 조회 API 호출
-  const fetchBookmarks = async () => {
+  const fetchBookmarks = useCallback(async () => {
     try {
       const data = await getBookmarkById(userId);
       setBookmarks(data.result);
     } catch (error) {
       console.error("북마크를 가져오는 데 실패했습니다.", error);
     }
-  };
+  }, [setBookmarks]);
 
   useEffect(() => {
     fetchBookmarks();
