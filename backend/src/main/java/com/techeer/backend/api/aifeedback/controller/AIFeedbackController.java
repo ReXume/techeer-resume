@@ -42,14 +42,5 @@ public class AIFeedbackController {
         AIFeedbackResponse response = AIFeedbackConverter.toResponse(aifeedback);
         return CommonResponse.of(SuccessCode.OK, response);
     }
-
-    @Operation(summary = "이력서별 피드백 목록 조회", description = "특정 이력서에 대한 모든 AI 피드백을 조회합니다.")
-    @GetMapping("/resume/{resume_id}")
-    public CommonResponse<List<AIFeedbackResponse>> getFeedbacksByResumeId(@PathVariable("resume_id") Long resumeId) {
-        List<AIFeedback> feedbacks = aifeedbackService.getFeedbacksByResumeId(resumeId);
-        List<AIFeedbackResponse> responses = feedbacks.stream()
-                .map(feedback -> AIFeedbackConverter.toResponse(feedback))
-                .collect(Collectors.toList());
-        return CommonResponse.of(SuccessCode.OK, responses);
-    }
+    
 }

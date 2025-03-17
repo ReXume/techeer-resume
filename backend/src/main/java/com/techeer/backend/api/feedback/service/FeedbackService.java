@@ -69,7 +69,8 @@ public class FeedbackService {
 
         return feedbacks;
     }
-    
+
+
     public List<Feedback> getFeedbacksByResumeId(Long resumeId) {
         return feedbackRepository.findAllByResumeId(resumeId);
     }

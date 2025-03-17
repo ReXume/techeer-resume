@@ -76,13 +76,9 @@ public class AIFeedbackService {
         return aiFeedbackRepository.save(aiFeedback);
     }
 
-    public AIFeedback getFeedbackById(Long feedbackId) {
-        return aiFeedbackRepository.findById(feedbackId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.FEEDBACK_NOT_FOUND));
-    }
-
-    public List<AIFeedback> getFeedbacksByResumeId(Long resumeId) {
-        return aiFeedbackRepository.findByResumeId(resumeId);
+    public AIFeedback getFeedbackById(Long aifeedbackId) {
+        return aiFeedbackRepository.findById(aifeedbackId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.AIFEEDBACK_NOT_FOUND));
     }
 
     // 별도의 메서드로 URL에서 key 추출 (예시)

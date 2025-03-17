@@ -44,7 +44,6 @@ public enum ErrorCode {
 
     // AIFeedback Error
     AIFEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "AIFEEDBACK_404", "AI 피드백을 찾을 수 없습니다."),
-
     ;
 
 
