@@ -3,6 +3,7 @@ import { Search, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useSearchStore from "../../store/SearchStore.ts";
 import authStore from "../../store/authStore.ts";
+import ErrorButton from "./ErrorButton.tsx";
 
 function Navbar() {
   const navigate = useNavigate();
