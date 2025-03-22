@@ -4,6 +4,8 @@ import { handleAPIError } from "./interceptor.ts";
 import camelcaseKeys from "camelcase-keys";
 import decamelizeKeys from "decamelize-keys";
 import useAuthStore from "../store/authStore.ts";
+import * as Sentry from "@sentry/browser";
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const jsonAxios = axios.create({
@@ -50,8 +52,10 @@ axiosInstance.interceptors.response.use(
         await axiosInstance.post(BASE_URL + "/reissue");
         return axiosInstance(originalRequest);
       } catch (error) {
+        const customError = new Error("재발급 오류");
         const logout = useAuthStore.getState().logout;
         logout();
+        Sentry.captureException(customError);
         return Promise.reject(error);
       }
     }
