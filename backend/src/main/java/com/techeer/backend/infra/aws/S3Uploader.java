@@ -29,7 +29,6 @@ public class S3Uploader {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-
     public String uploadPdf(MultipartFile multipartFile) {
         String originalFileName = multipartFile.getOriginalFilename();
         String s3PdfName = UUID.randomUUID().toString().substring(0, 10) + "_" + originalFileName;
@@ -90,7 +89,8 @@ public class S3Uploader {
         }
     }
 
-
-
+    public String getBucketName() {
+        return bucket;
+    }
 
 }

@@ -16,14 +16,15 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AIFeedbackService {
 
     private static final Logger log = LoggerFactory.getLogger(AIFeedbackService.class);
@@ -32,20 +33,6 @@ public class AIFeedbackService {
     private final ResumeRepository resumeRepository;
     private final S3Uploader s3Uploader;
     private final OpenAIService openAiService;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
-    public AIFeedbackService(
-            AIFeedbackRepository aiFeedbackRepository,
-            ResumeRepository resumeRepository,
-            S3Uploader s3Uploader,
-            OpenAIService openAiService) {
-        this.aiFeedbackRepository = aiFeedbackRepository;
-        this.resumeRepository = resumeRepository;
-        this.s3Uploader = s3Uploader;
-        this.openAiService = openAiService;
-    }
 
     @Transactional
     public AIFeedback generateAIFeedbackFromS3(Long resumeId) {
@@ -61,7 +48,9 @@ public class AIFeedbackService {
         // 2. S3에서 PDF 파일 가져오기
         String pdfUrl = resumePdf.getPdf().getPdfUrl();
         String s3Key = extractKeyFromUrl(pdfUrl);
-        InputStream pdfInputStream = s3Uploader.getFileFromS3(bucket, s3Key);
+
+        // 변경된 부분: S3Uploader에서 직접 bucket name을 받아 사용
+        InputStream pdfInputStream = s3Uploader.getFileFromS3(s3Uploader.getBucketName(), s3Key);
 
         // PDF 텍스트 추출
         String resumeText = extractTextFromPdf(pdfInputStream);
