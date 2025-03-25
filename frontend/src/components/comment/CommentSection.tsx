@@ -56,24 +56,17 @@ function CommentSection({
 
   const handleAiFeedback = async () => {
     try {
-      console.log("AI 피드백 요청 시작:", resumeId); // 요청 시작 로그
-
+      console.log("AI 피드백 요청 시작:", resumeId);
       const response = await postAiFeedback(resumeId);
+      console.log("AI 피드백 응답:", response);
 
-      console.log("AI 피드백 응답:", response); // 응답 로그
-
-      if (!response?.data?.result?.feedback) {
+      if (!response) {
         console.error("AI 피드백 응답이 올바르지 않습니다.", response);
         return;
       }
 
-      addFeedbackPoint({
-        content: `AI피드백: ${response.data.result.feedback}`,
-        xCoordinate: 0,
-        yCoordinate: 0,
-        pageNumber: 1,
-      });
-
+      // handleAddComment 함수를 사용하여 AI 피드백을 추가합니다.
+      handleAddComment(`AI피드백: ${response}`);
       console.log("AI 피드백 추가 성공!");
     } catch (error) {
       console.error("Failed to add AI feedback", error);

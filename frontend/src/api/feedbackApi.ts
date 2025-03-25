@@ -73,6 +73,6 @@ export const getResumeApi = async (resumeId: number): Promise<ResumeData> => {
  * @returns AI 피드백 데이터
  */
 export const postAiFeedback = async (resumeId: number) => {
-  const response = await jsonAxios.post(`/aifeedbacks/${resumeId}`, {});
-  return response;
+  const response = await jsonAxios.post(`/aifeedbacks/${resumeId}`);
+  return response.data.result.feedback;
 };
