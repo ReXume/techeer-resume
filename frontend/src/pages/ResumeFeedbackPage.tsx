@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
 import MainContainer from "../components/resumeoverview/MainContainer";
 import ResumeOverview from "../components/resumeoverview/ResumeOverview";
@@ -188,7 +189,6 @@ function ResumeFeedbackPage() {
                 editFeedbackPoint={editFeedbackPoint}
                 hoveredCommentId={hoveredCommentId}
                 setHoveredCommentId={setHoveredCommentId}
-              
               />
             </div>
           </div>
