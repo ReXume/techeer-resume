@@ -1,3 +1,4 @@
+import { Send } from "lucide-react";
 import React, {
   useState,
   ChangeEvent,
@@ -5,8 +6,7 @@ import React, {
   useRef,
   useEffect,
 } from "react";
-import { postAiFeedback } from "../../api/feedbackApi";
-import { useParams } from "react-router-dom";
+import useAuthStore from "../../store/authStore";
 
 interface Position {
   x: number; // 백분율

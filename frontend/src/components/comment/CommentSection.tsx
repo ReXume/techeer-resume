@@ -94,8 +94,13 @@ function CommentSection({
       </div>
 
       {/* 댓글 추가 입력 */}
-      <div className="mt-4">
-        <CommentForm onAdd={handleAddComment} disabled={loading} />
+      <div className="mt-6">
+        <h4 className="text-md font-medium text-gray-700 mb-2">댓글 작성</h4>
+        <CommentForm
+          onAdd={handleAddComment}
+          onAiFeedback={handleAiFeedback}
+          disabled={!isLogin}
+        />
       </div>
     </div>
   );
