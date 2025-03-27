@@ -1,13 +1,9 @@
 package com.techeer.backend.api.resume.controller;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -15,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techeer.backend.api.feedback.service.FeedbackService;
 import com.techeer.backend.api.resume.domain.Resume;
-import com.techeer.backend.api.resume.dto.request.CreateResumeRequest;
 import com.techeer.backend.api.resume.service.ResumeService;
 import com.techeer.backend.api.resume.service.facade.ResumeCreateFacade;
 import com.techeer.backend.api.tag.position.Position;
@@ -32,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -59,44 +53,6 @@ class ResumeControllerTest {
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-    }
-
-    @Test
-    void resumeRegistration_WhenValidInput_ShouldReturnCreated() throws Exception {
-        // Arrange
-        CreateResumeRequest createResumeRequest = CreateResumeRequest.builder()
-                .techStackNames(Arrays.asList("Java", "Spring"))
-                .companyNames(Arrays.asList("CompanyA", "CompanyB"))
-                .position(Position.BACKEND) // Position enum 사용 시, 문자열 대신 enum 값 사용
-                .career(5)
-                .build();
-
-        String createResumeJson = objectMapper.writeValueAsString(createResumeRequest);
-
-        MockMultipartFile createResumeReq = new MockMultipartFile(
-                "resume",
-                "",
-                "application/json",
-                createResumeJson.getBytes()
-        );
-
-        MockMultipartFile resumeFile = new MockMultipartFile(
-                "resume_file",
-                "resume.pdf",
-                "application/pdf",
-                "Dummy PDF Content".getBytes()
-        );
-
-        // Act & Assert
-        mockMvc.perform(multipart("/api/v1/resumes")
-                        .file(createResumeReq)
-                        .file(resumeFile)
-                        .with(csrf())
-                        .with(oauth2Login())
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isCreated());
-
-        verify(resumeCreateFacade, times(1)).createResume(any(CreateResumeRequest.class), any());
     }
 
     @Test

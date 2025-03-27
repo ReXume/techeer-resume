@@ -1,4 +1,5 @@
 import { jsonAxios } from "./axios.config.ts";
+import * as Sentry from "@sentry/browser";
 
 // 북마크 추가
 export const postBookmark = async (resumeId: number) => {
@@ -7,6 +8,8 @@ export const postBookmark = async (resumeId: number) => {
     return response.data.result;
   } catch (error) {
     console.error("북마크 추가 오류:", error);
+    const customError = new Error("북마크 추가 오류");
+    Sentry.captureException(customError);
     throw error;
   }
 };
@@ -18,6 +21,8 @@ export const getBookmarkById = async (userId: number) => {
     return response.data;
   } catch (error) {
     console.error("북마크 조회 오류:", error);
+    const customError = new Error("북마크 조회 오류");
+    Sentry.captureException(customError);
     throw error;
   }
 };
@@ -30,6 +35,8 @@ export const deleteBookmarkById = async (bookmarkId: number) => {
     return response.data;
   } catch (error) {
     console.error("북마크 삭제 오류:", error);
+    const customError = new Error("북마크 삭제 오류");
+    Sentry.captureException(customError);
     throw error;
   }
 };

@@ -43,7 +43,11 @@ function MyInfoPage() {
               </div>
             ) : (
               userResumes.map((resume) => (
-                <ResumeItem key={resume.resume_id} resume={resume} />
+                <ResumeItem
+                  key={resume.resume_id}
+                  resume={resume}
+                  onUpdate={renderResume}
+                />
               ))
             )}
           </div>

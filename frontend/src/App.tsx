@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import ResumeFeedbackPage from "./pages/ResumeFeedbackPage";
 import SearchPage from "./pages/SearchPage";
-import Upload from "./pages/Upload";
+import Upload from "./pages/ResumeUpload";
 import Login from "./pages/LoginPage";
 import ProtectedRoute from "./utils/Token";
 import MyInfoPage from "./pages/MyInfoPage";

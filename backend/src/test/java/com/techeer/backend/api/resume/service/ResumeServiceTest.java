@@ -40,6 +40,21 @@ class ResumeServiceTest {
     }
 
     @Test
+    void createResume_ShouldReturnCreatedResume() {
+        // Arrange
+        Resume resume = ResumeUtils.newInstance();
+        when(resumeRepository.save(resume)).thenReturn(resume);
+
+        // Act
+        Resume createdResume = resumeService.saveResume(resume);
+
+        // Assert
+        assertNotNull(createdResume);
+        assertEquals(resume, createdResume);
+        verify(resumeRepository, times(1)).save(resume);
+    }
+
+    @Test
     void getResume_WhenResumeExists_ShouldReturnResume() {
         // Arrange
         Long resumeId = 1L;
