@@ -80,7 +80,7 @@ class ResumeCreateFacadeTest {
         given(companyService.findOrCreateCompanies(anyList())).willReturn(mockCompanies);
 
         // 이전 이력서가 없는 경우
-        given(resumeService.findLaterByUser(mockUser)).willReturn(null);
+        given(resumeService.findLatestByUser(mockUser)).willReturn(null);
 
         // PDF 파일 Mock
         MockMultipartFile pdfFile = new MockMultipartFile(

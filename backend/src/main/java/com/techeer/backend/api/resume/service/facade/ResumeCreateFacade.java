@@ -36,21 +36,17 @@ public class ResumeCreateFacade {
     private final CompanyService companyService;
     private final TechStackService techStackService;
     private final ResumePdfService resumePdfService;
-    private final UserService userService;
     private final RedissonClient redissonClient;
     private final DistributedLockService distributedLockService;
 
     @Transactional
-    public void createResume(CreateResumeRequest req, MultipartFile multipartFile) {
-        // 0) 현재 로그인 유저 가져오기
-        User user = userService.getLoginUser();
+    public void createResume(User user, CreateResumeRequest req, MultipartFile multipartFile) {
         Long userId = user.getId();
 
         // 1) 분산 락 획득 (동시에 들어오는 요청 방지)
         String lockKey = "resume-create-lock:" + userId;
         RLock lock = distributedLockService.acquireLock(lockKey, 0, 10, TimeUnit.SECONDS);
         if (lock == null) {
-            // 락 획득 실패 시 (이미 다른 요청이 진행 중)
             throw new BusinessException(ErrorCode.DUPLICATE_REQUEST);
         }
 
@@ -58,13 +54,12 @@ public class ResumeCreateFacade {
             // 2) 1분 내 재등록 여부 확인 (Redis에 최근 등록 시각 저장)
             RBucket<Long> lastCreatedBucket = redissonClient.getBucket("resume:lastCreated:" + userId);
             Long lastCreatedTime = lastCreatedBucket.get();
-
             if (lastCreatedTime != null &&
                     (System.currentTimeMillis() - lastCreatedTime) < 60_000) {
                 throw new BusinessException(ErrorCode.TOO_OFTEN_REQUEST);
             }
 
-            // (a) 태그 및 회사 조회/생성
+            // (a) 태그, 회사 조회/생성
             List<TechStack> techStacks = techStackService.findOrCreateTechStacks(req.getTechStackNames());
             List<Company> companies = companyService.findOrCreateCompanies(req.getCompanyNames());
 

@@ -160,7 +160,7 @@ class ResumeAcceptanceTest {
         assertNotNull(foundUser);
 
         // resumeService가 최종적으로 저장한 이력서를 꺼내 확인
-        Resume savedResume = resumeService.findLaterByUser(foundUser);
+        Resume savedResume = resumeService.findLatestByUser(foundUser);
         assertNotNull(savedResume);
         assertEquals(Position.BACKEND, savedResume.getPosition());
         assertEquals(3, savedResume.getCareer());
