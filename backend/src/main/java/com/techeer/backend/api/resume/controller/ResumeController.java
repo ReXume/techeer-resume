@@ -56,21 +56,20 @@ public class ResumeController {
     // 이력서 등록
     @Operation(summary = "이력서 등록")
     @PostMapping(value = "/resumes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public CommonResponse<?> resumeRegistration(@Valid @RequestPart("resume") CreateResumeRequest createResumeReq,
-                                                @RequestPart(name = "resume_file")
-                                                @Valid MultipartFile resumeFile) {
+    public CommonResponse<?> resumeRegistration(
+            @Valid @RequestPart("resume") CreateResumeRequest createResumeReq,
+            @RequestPart(name = "resume_file") @Valid MultipartFile resumeFile) {
+
         User user = userService.getLoginUser();
+
         if (resumeFile.isEmpty()) {
             throw new BusinessException(ErrorCode.RESUME_FILE_EMPTY);
         }
         if (!resumeFile.getContentType().equals("application/pdf")) {
             throw new BusinessException(ErrorCode.RESUME_FILE_TYPE_NOT_ALLOWED);
         }
-        // todo 유저 이름으로 객체 탐색
-        //        Optional<User> registrars = userService.findUserByName(createResumeReq.getUsername());
-        //        User registrar = null;
-        //        if (registrars.isPresent()) {registrar = registrars.get();}
-        resumeCreateFacade.createResume(createResumeReq, resumeFile);
+
+        resumeCreateFacade.createResume(user, createResumeReq, resumeFile);
         return CommonResponse.of(SuccessCode.RESUME_CREATED, null);
     }
 
