@@ -30,14 +30,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "이력서 피드백 등록 API", description = "Feedback API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/resumes/")
+@RequestMapping("/api/v1/resumes")
 public class FeedbackController {
 
     private final FeedbackService feedbackService;
     private final UserService userService;
     private final AIFeedbackService aifeedbackService;
 
-    @Operation(summary = "피드백 등록", description = "원하는 위치에 피드백을 작성합니다.")
+    @Operation(summary = "피드백 등록", description = "원하는 위치(또는 영역)에 피드백을 작성합니다.")
     @PostMapping("/{resume_id}/feedbacks")
     public CommonResponse<FeedbackResponse> createFeedback(
             @PathVariable("resume_id") Long resumeId,
@@ -58,23 +58,27 @@ public class FeedbackController {
         return CommonResponse.of(SuccessCode.CREATED, feedbackResponse);
     }
 
-    @Operation(summary = "AI 피드백, 일반 피드백 조회", description = "해당 이력서에 대한 일반 피드백과 특정 AI 피드백(aifeedbackId를 이용)을 조회합니다.")
-    @GetMapping("/{resume_id}/feedbacks/{aifeedback_id}")
-    public CommonResponse<AllFeedbackResponse> getFeedbackWithAIFeedback(
-            @PathVariable("resume_id") Long resumeId,
-            @PathVariable("aifeedback_id") Long aifeedbackId) {
+    /**
+     * 기존에는 aifeedback_id를 같이 받아서 특정 AI 피드백만 조회했지만,
+     * 이제는 resume_id만 받아서 일반 피드백과 AI 피드백을 전부 반환하도록 수정.
+     */
+    @Operation(summary = "AI 피드백, 일반 피드백 조회",
+            description = "해당 이력서의 모든 일반 피드백과 AI 피드백을 조회합니다.")
+    @GetMapping("/{resume_id}/feedbacks")
+    public CommonResponse<AllFeedbackResponse> getAllFeedbackWithAIFeedback(
+            @PathVariable("resume_id") Long resumeId) {
 
         // 일반 피드백 조회 (이력서 ID 기준)
         List<Feedback> feedbacks = feedbackService.getFeedbackByResumeId(resumeId);
-        // 특정 AI 피드백 조회 (AI 피드백 ID 기준)
-        AIFeedback aiFeedback = aifeedbackService.getFeedbackById(aifeedbackId);
 
-        // 두 결과를 하나의 DTO로 변환 (여기서는 원시 도메인 객체를 전달)
+        // AI 피드백 조회 (이력서 ID 기준)
+        AIFeedback aiFeedback = aifeedbackService.getFeedbackById(resumeId);
+
+        // 두 결과를 하나의 DTO로 변환
         AllFeedbackResponse response = FeedbackConverter.toAllFeedbackResponse(feedbacks, aiFeedback);
 
         return CommonResponse.of(SuccessCode.FEEDBACK_FETCH_OK, response);
     }
-
 
     @Operation(summary = "피드백 삭제")
     @DeleteMapping("/{resume_id}/feedbacks/{feedback_id}")
