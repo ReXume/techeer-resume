@@ -4,11 +4,13 @@ package com.techeer.backend.infra.aws;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.techeer.backend.global.error.ErrorCode;
 import com.techeer.backend.global.error.exception.BusinessException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,6 @@ public class S3Uploader {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-
 
     public String uploadPdf(MultipartFile multipartFile) {
         String originalFileName = multipartFile.getOriginalFilename();
@@ -76,5 +77,20 @@ public class S3Uploader {
         amazonS3.deleteObject(bucket, fileName);
     }
 
+    public InputStream getFileFromS3(String bucketName, String key) {
+        try {
+            S3Object s3Object = amazonS3.getObject(bucketName, key);
+            log.info("Successfully retrieved S3 object. Content length: {}",
+                    s3Object.getObjectMetadata().getContentLength());
+            return s3Object.getObjectContent();
+        } catch (Exception e) {
+            log.error("Error retrieving file from S3. Bucket: '{}', Key: '{}'", bucketName, key, e);
+            throw new BusinessException(ErrorCode.RESUME_UPLOAD_ERROR);
+        }
+    }
+
+    public String getBucketName() {
+        return bucket;
+    }
 
 }
