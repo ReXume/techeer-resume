@@ -1,10 +1,9 @@
 import { formAxios, jsonAxios, jsonFormAxios } from "./axios.config.ts";
+import * as Sentry from "@sentry/browser";
 
-// 이력서 업로드 API
 export const postResume = async (
-  resume: File,
-  createResumeReq: {
-    // username: string;
+  resume_file: File,
+  resume: {
     position: string;
     career: number;
     company_names: string[];
@@ -13,18 +12,31 @@ export const postResume = async (
 ) => {
   try {
     const formData = new FormData();
-    formData.append("resume_file", resume);
-    formData.append("createResumeReq", JSON.stringify(createResumeReq));
+    formData.append("resume_file", resume_file);
 
-    const response = await formAxios.post(`/resumes`, formData, {});
+    // JSON 문자열 그대로 추가
+    formData.append("resume", JSON.stringify(resume));
+    console.log("resume", resume);
+
+    // FormData 내부 확인
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    console.log("전송할 데이터:", resume);
+    console.log("폼데이터 확인:", [...formData.entries()]);
+
+    // API 요청 보내기
+    const response = await formAxios.post(`/resumes`, formData);
 
     return response.data;
   } catch (error) {
     console.error("이력서 업로드 오류:", error);
+    const customError = new Error("이력서 업로드 오류");
+    Sentry.captureException(customError);
     throw error;
   }
 };
-
 // 이력서 검색
 export const searchResume = async (searchName: string) => {
   try {
@@ -35,6 +47,8 @@ export const searchResume = async (searchName: string) => {
     return response.data;
   } catch (error) {
     console.log("이력서 검색 오류", error);
+    const customError = new Error("이력서 검색 오류");
+    Sentry.captureException(customError);
     throw error;
   }
 };
@@ -51,7 +65,9 @@ export const getResumeList = async (page: number, size: number) => {
     );
     return response.data.result;
   } catch (error) {
-    console.log("이력서 조회 오류", error);
+    console.log("이력서 목록 조회 오류", error);
+    const customError = new Error("이력서 목록 조회 오류");
+    Sentry.captureException(customError);
     throw error;
   }
 };
@@ -99,6 +115,8 @@ export const postFilter = async (filterParams: FilterParams) => {
   } catch (error) {
     if (error instanceof Error) {
       console.error("필터링 api 오류:", error.message);
+      const customError = new Error("필터링 API 오류");
+      Sentry.captureException(customError);
     }
     throw error;
   }
@@ -111,6 +129,20 @@ export const viewResume = async (resumeId: number) => {
     return response.data.result;
   } catch (error) {
     console.log("이력서 조회 오류", error);
+    const customError = new Error("개별 이력서 조회 오류");
+    Sentry.captureException(customError);
+    throw error;
+  }
+};
+
+export const deleteResume = async (resumeId: number) => {
+  try {
+    const response = await jsonAxios.delete(`/resumes/${resumeId}`);
+    return response.data;
+  } catch (error) {
+    console.log("이력서 삭제 오류", error);
+    const customError = new Error("이력서 삭제 오류");
+    Sentry.captureException(customError);
     throw error;
   }
 };

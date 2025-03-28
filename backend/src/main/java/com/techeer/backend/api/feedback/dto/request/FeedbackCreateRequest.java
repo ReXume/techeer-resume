@@ -5,29 +5,32 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-// @ToString
 public class FeedbackCreateRequest {
 
     @NotBlank(message = "content는 필수입니다.")
     private String content;
 
-    @NotNull(message = "x 좌표는 필수입니다.")
-    @JsonProperty("x_coordinate")
-    private Double xCoordinate;
+    // 두 꼭짓점 좌표
+    @NotNull(message = "x1 좌표는 필수입니다.")
+    @JsonProperty("x1")
+    private Double x1;
 
-    @NotNull(message = "y 좌표는 필수입니다.")
-    @JsonProperty("y_coordinate")
-    private Double yCoordinate;
+    @NotNull(message = "y1 좌표는 필수입니다.")
+    @JsonProperty("y1")
+    private Double y1;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Double xcoordinate = null;
+    @NotNull(message = "x2 좌표는 필수입니다.")
+    @JsonProperty("x2")
+    private Double x2;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Double ycoordinate = null;
+    @NotNull(message = "y2 좌표는 필수입니다.")
+    @JsonProperty("y2")
+    private Double y2;
 
-    @NotNull(message = "page번호는 필수입니다")
+    @NotNull(message = "page번호는 필수입니다.")
     private int pageNumber;
 }

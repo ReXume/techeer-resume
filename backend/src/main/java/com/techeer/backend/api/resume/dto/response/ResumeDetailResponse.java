@@ -21,4 +21,6 @@ public class ResumeDetailResponse {
 
     private final Long previousResumeId;
     private final Long laterResumeId;
+
+    private Integer pdfPageCount;
 }

@@ -1,6 +1,7 @@
 import { Key } from "react";
 
 export type PostCardsType = {
+  view_count: number;
   career: number;
   position: string;
   user_name: string;
@@ -22,4 +23,12 @@ export type BookmarkType = {
   user_name: string;
   title: string;
   date: string;
+};
+
+export type BookmarkListType = {
+  bookmark_id: number;
+  created_at: string;
+  resume_author: string;
+  resume_id: number;
+  resume_title: string;
 };

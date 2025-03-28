@@ -10,6 +10,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -39,7 +40,10 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:5173"));
+        // 백엔드 배포 테스트v1
+        config.setAllowedOrigins(
+                List.of("http://localhost:8080", "http://localhost:5173", "http://backend:8080", "http://backend:5173", "http://rexume.site:8080", "http://rexume.site:5173", "http://rexume.site",
+                        "http://52.78.85.237:8080", "http://52.78.85.237:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
@@ -64,6 +68,14 @@ public class SecurityConfig {
 //                        .anyRequest().permitAll()
 //                )
                 .authorizeHttpRequests(authorize -> authorize
+
+                        // 특정 엔드포인트에서 GET 요청만 허용
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/resumes",
+                                "/api/v1/resumes/view",
+                                "/api/v1/resumes/search/**"
+                        ).permitAll()
+
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/oauth2/**",

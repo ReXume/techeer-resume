@@ -1,49 +1,55 @@
-import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
+import man1 from "../../assets/man1.webp";
+import man2 from "../../assets/man2.webp";
 
-function BannerCard({
-  title,
-  comment,
-  btncomment,
-  imgurl,
-  pageurl,
-}: {
-  title: ReactNode;
-  comment: string;
-  btncomment: string;
-  imgurl: string;
-  pageurl: string;
-}) {
+function BannerCard() {
   const navigate = useNavigate();
 
-  const movePage = () => {
-    navigate(`/${pageurl}`);
+  const moveUploadPage = () => {
+    navigate(`/upload`);
   };
 
   return (
-    <div>
-      {/* 카드 영역 */}
-      <div className="flex flex-row justify-between items-center w-60 sm:w-68 md:w-92 lg:w-125 xl:w-140 h-75 rounded-3xl bg-[#4177FF] p-8">
-        {/* 텍스트 영역 */}
-        <div className="flex flex-col space-y-4">
-          <p className="flex justify-start text-left font-bold leading-loose text-xl text-white md:text-2xl">
-            {title}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="bg-blue-500 rounded-2xl p-8 text-white flex flex-col md:flex-row items-center">
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold mb-2">내가 지원할 기업은?</h2>
+          <p className="text-sm text-blue-100 mb-6">
+            채용 공고를 한 번에 볼 수 있습니다.
           </p>
-          {/* sm 사이즈 이상에서만 표시 */}
-          <p className="text-white text-sm hidden sm:block">{comment}</p>
-          <button
-            className="bg-white text-[#4177FF] px-6 py-3 rounded-full font-bold text-sm hover:scale-110 transition-transform duration-200 md:text-lg"
-            onClick={movePage}
-          >
-            {btncomment}
+          <button className="bg-white text-blue-600 px-6 py-3 rounded-full font-medium hover:bg-blue-50 transition-colors">
+            지금 확인하기
           </button>
         </div>
-        {/* 이미지 영역 - lg 사이즈 이상에서만 표시 */}
-        <div className="flex hidden lg:block">
+        <div className="mt-6 md:mt-0">
           <img
-            src={imgurl}
-            alt="캐릭터 이미지"
-            className="w-20 md:w-40 lg:w-70 h-auto"
+            src={man1}
+            alt="셔츠입은 사람"
+            className="flex hidden lg:block w-40 h-40 object-cover rounded-full"
+          />
+        </div>
+      </div>
+
+      <div className="bg-indigo-500 rounded-2xl p-8 text-white flex flex-col md:flex-row items-center">
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold mb-2">
+            이력서 피드백이 필요할 때?
+          </h2>
+          <p className="text-sm text-indigo-100 mb-6">
+            이력서를 등록하고 피드백을 받을 수 있습니다.
+          </p>
+          <button
+            className="bg-white text-indigo-600 px-6 py-3 rounded-full font-medium hover:bg-indigo-50 transition-colors"
+            onClick={moveUploadPage}
+          >
+            등록하러 가기
+          </button>
+        </div>
+        <div className="flex hidden lg:block mt-6 md:mt-0">
+          <img
+            src={man2}
+            alt="컴퓨터하는 사람"
+            className="w-40 h-40 object-cover rounded-full"
           />
         </div>
       </div>

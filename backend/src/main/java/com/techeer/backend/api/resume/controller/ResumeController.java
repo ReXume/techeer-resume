@@ -18,6 +18,8 @@ import com.techeer.backend.global.error.ErrorCode;
 import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -29,6 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,7 +59,7 @@ public class ResumeController {
     public CommonResponse<?> resumeRegistration(@Valid @RequestPart("resume") CreateResumeRequest createResumeReq,
                                                 @RequestPart(name = "resume_file")
                                                 @Valid MultipartFile resumeFile) {
-        // 파일 유효성 검사 -> 나중에 vaildtor로 변경해서 유효성 검사할 예정
+        User user = userService.getLoginUser();
         if (resumeFile.isEmpty()) {
             throw new BusinessException(ErrorCode.RESUME_FILE_EMPTY);
         }
@@ -67,18 +70,16 @@ public class ResumeController {
         //        Optional<User> registrars = userService.findUserByName(createResumeReq.getUsername());
         //        User registrar = null;
         //        if (registrars.isPresent()) {registrar = registrars.get();}
-
         resumeCreateFacade.createResume(createResumeReq, resumeFile);
         return CommonResponse.of(SuccessCode.RESUME_CREATED, null);
     }
 
-
     @Operation(summary = "회원 이름으로 이력서 조회")
     @GetMapping("/resumes/search")
-    public CommonResponse<List<ResumeResponse>> searchResumesByUserName(@RequestParam("user_name") String userName) {
-        User user = userService.getLoginUser();
-
-        List<Resume> resumes = resumeService.searchResumesByUserName(userName);
+    public CommonResponse<List<ResumeResponse>> searchResumesByUserName(
+            @Parameter(schema = @Schema(type = "string"))
+            @RequestParam("user_name") String userName) {
+        List<Resume> resumes = resumeService.searchResumesByUserNameContaining(userName);
 
         List<ResumeResponse> resumeResponse = resumes.stream()
                 .map(ResumeConverter::toResumeResponse)
@@ -117,7 +118,7 @@ public class ResumeController {
                                                                       @RequestParam(name = "size") int size) {
         //ResumeService를 통해 페이지네이션된 이력서 목록을 가져옵니다.
         final Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
-        Page<Resume> resumes = resumeService.getResumePage(pageable);
+        Slice<Resume> resumes = resumeService.getResumePage(pageable);
 
         List<PageableResumeResponse> resumeResponses = resumes.stream()
                 .map(ResumeConverter::toPageableResumeResponse)
@@ -134,6 +135,29 @@ public class ResumeController {
                                                                            @RequestBody ResumeSearchRequest dto) {
         final Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
         Page<Resume> resumeList = resumeService.searchByTages(dto, pageable);
+
+        List<PageableResumeResponse> pageableResumeResponse = resumeList.stream()
+                .map(ResumeConverter::toPageableResumeResponse)
+                .collect(Collectors.toList());
+
+        return CommonResponse.of(SuccessCode.OK, pageableResumeResponse);
+    }
+
+    @Operation(summary = "이력서 삭제")
+    @DeleteMapping("/resumes/{resume_id}")
+    public CommonResponse<?> deleteResume(@PathVariable("resume_id") Long resumeId) {
+        User user = userService.getLoginUser();
+
+        resumeService.softDeleteResume(user, resumeId);
+        return CommonResponse.of(SuccessCode.RESUME_SOFT_DELETED, null);
+    }
+
+    @Operation(summary = "이력서 조회순으로 조회")
+    @GetMapping("/resumes/view")
+    public CommonResponse<List<PageableResumeResponse>> searchResumesByView(@RequestParam(name = "page") int page,
+                                                                            @RequestParam(name = "size") int size) {
+        final Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("viewCount")));
+        Slice<Resume> resumeList = resumeService.getResumePage(pageable);
 
         List<PageableResumeResponse> pageableResumeResponse = resumeList.stream()
                 .map(ResumeConverter::toPageableResumeResponse)

@@ -44,6 +44,7 @@ public enum ErrorCode {
 
     // AIFeedback Error
     AIFEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "AIFEEDBACK_404", "AI 피드백을 찾을 수 없습니다."),
+    OPENAI_RESPONSE_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "OPENAI_003", "OpenAI 응답 처리 중 오류가 발생했습니다."),
 
     UPLOAD_IN_PROGRESS(HttpStatus.CONFLICT, "E1001", "이력서 업로드가 이미 진행 중입니다."),
     RESUME_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "E1002", "이력서 업로드에 실패했습니다."),

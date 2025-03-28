@@ -17,6 +17,7 @@ public class ResumeConverter {
                 .resumeId(resume.getId())
                 .resumeName(resume.getName())
                 .userName(resume.getUser().getUsername())
+                .viewCount(resume.getViewCount())
                 .resumeName(resume.getName())
                 .position(resume.getPosition().getValue())
                 .career(resume.getCareer())
@@ -47,6 +48,7 @@ public class ResumeConverter {
                 .feedbackResponses(feedbacks.stream().map(FeedbackConverter::toFeedbackResponse).collect(Collectors.toList()))
                 .previousResumeId(Optional.ofNullable(resume.getPreviousResumeId()).orElse(null))
                 .laterResumeId(Optional.ofNullable(resume.getLaterResumeId()).orElse(null))
+                .pdfPageCount(resume.getResumePdf().getPageCount())
                 .build();
     }
 
@@ -54,6 +56,7 @@ public class ResumeConverter {
     public static ResumeResponse toResumeResponse(Resume resume) {
         return ResumeResponse.builder()
                 .resumeId(resume.getId())
+                .viewCount(resume.getViewCount())
                 .resumeName(resume.getName())
                 .userName(resume.getUser().getUsername())
                 .resumeName(resume.getName())

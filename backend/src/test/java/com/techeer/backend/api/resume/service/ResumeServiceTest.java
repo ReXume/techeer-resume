@@ -13,6 +13,9 @@ import static org.mockito.Mockito.when;
 import com.techeer.backend.api.resume.domain.Resume;
 import com.techeer.backend.api.resume.exception.ResumeNotFoundException;
 import com.techeer.backend.api.resume.repository.ResumeRepository;
+import com.techeer.backend.api.user.domain.User;
+import com.techeer.backend.util.domain.ResumeUtils;
+import com.techeer.backend.util.domain.UserUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -29,11 +32,26 @@ class ResumeServiceTest {
 
     @Mock
     private ResumeRepository resumeRepository;
-    
+
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void createResume_ShouldReturnCreatedResume() {
+        // Arrange
+        Resume resume = ResumeUtils.newInstance();
+        when(resumeRepository.save(resume)).thenReturn(resume);
+
+        // Act
+        Resume createdResume = resumeService.saveResume(resume);
+
+        // Assert
+        assertNotNull(createdResume);
+        assertEquals(resume, createdResume);
+        verify(resumeRepository, times(1)).save(resume);
     }
 
     @Test
@@ -122,4 +140,23 @@ class ResumeServiceTest {
 
         verify(resumeRepository, times(1)).findResumesByUsername(userName);
     }
+
+    @Test
+    void deleteResume_WhenResumeExists_ShouldDeleteResume() {
+        // Given (테스트 준비)
+        User user = UserUtils.newInstance();
+        Resume resume = ResumeUtils.newInstance();
+        Long resumeId = 1L;
+
+        // Mocking: 특정 user와 resumeId로 조회하면 해당 resume 반환
+        when(resumeRepository.findByUserAndId(user, resumeId)).thenReturn(Optional.of(resume));
+
+        // When (테스트 실행)
+        resumeService.softDeleteResume(user, resumeId);
+
+        // Then (결과 검증)
+        assertNotNull(resume.getDeletedAt()); // deletedAt이 null이 아니면 softDelete()가 정상 동작한 것
+        verify(resumeRepository, times(1)).findByUserAndId(user, resumeId);
+    }
+
 }

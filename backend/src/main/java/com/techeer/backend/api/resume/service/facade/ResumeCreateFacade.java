@@ -32,18 +32,17 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ResumeCreateFacade {
 
-    private final ResumeService resumeService;       // 실제 이력서 저장 로직
-    private final CompanyService companyService;     // 회사 태그 처리
-    private final TechStackService techStackService; // 기술 스택 처리
-    private final ResumePdfService resumePdfService; // PDF 처리
-    private final UserService userService;           // 현재 유저 가져오기
-
-    private final RedissonClient redissonClient;     // Redisson
-    private final DistributedLockService distributedLockService; // 분산 락
+    private final ResumeService resumeService;
+    private final CompanyService companyService;
+    private final TechStackService techStackService;
+    private final ResumePdfService resumePdfService;
+    private final UserService userService;
+    private final RedissonClient redissonClient;
+    private final DistributedLockService distributedLockService;
 
     @Transactional
     public void createResume(CreateResumeRequest req, MultipartFile multipartFile) {
-        // 0) 현재 로그인 유저
+        // 0) 현재 로그인 유저 가져오기
         User user = userService.getLoginUser();
         Long userId = user.getId();
 
@@ -51,7 +50,7 @@ public class ResumeCreateFacade {
         String lockKey = "resume-create-lock:" + userId;
         RLock lock = distributedLockService.acquireLock(lockKey, 0, 10, TimeUnit.SECONDS);
         if (lock == null) {
-            // 락 획득 실패 시 (이미 다른 요청이 점유 중)
+            // 락 획득 실패 시 (이미 다른 요청이 진행 중)
             throw new BusinessException(ErrorCode.DUPLICATE_REQUEST);
         }
 
@@ -60,15 +59,12 @@ public class ResumeCreateFacade {
             RBucket<Long> lastCreatedBucket = redissonClient.getBucket("resume:lastCreated:" + userId);
             Long lastCreatedTime = lastCreatedBucket.get();
 
-            // lastCreatedTime이 존재하고, 1분(60초)이 지나지 않았다면 예외
             if (lastCreatedTime != null &&
                     (System.currentTimeMillis() - lastCreatedTime) < 60_000) {
                 throw new BusinessException(ErrorCode.TOO_OFTEN_REQUEST);
             }
 
-            // 3) 이력서 등록 로직
-
-            // (a) 태그, 회사 조회/생성
+            // (a) 태그 및 회사 조회/생성
             List<TechStack> techStacks = techStackService.findOrCreateTechStacks(req.getTechStackNames());
             List<Company> companies = companyService.findOrCreateCompanies(req.getCompanyNames());
 
@@ -83,6 +79,7 @@ public class ResumeCreateFacade {
                     .name("Resume of " + user.getUsername() + " - "
                             + LocalDate.now(ZoneId.of("Asia/Seoul")))
                     .previousResumeId(previousResume != null ? previousResume.getId() : null)
+                    .viewCount(0L)
                     .build();
 
             resumeService.saveResume(resume);
@@ -95,7 +92,7 @@ public class ResumeCreateFacade {
             addResumeTechStacks(resume, techStacks);
             addResumeCompanies(resume, companies);
 
-            // (e) PDF 저장
+            // (e) PDF 저장 (파일이 존재할 경우)
             if (multipartFile != null && !multipartFile.isEmpty()) {
                 ResumePdf resumePdf = resumePdfService.saveResumePdf(resume, multipartFile);
                 resume.addResumePdf(resumePdf);

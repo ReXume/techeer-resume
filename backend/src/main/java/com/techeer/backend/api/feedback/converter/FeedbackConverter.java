@@ -6,6 +6,7 @@ import com.techeer.backend.api.feedback.dto.request.FeedbackCreateRequest;
 import com.techeer.backend.api.feedback.dto.response.AllFeedbackResponse;
 import com.techeer.backend.api.feedback.dto.response.FeedbackResponse;
 import com.techeer.backend.api.resume.domain.Resume;
+import com.techeer.backend.api.user.converter.UserConverter;
 import com.techeer.backend.api.user.domain.User;
 import java.util.List;
 import java.util.Optional;
@@ -16,12 +17,16 @@ public class FeedbackConverter {
     // 엔티티 -> 응답 DTO 변환
     public static FeedbackResponse toFeedbackResponse(Feedback feedback) {
         return FeedbackResponse.builder()
+                .userInfoResponse(UserConverter.ofUserInfoResponse(feedback.getUser()))
                 .feedbackId(feedback.getId())
                 .resumeId(feedback.getResume().getId())
                 .content(feedback.getContent())
-                .xCoordinate(feedback.getXCoordinate())
-                .yCoordinate(feedback.getYCoordinate())
+                .x1(feedback.getX1())  // 추가
+                .y1(feedback.getY1())  // 추가
+                .x2(feedback.getX2())  // 추가
+                .y2(feedback.getY2())  // 추가
                 .pageNumber(feedback.getPageNumber())
+                .createdAt(feedback.getCreatedAt())
                 .build();
     }
 
@@ -37,19 +42,20 @@ public class FeedbackConverter {
         return AllFeedbackResponse.builder()
                 .feedbackResponses(toFeedbackResponses(feedbacks))
                 .aiFeedbackContent(getAIFeedbackContent(aiFeedback))
-                .aiFeedbackId(getAIFeedbackId(aiFeedback))
                 .build();
     }
 
     // 요청 DTO -> 엔티티 변환
-    public static Feedback toFeedbackEntity(User user, Resume resume, FeedbackCreateRequest feedbackCreateRequest) {
+    public static Feedback toFeedbackEntity(User user, Resume resume, FeedbackCreateRequest dto) {
         return Feedback.builder()
                 .user(user)
                 .resume(resume)
-                .content(feedbackCreateRequest.getContent())
-                .xCoordinate(feedbackCreateRequest.getXCoordinate())
-                .yCoordinate(feedbackCreateRequest.getYCoordinate())
-                .pageNumber(feedbackCreateRequest.getPageNumber())
+                .content(dto.getContent())
+                .x1(dto.getX1())  // 추가
+                .y1(dto.getY1())  // 추가
+                .x2(dto.getX2())  // 추가
+                .y2(dto.getY2())  // 추가
+                .pageNumber(dto.getPageNumber())
                 .build();
     }
 
@@ -57,13 +63,6 @@ public class FeedbackConverter {
     private static String getAIFeedbackContent(AIFeedback aiFeedback) {
         return Optional.ofNullable(aiFeedback)
                 .map(AIFeedback::getFeedback)
-                .orElse(null);
-    }
-
-    // 헬퍼 메서드: AI 피드백 ID 추출
-    private static Long getAIFeedbackId(AIFeedback aiFeedback) {
-        return Optional.ofNullable(aiFeedback)
-                .map(AIFeedback::getId)
                 .orElse(null);
     }
 }

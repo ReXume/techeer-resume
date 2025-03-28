@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { Bookmark, Trash } from "lucide-react";
 import Swal from "sweetalert2";
-import { BookmarkType } from "../../dataType";
+import { BookmarkListType } from "../../dataType";
 import { deleteBookmarkById } from "../../api/bookMarkApi";
+import { formatDate } from "../../utils/DateFormatter.ts";
 
 type BookmarkItemProps = {
-  bookmark: BookmarkType;
+  bookmark: BookmarkListType;
   onUpdate: () => void; // 북마크 변경 시 호출되는 콜백
 };
 
@@ -49,14 +50,16 @@ function BookmarkItem({ bookmark, onUpdate }: BookmarkItemProps) {
         <div className="flex items-center space-x-4">
           <Bookmark className="w-5 h-5 text-gray-500 mx-2" />
           <div>
-            <h4 className="font-medium">2024 테커 상반기 채용 이력서</h4>
-            <p className="text-sm text-gray-500">정유진</p>
+            <h4 className="font-medium">{bookmark.resume_title}</h4>
+            <p className="text-sm text-gray-500">{bookmark.resume_author}</p>
           </div>
         </div>
       </div>
 
       <div className="flex items-center space-x-4 ml-10">
-        <span className="text-sm text-gray-500">2025-01-11</span>
+        <span className="text-sm text-gray-500">
+          {formatDate(bookmark.created_at)}
+        </span>
       </div>
       <div
         className="flex items-center justify-center w-20 h-10 hover:scale-125 cursor-pointer"

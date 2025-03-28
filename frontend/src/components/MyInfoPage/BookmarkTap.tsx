@@ -1,31 +1,26 @@
-import { useState, useEffect } from "react";
-import BookmarkItem from "../../components/MyInfoPage/BookmarkItem.tsx";
+import { useCallback, useEffect } from "react";
 import { getBookmarkById } from "../../api/bookMarkApi.ts";
-import { BookmarkType } from "../../dataType.ts";
+import { useBookmarkStore } from "../../store/BookmarkStore.ts";
+import BookmarkItem from "../../components/MyInfoPage/BookmarkItem.tsx";
 
 function BookmarkTap() {
-  const [bookmarks, setBookmarks] = useState<BookmarkType[]>([]);
+  const { bookmarks, setBookmarks } = useBookmarkStore();
 
   const userId = 1; // 임시. 지금 userId 필요 없음
 
   // 북마크 조회 API 호출
-  const fetchBookmarks = async () => {
+  const fetchBookmarks = useCallback(async () => {
     try {
       const data = await getBookmarkById(userId);
       setBookmarks(data.result);
     } catch (error) {
       console.error("북마크를 가져오는 데 실패했습니다.", error);
     }
-  };
-
-  // 북마크가 변경될 때 호출
-  const handleBookmarkUpdate = () => {
-    fetchBookmarks();
-  };
+  }, [setBookmarks]);
 
   useEffect(() => {
     fetchBookmarks();
-  }, []);
+  }, [fetchBookmarks]);
 
   return (
     <div className="flex gap-8">
@@ -41,7 +36,7 @@ function BookmarkTap() {
                 <BookmarkItem
                   key={bookmark.bookmark_id}
                   bookmark={bookmark}
-                  onUpdate={handleBookmarkUpdate}
+                  onUpdate={fetchBookmarks}
                 />
               ))
             ) : (

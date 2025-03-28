@@ -1,6 +1,7 @@
 package com.techeer.backend.api.feedback.controller;
 
 import com.techeer.backend.api.aifeedback.domain.AIFeedback;
+import com.techeer.backend.api.aifeedback.service.AIFeedbackService;
 import com.techeer.backend.api.feedback.converter.FeedbackConverter;
 import com.techeer.backend.api.feedback.domain.Feedback;
 import com.techeer.backend.api.feedback.dto.request.FeedbackCreateRequest;
@@ -29,13 +30,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "이력서 피드백 등록 API", description = "Feedback API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/resumes/")
+@RequestMapping("/api/v1/resumes")
 public class FeedbackController {
 
     private final FeedbackService feedbackService;
     private final UserService userService;
+    private final AIFeedbackService aifeedbackService;
 
-    @Operation(summary = "피드백 등록", description = "원하는 위치에 피드백을 작성합니다.")
+    @Operation(summary = "피드백 등록", description = "원하는 위치(또는 영역)에 피드백을 작성합니다.")
     @PostMapping("/{resume_id}/feedbacks")
     public CommonResponse<FeedbackResponse> createFeedback(
             @PathVariable("resume_id") Long resumeId,
@@ -56,14 +58,23 @@ public class FeedbackController {
         return CommonResponse.of(SuccessCode.CREATED, feedbackResponse);
     }
 
-    @Operation(summary = "AI 피드백, 일반 피드백 조회", description = "해당 이력서에 대한 AI 피드백과 일반 피드백 조회")
+    /**
+     * 기존에는 aifeedback_id를 같이 받아서 특정 AI 피드백만 조회했지만,
+     * 이제는 resume_id만 받아서 일반 피드백과 AI 피드백을 전부 반환하도록 수정.
+     */
+    @Operation(summary = "AI 피드백, 일반 피드백 조회",
+            description = "해당 이력서의 모든 일반 피드백과 AI 피드백을 조회합니다.")
     @GetMapping("/{resume_id}/feedbacks")
-    public CommonResponse<AllFeedbackResponse> getFeedbackWithAIFeedback(@PathVariable("resume_id") Long resumeId) {
+    public CommonResponse<AllFeedbackResponse> getAllFeedbackWithAIFeedback(
+            @PathVariable("resume_id") Long resumeId) {
 
-        // 엔티티, 리스트 반환
+        // 일반 피드백 조회 (이력서 ID 기준)
         List<Feedback> feedbacks = feedbackService.getFeedbackByResumeId(resumeId);
-        AIFeedback aiFeedback = feedbackService.getAIFeedbackByResumeId(resumeId);
 
+        // AI 피드백 조회 (이력서 ID 기준)
+        AIFeedback aiFeedback = aifeedbackService.getFeedbackById(resumeId);
+
+        // 두 결과를 하나의 DTO로 변환
         AllFeedbackResponse response = FeedbackConverter.toAllFeedbackResponse(feedbacks, aiFeedback);
 
         return CommonResponse.of(SuccessCode.FEEDBACK_FETCH_OK, response);
