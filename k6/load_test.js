@@ -13,13 +13,12 @@ export const options = {
   },
 };
 
-const BASE_URL = "https://api.rexume.site"; // Replace with your API base URL
+const BASE_URL = "https://rexume.site"; // Replace with your API base URL
 
 export default function () {
   // Test main API endpoints
   const responses = http.batch([
-    ["GET", `${BASE_URL}/api/health`],
-    ["GET", `${BASE_URL}/api/metrics`],
+    ["GET", `${BASE_URL}/api/v1/health`],
     // Add more endpoints as needed
   ]);
 
