@@ -14,9 +14,9 @@ jobs:
       - name: SSH to server and deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.AWS_IP }}
+          username: ubuntu
+          key: ${{ secrets.AWS_KEY }}
           script: |
             cd /home/ubuntu/project-root/docker-compose
             docker compose pull
