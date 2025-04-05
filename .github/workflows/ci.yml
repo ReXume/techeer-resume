@@ -2,7 +2,6 @@ name: CI - Build & Push Image
 
 on:
   push:
-    branches: ["develop"]
     paths:
       - k6/**
       - traefik/**
