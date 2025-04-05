@@ -21,6 +21,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.AWS_KEY }}
           script: |
-            cd /home/ubuntu/project-root/docker-compose
+            cd /home/ubuntu/techeer-resume
+            git pull origin develop
             docker compose pull
             docker compose -f docker-compose.yml -f docker-compose.app.yml -f docker-compose.monitor.yml up -d
