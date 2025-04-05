@@ -1,0 +1,47 @@
+name: CI - Build & Push Image
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - backend/**
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17 (Amazon Corretto)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'        # 올바른 배포판 이름
+          java-version: '17'
+
+      - name: Grant execute permission
+        run: chmod +x ./gradlew
+
+      - name: Build Jar
+        run: ./gradlew clean bootJar -x test
+
+      - name: Download NewRelic Jar
+        run: |
+          mkdir ../newrelic
+          curl -o ../newrelic/newrelic.jar https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic.jar
+
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER_NAME }}
+          password: ${{ secrets.DOCKER_USER_PW }}
+
+      - name: Build & Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: your-dockerhub-id/backend-app:latest
