@@ -4,11 +4,18 @@
 #ENTRYPOINT ["java","-jar","/techeer-resume-0.0.1-SNAPSHOT.jar"]
 
 FROM openjdk:17-jdk
-ARG JAR_FILE=build/libs/*.jar
-# 빌드 산출물을 /app.jar로 복사
-COPY ${JAR_FILE} techeer-resume-0.0.1-SNAPSHOT.jar
-# CI 파이프라인에서 다운로드한 newrelic 폴더 내의 파일들을 이미지에 포함
-COPY newrelic/newrelic.jar /newrelic/newrelic.jar
-COPY newrelic/newrelic.yml /newrelic/newrelic.yml
-# javaagent 옵션 추가하여 NewRelic 에이전트 활성화
-ENTRYPOINT ["java", "-javaagent:/newrelic/newrelic.jar", "-jar", "/techeer-resume-0.0.1-SNAPSHOT.jar"]
+WORKDIR /app
+
+# 빌드 결과물 복사 (bootJar 작업물)
+COPY build/libs/*.jar /app/app.jar
+
+# 빌드 단계에서 만든 newrelic 디렉토리 복사
+COPY ../newrelic/newrelic.jar /app/newrelic/
+COPY ../newrelic/newrelic.yml /app/newrelic/
+
+# 자주 쓰는 환경 변수 설정 (옵션)
+ENV NEW_RELIC_APP_NAME="MySpringApp"
+ENV NEW_RELIC_LOG_LEVEL="info"
+
+# -javaagent 옵션으로 New Relic Java Agent 활성화
+ENTRYPOINT ["java", "-javaagent:/app/newrelic/newrelic.jar", "-jar", "/app/app.jar"]
