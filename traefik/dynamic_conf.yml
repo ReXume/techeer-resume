@@ -14,9 +14,17 @@ http:
     spring-app:
       loadBalancer:
         servers:
+          # Point to the backend container name and port on the Docker network
+#          - url: "http://backend:8080"
           - url: "http://spring-app:8080"
 
   middlewares:
+    dashboard-auth:
+      basicAuth:
+        users:
+          - "${TRAEFIK_DASHBOARD_AUTH}"
+
+
     rate-limit:
       rateLimit:
         average: 50
