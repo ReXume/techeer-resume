@@ -6,6 +6,10 @@ on:
       - k6/**
       - traefik/**
       - backend/**
+  pull_request:
+    branches:
+      - main
+      - develop
 
 jobs:
   build-and-push:
