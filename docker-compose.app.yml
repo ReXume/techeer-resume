@@ -11,8 +11,8 @@ services:
     restart: always
     env_file:
       - backend-secret.env
-    ports:
-      - "8080:8080"
+#    ports:
+#      - "8080:8080"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.springboot.rule=Host(`api.rexume.site`)"
