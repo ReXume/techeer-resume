@@ -1,14 +1,10 @@
 name: CD - Deploy to Server
 
-#on:
-#  workflow_run:
-#    workflows: ["CI - Build & Push Image"]
-#    types:
-#      - completed
 on:
-  push:
-    branches:
-      - fix/#334
+  workflow_run:
+    workflows: ["CI - Build & Push Image"]
+    types:
+      - completed
   workflow_dispatch:  # 👉 수동 실행용
 
 jobs:
