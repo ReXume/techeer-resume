@@ -1,10 +1,9 @@
+# docker-compose.yml
 version: "3.8"
 
 networks:
-  web:
+  web: # 외부 네트워크 선언
     external: true
-  backend:
-    driver: bridge
 
 services:
   traefik:
@@ -14,12 +13,20 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
+      # - "8080:8080" # 대시보드 포트 제거
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik/traefik.yml:/traefik.yml:ro
       - ./traefik/dynamic_conf.yml:/dynamic_conf.yml:ro
-      - ./traefik/acme.json:/etc/traefik/acme.json
-      - ./letsencrypt:/etc/traefik
+      - ./traefik/letsencrypt:/etc/traefik # letsencrypt 데이터용 디렉토리 마운트
     networks:
-      - web
+      - web # web 네트워크 연결
+    environment:
+      - TRAEFIK_DASHBOARD_AUTH=rexume:$apr1$HtfOXLKL$QMj0r2dHvy0FnkLG.STWR1 # 대시보드 인증 정보
+    labels:
+      # 보안 대시보드 라우터 설정 (traefik.yourdomain.com 교체 필요)
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.rexume.site`)"
+      - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
+      - "traefik.http.routers.traefik-dashboard.service=api@internal"
+      - "traefik.http.routers.traefik-dashboard.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.traefik-dashboard.middlewares=dashboard-auth@file"
