@@ -1,0 +1,23 @@
+http:
+  routers:
+    spring-app:
+      rule: "Host(`api.rexume.site`)"
+      entryPoints:
+        - websecure
+      service: spring-app
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - rate-limit
+
+  services:
+    spring-app:
+      loadBalancer:
+        servers:
+          - url: "http://spring-app:8080"
+
+  middlewares:
+    rate-limit:
+      rateLimit:
+        average: 50
+        burst: 100

@@ -1,0 +1,25 @@
+version: "3.8"
+
+networks:
+  web:
+    external: true
+  backend:
+    driver: bridge
+
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/traefik.yml:ro
+      - ./traefik/dynamic_conf.yml:/dynamic_conf.yml:ro
+      - ./traefik/acme.json:/etc/traefik/acme.json
+      - ./letsencrypt:/etc/traefik
+    networks:
+      - web
