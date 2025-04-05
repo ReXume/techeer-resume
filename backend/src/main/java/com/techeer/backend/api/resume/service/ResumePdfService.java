@@ -7,6 +7,7 @@ import com.techeer.backend.global.vo.Pdf;
 import com.techeer.backend.infra.aws.S3Uploader;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,9 +27,17 @@ public class ResumePdfService {
                 .pdfUUID(UUID.randomUUID().toString())
                 .build();
 
+        int pageCount = 0;
+        try (PDDocument document = PDDocument.load(multipartFile.getInputStream())) {
+            pageCount = document.getNumberOfPages();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
         ResumePdf resumePdf = ResumePdf.builder()
                 .resume(resume)
                 .pdf(pdf)
+                .pageCount(pageCount)
                 .build();
 
         return resumePdfRepository.save(resumePdf);

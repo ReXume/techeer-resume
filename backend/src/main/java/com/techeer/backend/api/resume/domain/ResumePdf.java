@@ -37,6 +37,9 @@ public class ResumePdf {
     @JoinColumn(name = "resume_id")
     private Resume resume;
 
+    @Column(name="page_count")
+    private int pageCount;
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "pdfUrl", column = @Column(name = "resume_pdf_url", length = 1000)),
@@ -46,8 +49,9 @@ public class ResumePdf {
     private Pdf pdf;
 
     @Builder
-    public ResumePdf(Resume resume, Pdf pdf) {
+    public ResumePdf(Resume resume, Pdf pdf, int pageCount) {
         this.resume = resume;
         this.pdf = pdf;
+        this.pageCount = pageCount;
     }
 }
