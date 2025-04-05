@@ -6,15 +6,13 @@ networks:
 
 services:
   backend:
-    image: ${DOCKER_IMAGE_NAME}  # 또는 secrets에서 불러온 값 사용
+    image: "${DOCKER_USER_NAME}/${DOCKER_IMAGE_NAME}-be:latest"
     container_name: backend
     restart: always
     env_file:
       - backend-secret.env
     ports:
       - "8080:8080"
-    volumes:
-      - ./newrelic/newrelic.yml:/etc/newrelic/newrelic.yml:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.springboot.rule=Host(`api.rexume.site`)"
