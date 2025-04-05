@@ -6,6 +6,7 @@ on:
       - k6/**
       - traefik/**
       - backend/**
+
   pull_request:
     branches:
       - main
