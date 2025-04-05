@@ -46,10 +46,13 @@ jobs:
           username: ${{ secrets.DOCKER_USER_NAME }}
           password: ${{ secrets.DOCKER_USER_PW }}
 
+      - name: 디렉토리 구조 확인
+        run: ls -R
+
       - name: Build & Push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: /backend
+          context: ../backend
           file: Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-be:latest
