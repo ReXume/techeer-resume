@@ -13,7 +13,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      # - "8080:8080" # 대시보드 포트 제거
+      - "8088:8088"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik/traefik.yml:/traefik.yml:ro
