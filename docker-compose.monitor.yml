@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  newrelic-infra:
+    image: newrelic/infrastructure:latest
+    container_name: newrelic-infra
+    restart: always
+    privileged: true
+    network_mode: host
+    pid: host
+    env_file:
+      - backend-secret.env
+    volumes:
+      - /:/host:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./newrelic/newrelic.yml:/etc/newrelic-infra.yml:ro
+
+  k6:
+    image: grafana/k6:latest
+    container_name: k6-load-test
+    volumes:
+      - ./k6/load_test.js:/scripts/load_test.js:ro
+    command: run /scripts/load_test.js
