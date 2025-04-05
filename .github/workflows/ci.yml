@@ -37,7 +37,7 @@ jobs:
         run: |
           mkdir -p ../newrelic
           curl -o ../newrelic/newrelic.jar https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic.jar
-          cp ./src/main/resources/newrelic.yml ../newrelic/ || echo "No newrelic.yml found"
+#          cp ../newrelic/newrelic.yml ../newrelic/ || echo "No newrelic.yml found"
       
 
       - name: Docker Login
