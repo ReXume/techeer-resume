@@ -2,7 +2,7 @@ name: CI - Build & Push Image
 
 on:
   push:
-    branches: ["main"]
+    branches: ["develop"]
     paths:
       - backend/**
 
@@ -29,8 +29,10 @@ jobs:
 
       - name: Download NewRelic Jar
         run: |
-          mkdir ../newrelic
-          curl -o ../newrelic/newrelic.jar https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic.jar
+          mkdir -p newrelic
+          curl -o newrelic/newrelic.jar https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic.jar
+          # newrelic.yml은 resources 폴더나 별도 경로에 두었다면 복사
+          cp ./src/main/resources/newrelic.yml ./newrelic/ || echo "No newrelic.yml found"
 
       - name: Docker Login
         uses: docker/login-action@v3
@@ -44,4 +46,4 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: your-dockerhub-id/backend-app:latest
+          tags: ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-be:latest
