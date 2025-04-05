@@ -35,10 +35,10 @@ jobs:
 
       - name: Download NewRelic Jar
         run: |
-          mkdir -p newrelic
-          curl -o newrelic/newrelic.jar https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic.jar
-          # newrelic.yml은 resources 폴더나 별도 경로에 두었다면 복사
-          cp ./src/main/resources/newrelic.yml ./newrelic/ || echo "No newrelic.yml found"
+          mkdir -p ../newrelic
+          curl -o ../newrelic/newrelic.jar https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic.jar
+          cp ./src/main/resources/newrelic.yml ../newrelic/ || echo "No newrelic.yml found"
+      
 
       - name: Docker Login
         uses: docker/login-action@v3
