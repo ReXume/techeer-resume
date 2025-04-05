@@ -7,7 +7,7 @@ FROM openjdk:17-jdk
 WORKDIR /app
 
 # 빌드 결과물 복사 (bootJar 작업물)
-COPY build/libs/*.jar /app/app.jar
+COPY backend/build/libs/*.jar /app/app.jar
 
 # 빌드 단계에서 만든 newrelic 디렉토리 복사
 COPY newrelic/newrelic.jar /app/newrelic/
