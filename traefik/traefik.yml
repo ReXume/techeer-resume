@@ -8,6 +8,8 @@ entryPoints:
           scheme: https
   websecure:
     address: ":443"
+  dashboard:
+    address: ":8088"
 
 api:
   dashboard: true
