@@ -12,8 +12,6 @@ http:
       middlewares:
         - rate-limit # 적용할 미들웨어
 
-    # !!! 중요: ACME HTTP Challenge 처리를 위한 별도 라우터를 정의하지 않습니다. !!!
-    # Traefik이 static configuration의 certificatesResolvers 설정을 보고 자동으로 처리합니다.
 
   services:
     spring-app-service: # 서비스 이름 명확화 (선택 사항)
