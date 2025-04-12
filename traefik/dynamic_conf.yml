@@ -1,38 +1,35 @@
 http:
   routers:
-    spring-app:
-      rule: "Host(`api.rexume.site`)" && "PathPrefix(`/api/v1`)"
+    spring-app-router: # 라우터 이름 명확화 (선택 사항)
+      # Host 규칙은 정확히 api.rexume.site 만을 대상으로 함
+      # PathPrefix 규칙도 유지
+      rule: "Host(`api.rexume.site`) && PathPrefix(`/api/v1`)"
       entryPoints:
-        - websecure
-      service: spring-app
+        - websecure # HTTPS (443) 엔트리포인트 사용
+      service: spring-app-service # 서비스 이름 명확화 (선택 사항)
       tls:
-        certResolver: letsencrypt
+        certResolver: letsencrypt # Let's Encrypt 사용 명시
       middlewares:
-        - rate-limit
+        - rate-limit # 적용할 미들웨어
 
-    http-challenge:
-      rule: "PathPrefix(`/.well-known/acme-challenge/`)"
-      entryPoints:
-        - web
-      service: noop
-      priority: 100
-
+    # !!! 중요: ACME HTTP Challenge 처리를 위한 별도 라우터를 정의하지 않습니다. !!!
+    # Traefik이 static configuration의 certificatesResolvers 설정을 보고 자동으로 처리합니다.
 
   services:
-    spring-app:
+    spring-app-service: # 서비스 이름 명확화 (선택 사항)
       loadBalancer:
         servers:
-          # Point to the backend container name and port on the Docker network
-#          - url: "http://backend:8080"
+          # 백엔드 서비스 컨테이너의 이름과 포트를 Docker 네트워크 기준으로 지정
           - url: "http://spring-app:8080"
 
   middlewares:
+    # 대시보드 인증 미들웨어 정의 (실제 사용은 Traefik API 라우터 설정에서 필요 시 적용)
     dashboard-auth:
       basicAuth:
         users:
           - "${TRAEFIK_DASHBOARD_AUTH}"
 
-
+    # Rate Limit 미들웨어 정의
     rate-limit:
       rateLimit:
         average: 50
