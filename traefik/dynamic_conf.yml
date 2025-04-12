@@ -10,6 +10,14 @@ http:
       middlewares:
         - rate-limit
 
+    http-challenge:
+      rule: "PathPrefix(`/.well-known/acme-challenge/`)"
+      entryPoints:
+        - web
+      service: noop
+      priority: 100
+
+
   services:
     spring-app:
       loadBalancer:
