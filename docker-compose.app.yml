@@ -15,10 +15,6 @@ services:
       - "8080:8080"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.springboot.rule=Host(`api.rexume.site`)"
-      - "traefik.http.services.springboot.loadbalancer.server.port=8080"
-      - "traefik.http.routers.springboot.tls=true"
-      - "traefik.http.routers.springboot.tls.certresolver=letsencrypt"
     networks:
       - backend
       - web
