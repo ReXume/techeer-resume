@@ -27,9 +27,10 @@ jobs:
             cd /home/ubuntu/techeer-resume
             git pull origin develop
             
-            mkdir -p traefik/letsencrypt
-            touch traefik/letsencrypt/acme.json
-            chmod 600 traefik/letsencrypt/acme.json
+            sudo mkdir -p traefik/letsencrypt
+            sudo touch traefik/letsencrypt/acme.json
+            sudo chmod 600 traefik/letsencrypt/acme.json
+            sudo chown ubuntu:ubuntu traefik/letsencrypt/acme.json
             
             export DOCKER_USER_NAME=${{ secrets.DOCKER_USER_NAME }}
             export DOCKER_IMAGE_NAME=${{ secrets.DOCKER_IMAGE_NAME }}
