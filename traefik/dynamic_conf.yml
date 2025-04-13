@@ -18,7 +18,7 @@ http:
       loadBalancer:
         servers:
           # 백엔드 서비스 컨테이너의 이름과 포트를 Docker 네트워크 기준으로 지정
-          - url: "http://spring-app:8080"
+          - url: "http://backend:8080"
 
   middlewares:
     # 대시보드 인증 미들웨어 정의 (실제 사용은 Traefik API 라우터 설정에서 필요 시 적용)
