@@ -47,6 +47,9 @@ function ResumeFeedbackPage() {
         const data = await getResumeApi(resumeId);
         setResumeData(data);
         setFeedbackPoints(data.feedbackResponses || []);
+        console.log("api 호출");
+        console.log(data.feedbackResponses);
+
         setResumeUrl(data.fileUrl);
 
         const userId = 1;
@@ -116,11 +119,7 @@ function ResumeFeedbackPage() {
 
   const addFeedbackPoint = async (point: Omit<AddFeedbackPoint, "id">) => {
     try {
-      if (
-        !point.content ||
-        point.xCoordinate === undefined ||
-        point.yCoordinate === undefined
-      ) {
+      if (!point.content || point.x1 === undefined || point.y1 === undefined) {
         setError("All fields are required to add a feedback point.");
         return;
       }
@@ -161,7 +160,7 @@ function ResumeFeedbackPage() {
   const bookmarked = isBookmarked(resumeId);
 
   return (
-    <div className="flex flex-col flex-grow bg-[#F9FAFB]">
+    <div className="flex flex-col z-10 flex-grow bg-[#F9FAFB]">
       <Layout
         sidebar={
           <div className="flex flex-col justify-between bg-[#F9FAFB] p-2 mt-10">

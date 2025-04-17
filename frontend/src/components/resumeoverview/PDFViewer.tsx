@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import * as pdfjsLib from "pdfjs-dist";
 import PDF from "./PDF";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js";
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.js`;
 
 const PDFViewer = ({
   pdfSrc,
@@ -30,7 +29,14 @@ const PDFViewer = ({
   if (!pdf) return <div>PDF 로딩 중...</div>;
 
   return (
-    <div style={{ overflowY: "auto", maxHeight: "90vh" }}>
+    <div
+      style={{
+        width: 1200,
+        margin: "auto",
+        overflowY: "auto",
+        maxHeight: "90vh",
+      }}
+    >
       {Array.from({ length: numPages }, (_, index) => (
         <PDF
           key={index + 1}

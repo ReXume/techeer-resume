@@ -1,8 +1,7 @@
 import React, { useRef, useState } from "react";
-import CommentForm from "../comment/CommentForm.tsx";
 import { AddFeedbackPoint, FeedbackPoint } from "../../types.ts";
-import PDFPage from "./PDFPage.tsx";
 import useResumeStore from "../../store/ResumeStore.ts";
+import PDF from "./PDF.tsx";
 import PDFViewer from "./PDFViewer.tsx";
 
 type ResumePageProps = {
@@ -81,8 +80,6 @@ function ResumePage({
         className="w-full h-[903px] items-center relative cursor-pointer -mt-1"
         onClick={handleClick}
       >
-        {/* PDF 미리보기 */}
-        {/* <PDFPage pdfUrl={ResumeUrl} /> */}
         <PDFViewer
           pdfSrc={ResumeUrl}
           pageNumber={pageNumber}

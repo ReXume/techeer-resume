@@ -39,8 +39,10 @@ function CommentSection({
     try {
       addFeedbackPoint({
         content: text,
-        xCoordinate: 0,
-        yCoordinate: 0,
+        x1: 0,
+        x2: 0,
+        y1: 0,
+        y2: 0,
         pageNumber: 1,
       });
     } catch (error) {
