@@ -37,12 +37,12 @@ const PDFViewer = ({
         maxHeight: "90vh",
       }}
     >
-      {Array.from({ length: numPages }, (_, index) => (
+      {Array.from({ length: numPages }).map((_, idx) => (
         <PDF
-          key={index + 1}
+          key={`page-${idx + 1}`} // ← key 로 pageNumber 포함
           pdf={pdf}
-          pageNumber={index + 1}
-          feedback={feedbackData && feedbackData[index + 1]}
+          pageNumber={idx + 1}
+          feedback={feedbackData && feedbackData[idx + 1]}
           addFeedbackPoint={addFeedbackPoint}
           editFeedbackPoint={editFeedbackPoint}
           feedbackPoints={feedbackPoints}
