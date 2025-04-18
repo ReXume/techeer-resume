@@ -7,38 +7,34 @@ import { FeedbackPoint } from "../../types";
 // PDF.js Worker 설정
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.js`;
 
-// 영역 피드백 데이터 예시
-const Comment = [
-  {
-    feedback_id: 1,
-    resume_id: 1,
-    content: "Great work on your resume!",
-    page_number: 1,
-    xcoordinate1: 25,
-    xcoordinate2: 60,
-    ycoordinate1: 40,
-    ycoordinate2: 60,
-  },
-  {
-    feedback_id: 2,
-    resume_id: 1,
-    content: "Maybe add more details about your experience.",
-    page_number: 2,
-    xcoordinate1: 25,
-    xcoordinate2: 80,
-    ycoordinate1: 40,
-    ycoordinate2: 90,
-  },
-];
+interface PDFProps {
+  pdf: any;
+  pageNumber: number;
+  feedback: any;
+  addFeedbackPoint: (point: {
+    pageNumber: number;
+    x1: number;
+    x2: number;
+    y1: number;
+    y2: number;
+    content: string;
+  }) => void;
+  feedbackPoints: FeedbackPoint[];
+  editFeedbackPoint: (item: FeedbackPoint) => void;
+  hoveredCommentId: number | null;
+  setHoveredCommentId: (id: number | null) => void;
+}
 
-const PDF = ({
+const PDF: React.FC<PDFProps> = ({
   pdf,
   pageNumber,
   feedback,
   addFeedbackPoint,
   feedbackPoints,
   editFeedbackPoint,
-}: any) => {
+  hoveredCommentId,
+  setHoveredCommentId,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const renderTaskRef = useRef<any>(null);
 
@@ -73,12 +69,10 @@ const PDF = ({
       canvas.width = viewport.width;
       canvas.height = viewport.height;
 
-      // 이전 렌더링이 있다면 취소
       if (renderTaskRef.current) {
         renderTaskRef.current.cancel();
       }
 
-      // 새로운 렌더링 시작
       renderTaskRef.current = page.render({
         canvasContext: context,
         viewport,
@@ -88,7 +82,6 @@ const PDF = ({
         await renderTaskRef.current.promise;
         if (cancelled) return;
       } catch (err: any) {
-        // 취소된 경우만 무시
         if (err?.name !== "RenderingCancelledException") {
           console.error("PDF 렌더링 에러:", err);
         }
@@ -96,7 +89,7 @@ const PDF = ({
     };
 
     loadPage();
-    console.log(feedback);
+    console.log("PDF 렌더링 시작:", pageNumber);
 
     return () => {
       cancelled = true;
@@ -106,18 +99,25 @@ const PDF = ({
     };
   }, [pdf, pageNumber]);
 
+  // hover 핸들러 캡슐화: 콘솔 로그로 확인
+  const handleHover = (id: number | null) => {
+    console.log("Hovered comment ID:", id);
+    setHoveredCommentId(id);
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     setStartPos({ x, y });
     setSelectedArea({ x, y, width: 0, height: 0 });
     setIsSelecting(true);
+    console.log(pageNumber);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isSelecting || !selectedArea) return;
-    const rect = e.currentTarget.getBoundingClientRect();
+    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
     const currentX = e.clientX - rect.left;
     const currentY = e.clientY - rect.top;
     setSelectedArea({
@@ -131,13 +131,13 @@ const PDF = ({
   const handleMouseUp = (e: React.MouseEvent) => {
     setIsSelecting(false);
     if (selectedArea) {
-      const containerRect = e.currentTarget.getBoundingClientRect();
-      const percentX1 = (selectedArea.x / containerRect.width) * 100;
+      const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+      const percentX1 = (selectedArea.x / rect.width) * 100;
       const percentX2 =
-        ((selectedArea.x + selectedArea.width) / containerRect.width) * 100;
-      const percentY1 = (selectedArea.y / containerRect.height) * 100;
+        ((selectedArea.x + selectedArea.width) / rect.width) * 100;
+      const percentY1 = (selectedArea.y / rect.height) * 100;
       const percentY2 =
-        ((selectedArea.y + selectedArea.height) / containerRect.height) * 100;
+        ((selectedArea.y + selectedArea.height) / rect.height) * 100;
       setAddingFeedback({
         x1: percentX1,
         x2: percentX2,
@@ -161,6 +161,9 @@ const PDF = ({
       setAddingFeedback(null);
     }
   };
+  useEffect(() => {
+    console.log(addingFeedback);
+  }, [addingFeedback]);
 
   return (
     <div
@@ -184,6 +187,7 @@ const PDF = ({
           }}
         />
       )}
+
       {feedbackPoints
         .filter((item) => item.pageNumber === pageNumber)
         .map((item) => {
@@ -191,6 +195,7 @@ const PDF = ({
           const top = item.y1;
           const width = item.x2 - item.x1;
           const height = item.y2 - item.y1;
+          const isHovered = item.feedbackId === hoveredCommentId;
           return (
             <div
               key={item.feedbackId}
@@ -200,26 +205,16 @@ const PDF = ({
                 top: `${top}%`,
                 width: `${width}%`,
                 height: `${height}%`,
-                border: "2px solid red",
-                background: "rgba(255,0,0,0.3)",
+                border: isHovered ? "2px solid #3B82F6" : "2px solid #EF4444",
+                background: isHovered
+                  ? "rgba(59,130,246,0.3)"
+                  : "rgba(255,0,0,0.3)",
+                cursor: "pointer",
               }}
               onClick={() => setEditingFeedback(item)}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: -25,
-                  left: 0,
-                  background: "rgba(255,255,255,0.8)",
-                  padding: "2px 5px",
-                  border: "1px solid #ccc",
-                  borderRadius: 3,
-                  fontSize: "0.9em",
-                }}
-              >
-                {item.content}
-              </div>
-            </div>
+              onMouseEnter={() => handleHover(item.feedbackId)}
+              onMouseLeave={() => handleHover(null)}
+            />
           );
         })}
 

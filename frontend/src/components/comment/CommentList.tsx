@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { FeedbackPoint } from "../../types";
 
 type CommentListProps = {
@@ -15,6 +16,22 @@ function CommentList({
   hoveredCommentId,
   setHoveredCommentId,
 }: CommentListProps) {
+  // hover 핸들러 캡슐화: 콘솔 로그로 확인
+  const handleHover = (id: number | null) => {
+    console.log("Hovered list comment ID:", id);
+    setHoveredCommentId(id);
+  };
+
+  // hoveredCommentId 변경 시 해당 코멘트를 스크롤로 보이게 함
+  useEffect(() => {
+    if (hoveredCommentId !== null) {
+      const el = document.getElementById(`comment-${hoveredCommentId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [hoveredCommentId]);
+
   return (
     <ul>
       {feedbackPoints.map((item) => {
@@ -26,17 +43,17 @@ function CommentList({
         const username = "익명";
         const timestamp = "";
         const initials = username.substring(0, 2);
+        const isHovered = item.feedbackId === hoveredCommentId;
 
         return (
           <li
-            key={item.id}
-            className={`mb-4 ${
-              item.id === hoveredCommentId ? "bg-blue-100" : ""
-            }`}
-            onMouseEnter={() => setHoveredCommentId(item.id)}
-            onMouseLeave={() => setHoveredCommentId(null)}
+            id={`comment-${item.feedbackId}`}
+            key={item.feedbackId}
+            className={`mb-4 ${isHovered ? "bg-blue-100" : ""}`}
+            onMouseEnter={() => handleHover(item.feedbackId)}
+            onMouseLeave={() => handleHover(null)}
           >
-            <div className={`flex items-start p-2 rounded `}>
+            <div className="flex items-start p-2 rounded">
               {/* 아바타 */}
               <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3 flex-shrink-0">
                 <span className="text-sm font-medium text-blue-600">
@@ -65,7 +82,7 @@ function CommentList({
                   </button>
                   <button
                     className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
-                    onClick={() => deleteFeedbackPoint(item.id)}
+                    onClick={() => deleteFeedbackPoint(item.feedbackId)}
                   >
                     삭제
                   </button>
