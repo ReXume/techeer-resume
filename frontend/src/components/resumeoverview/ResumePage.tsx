@@ -12,6 +12,7 @@ type ResumePageProps = {
   editFeedbackPoint: (item: AddFeedbackPoint) => void;
   hoveredCommentId: number | null;
   setHoveredCommentId: (id: number | null) => void;
+  setClickedCommentId: (id: number | null) => void;
 };
 
 function ResumePage({
@@ -21,6 +22,7 @@ function ResumePage({
   editFeedbackPoint,
   hoveredCommentId,
   setHoveredCommentId,
+  setClickedCommentId,
 }: ResumePageProps) {
   const pageRef = useRef<HTMLDivElement>(null);
   const [addingFeedback, setAddingFeedback] = useState<{
@@ -88,6 +90,7 @@ function ResumePage({
           feedbackPoints={feedbackPoints}
           hoveredCommentId={hoveredCommentId}
           setHoveredCommentId={setHoveredCommentId}
+          setClickedCommentId={setClickedCommentId}
         />
       </div>
     </div>

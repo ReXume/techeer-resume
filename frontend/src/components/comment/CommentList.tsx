@@ -7,6 +7,7 @@ type CommentListProps = {
   editFeedbackPoint: (item: FeedbackPoint) => void;
   hoveredCommentId: number | null;
   setHoveredCommentId: (id: number | null) => void;
+  onClickedCommentId: number | null;
 };
 
 function CommentList({
@@ -15,6 +16,7 @@ function CommentList({
   editFeedbackPoint,
   hoveredCommentId,
   setHoveredCommentId,
+  onClickedCommentId,
 }: CommentListProps) {
   // hover 핸들러 캡슐화: 콘솔 로그로 확인
   const handleHover = (id: number | null) => {
@@ -22,15 +24,14 @@ function CommentList({
     setHoveredCommentId(id);
   };
 
-  // hoveredCommentId 변경 시 해당 코멘트를 스크롤로 보이게 함
   useEffect(() => {
-    if (hoveredCommentId !== null) {
-      const el = document.getElementById(`comment-${hoveredCommentId}`);
+    if (onClickedCommentId !== null) {
+      const el = document.getElementById(`comment-${onClickedCommentId}`);
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
-  }, [hoveredCommentId]);
+  }, [onClickedCommentId]);
 
   return (
     <ul>

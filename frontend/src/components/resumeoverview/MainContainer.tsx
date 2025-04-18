@@ -11,6 +11,7 @@ type MainContainerProps = {
   setHoveredCommentId: (id: number | null) => void;
   laterResumeId: number | null;
   previousResumeId: number | null;
+  setClickedCommentId: (id: number | null) => void;
 };
 
 function MainContainer({
@@ -22,7 +23,10 @@ function MainContainer({
   setHoveredCommentId,
   laterResumeId,
   previousResumeId,
+  setClickedCommentId,
 }: MainContainerProps) {
+  console.log({ setClickedCommentId });
+
   return (
     <div className=" flex flex-col bg-[#F9FAFB] h-[90vh] ">
       {/* Scrollable Content with space for the fixed NavBar and Footer */}
@@ -36,6 +40,7 @@ function MainContainer({
           editFeedbackPoint={editFeedbackPoint}
           hoveredCommentId={hoveredCommentId}
           setHoveredCommentId={setHoveredCommentId}
+          setClickedCommentId={setClickedCommentId}
         />
       </div>
       <Footer
