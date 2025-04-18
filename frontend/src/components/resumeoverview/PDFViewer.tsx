@@ -12,6 +12,7 @@ const PDFViewer = ({
   feedbackPoints,
   hoveredCommentId,
   setHoveredCommentId,
+  setClickedCommentId,
 }: any) => {
   const [pdf, setPdf] = useState(null);
   const [numPages, setNumPages] = useState(0);
@@ -48,6 +49,7 @@ const PDFViewer = ({
           feedbackPoints={feedbackPoints}
           hoveredCommentId={hoveredCommentId}
           setHoveredCommentId={setHoveredCommentId}
+          setClickedCommentId={setClickedCommentId}
         />
       ))}
     </div>

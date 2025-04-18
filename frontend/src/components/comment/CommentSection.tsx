@@ -16,6 +16,7 @@ interface CommentSectionProps {
   handleAiFeedback: () => void;
   loading?: boolean;
   error?: string;
+  onClickedCommentId: number | null;
 }
 
 function CommentSection({
@@ -28,6 +29,7 @@ function CommentSection({
   handleAiFeedback,
   loading = false,
   error = "",
+  onClickedCommentId,
 }: CommentSectionProps): React.ReactElement {
   const [isLogin, setIsLogin] = useState(false);
   const { isAuthenticated } = useAuthStore();
@@ -68,6 +70,7 @@ function CommentSection({
             editFeedbackPoint={editFeedbackPoint}
             hoveredCommentId={hoveredCommentId}
             setHoveredCommentId={setHoveredCommentId}
+            onClickedCommentId={onClickedCommentId}
           />
         )}
       </div>

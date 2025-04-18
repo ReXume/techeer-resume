@@ -23,6 +23,7 @@ interface PDFProps {
   editFeedbackPoint: (item: FeedbackPoint) => void;
   hoveredCommentId: number | null;
   setHoveredCommentId: (id: number | null) => void;
+  setClickedCommentId: (id: number | null) => void;
 }
 
 const PDF: React.FC<PDFProps> = ({
@@ -34,6 +35,7 @@ const PDF: React.FC<PDFProps> = ({
   editFeedbackPoint,
   hoveredCommentId,
   setHoveredCommentId,
+  setClickedCommentId,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const renderTaskRef = useRef<any>(null);
@@ -101,7 +103,6 @@ const PDF: React.FC<PDFProps> = ({
 
   // hover 핸들러 캡슐화: 콘솔 로그로 확인
   const handleHover = (id: number | null) => {
-    console.log("Hovered comment ID:", id);
     setHoveredCommentId(id);
   };
 
@@ -112,7 +113,6 @@ const PDF: React.FC<PDFProps> = ({
     setStartPos({ x, y });
     setSelectedArea({ x, y, width: 0, height: 0 });
     setIsSelecting(true);
-    console.log(pageNumber);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -161,9 +161,6 @@ const PDF: React.FC<PDFProps> = ({
       setAddingFeedback(null);
     }
   };
-  useEffect(() => {
-    console.log(addingFeedback);
-  }, [addingFeedback]);
 
   return (
     <div
@@ -211,7 +208,10 @@ const PDF: React.FC<PDFProps> = ({
                   : "rgba(255,0,0,0.3)",
                 cursor: "pointer",
               }}
-              onClick={() => setEditingFeedback(item)}
+              onClick={() => {
+                console.log("Clicked comment ID:", item.feedbackId);
+                setClickedCommentId(item.feedbackId);
+              }}
               onMouseEnter={() => handleHover(item.feedbackId)}
               onMouseLeave={() => handleHover(null)}
             />

@@ -33,6 +33,7 @@ function ResumeFeedbackPage() {
   const resumeId = Number(id);
   const { setResumeUrl } = useResumeStore();
   const { bookmarks, setBookmarks, isBookmarked } = useBookmarkStore();
+  const [onClickedCommentId, setClickedCommentId] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,15 +44,11 @@ function ResumeFeedbackPage() {
       try {
         setLoading(true);
         setError(null);
-
         const data = await getResumeApi(resumeId);
         setResumeData(data);
         setFeedbackPoints(data.feedbackResponses || []);
-        console.log("api 호출");
         console.log(data.feedbackResponses);
-
         setResumeUrl(data.fileUrl);
-
         const userId = 1;
         const bookmarksData = await getBookmarkById(userId);
         setBookmarks(bookmarksData.result || []);
@@ -104,7 +101,9 @@ function ResumeFeedbackPage() {
       });
     }
   };
-
+  useEffect(() => {
+    console.log("dkfasdfndla" + onClickedCommentId);
+  }, [onClickedCommentId]);
   const handleAiFeedback = async () => {
     setLoading(true);
     try {
@@ -124,7 +123,7 @@ function ResumeFeedbackPage() {
         return;
       }
       setLoading(true);
-      const newPoint: AddFeedbackPoint = { ...point, pageNumber: 1 };
+      const newPoint: AddFeedbackPoint = { ...point };
       await addFeedbackApi(resumeId, newPoint);
       const updatedData = await getResumeApi(resumeId);
       setFeedbackPoints(updatedData.feedbackResponses);
@@ -201,6 +200,7 @@ function ResumeFeedbackPage() {
                 hoveredCommentId={hoveredCommentId}
                 handleAiFeedback={handleAiFeedback}
                 setHoveredCommentId={setHoveredCommentId}
+                onClickedCommentId={onClickedCommentId}
               />
             </div>
           </div>
@@ -215,6 +215,7 @@ function ResumeFeedbackPage() {
           setHoveredCommentId={setHoveredCommentId}
           laterResumeId={resumeData.laterResumeId}
           previousResumeId={resumeData.previousResumeId}
+          setClickedCommentId={setClickedCommentId}
         />
       </Layout>
     </div>
