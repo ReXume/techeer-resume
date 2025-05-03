@@ -67,8 +67,14 @@ jobs:
           host: ${{ secrets.AWS_IP }}
           username: ubuntu
           key: ${{ secrets.AWS_KEY }}
-          # README 권장 방식: 콤마 또는 줄바꿈으로 구분된 명시적 경로
-          # → 공백 하나로 합쳐진 문자열은 인식하지 못해 tar empty archive 오류 유발
-          source: "docker-compose.yml,docker-compose.app.yml,docker-compose.monitor.yml,backend-secret.env,k6/**,traefik/**,newrelic/**"
+          source: |
+            docker-compose.yml
+            docker-compose.app.yml
+            docker-compose.monitor.yml
+            backend-secret.env
+            k6/**
+            traefik/**
+            newrelic/**
           target: /home/ubuntu/techeer-resume
-          overwrite: true            # 동일 이름 덮어쓰기(선택)
+          overwrite: true
+          tar_exec: "sudo tar"        # ← untar를 root 권한으로
