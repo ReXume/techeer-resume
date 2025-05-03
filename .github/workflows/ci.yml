@@ -2,73 +2,72 @@ name: CI - Build & Push Backend Image
 
 on:
   push:
-    branches:
-      - develop
-      - main
+    branches: [develop, main]
     paths:
       - backend/**
       - k6/**
       - traefik/**
       - .github/workflows/**
-    workflow_dispatch:  # 수동 실행을 위한 트리거
+  workflow_dispatch:     # 수동 실행 트리거
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     environment: production
+
+    # `run:` 스텝 전용 working directory
     defaults:
       run:
         working-directory: backend
 
     steps:
-      - uses: actions/checkout@v4
+      # ────────────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 17 (Amazon Corretto)
+      - name: Set up JDK 17 (Amazon Corretto)
         uses: actions/setup-java@v3
         with:
-          distribution: 'corretto'
+          distribution: corretto
           java-version: '17'
 
-      - name: Grant execute permission
+      - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
 
-      - name: Build Jar
+      - name: Build JAR
         run: ./gradlew clean bootJar -x test
 
-      - name: Download NewRelic Jar
+      - name: Download New Relic Java agent
         run: |
           mkdir -p ../newrelic
-          curl -o ../newrelic/newrelic.jar https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic.jar
+          curl -sSL \
+            -o ../newrelic/newrelic.jar \
+            https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic.jar
 
-      - name: Docker Login
+      # ────────────────────────────────────────────────────────────────
+      - name: Docker login
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USER_NAME }}
           password: ${{ secrets.DOCKER_USER_PW }}
 
-      - name: 디렉토리 구조 확인
-        run: ls -R
-
-      - name: Build & Push Docker image
+      - name: Build & push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./backend          # 빌드 컨텍스트 한정
           file: ./backend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-be:latest
 
-      - name: Upload files to EC2
+      # ────────────────────────────────────────────────────────────────
+      - name: Upload compose & config files to EC2
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.AWS_IP }}
           username: ubuntu
           key: ${{ secrets.AWS_KEY }}
-          source: "
-          ../docker-compose.yml,
-          ../docker-compose.app.yml,
-          ../docker-compose.monitor.yml,
-          ../k6/**,
-          ../traefik/**,
-          ../newrelic/**"
-
+          # README 권장 방식: 콤마 또는 줄바꿈으로 구분된 명시적 경로
+          # → 공백 하나로 합쳐진 문자열은 인식하지 못해 tar empty archive 오류 유발
+          source: "docker-compose.yml,docker-compose.app.yml,docker-compose.monitor.yml,backend-secret.env,k6/**,traefik/**,newrelic/**"
           target: /home/ubuntu/techeer-resume
+          overwrite: true            # 동일 이름 덮어쓰기(선택)
