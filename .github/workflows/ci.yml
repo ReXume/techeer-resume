@@ -54,10 +54,11 @@ jobs:
       - name: Build & push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./backend          # 빌드 컨텍스트 한정
+          context: .                  # 루트 전체
           file: ./backend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-be:latest
+
 
       # ────────────────────────────────────────────────────────────────
       - name: Upload compose & config files to EC2
