@@ -8,73 +8,96 @@ on:
       - k6/**
       - traefik/**
       - .github/workflows/**
-  workflow_dispatch:     # 수동 실행 트리거
+  workflow_dispatch:        # 수동 실행 트리거
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     environment: production
 
-    # `run:` 스텝 전용 working directory
+    # ───── 기본 실행 디렉터리: backend ──────────────────────────────
     defaults:
       run:
         working-directory: backend
 
     steps:
-      # ────────────────────────────────────────────────────────────────
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    # ───── 소스 체크아웃 ────────────────────────────────────────────
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Set up JDK 17 (Amazon Corretto)
-        uses: actions/setup-java@v3
-        with:
-          distribution: corretto
-          java-version: '17'
+    # ───── JDK 17 설치 ─────────────────────────────────────────────
+    - name: Set up JDK 17 (Amazon Corretto)
+      uses: actions/setup-java@v3
+      with:
+        distribution: corretto
+        java-version: '17'
 
-      - name: Grant execute permission to Gradle wrapper
-        run: chmod +x ./gradlew
+    # ───── Gradle 권한 부여 & 빌드 ─────────────────────────────────
+    - name: Grant execute permission to Gradle wrapper
+      run: chmod +x ./gradlew
 
-      - name: Build JAR
-        run: ./gradlew clean bootJar -x test
+    - name: Build JAR
+      run: ./gradlew clean bootJar -x test
 
-      - name: Download New Relic Java agent
-        run: |
-          mkdir -p ../newrelic
-          curl -sSL \
-            -o ../newrelic/newrelic.jar \
-            https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic.jar
+    # ───── New Relic Java Agent 다운로드 ───────────────────────────
+    - name: Download New Relic Java agent
+      working-directory: backend          # 명시적으로 backend 폴더
+      run: |
+        mkdir -p newrelic
+        curl -sSL \
+          -o newrelic/newrelic.jar \
+          https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic.jar
+        # (선택) 최소 설정 파일 자동 생성
+        cat <<'YAML' > newrelic/newrelic.yml
+        common: &
+          license_key: ${NEW_RELIC_LICENSE_KEY}
+          app_name: MySpringApp
+        YAML
 
-      # ────────────────────────────────────────────────────────────────
-      - name: Docker login
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USER_NAME }}
-          password: ${{ secrets.DOCKER_USER_PW }}
+    # ───── Docker Hub 로그인 ──────────────────────────────────────
+    - name: Docker login
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USER_NAME }}
+        password: ${{ secrets.DOCKER_USER_PW }}
 
-      - name: Build & push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .                  # 루트 전체
-          file: ./backend/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-be:latest
+    # ───── Docker 이미지 빌드 & 푸시 ───────────────────────────────
+    - name: Build & push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend          # 빌드 컨텍스트 한정
+        file: ./backend/Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-be:latest
+
+    # ───── 원격 서버 디렉터리 권한 준비 ────────────────────────────
+    - name: Prepare target directory on EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.AWS_IP }}
+        username: ubuntu
+        key: ${{ secrets.AWS_KEY }}
+        script: |
+          sudo mkdir -p /home/ubuntu/techeer-resume
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/techeer-resume
+          sudo chmod -R u+rwX /home/ubuntu/techeer-resume
+
+    # ───── 구성 파일 전송 ─────────────────────────────────────────
+    - name: Upload compose & config files to EC2
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.AWS_IP }}
+        username: ubuntu
+        key: ${{ secrets.AWS_KEY }}
+        source: |
+          docker-compose.yml
+          docker-compose.app.yml
+          docker-compose.monitor.yml
+          backend-secret.env
+          k6/**
+          traefik/**
+          newrelic/**
+        target: /home/ubuntu/techeer-resume
+        overwrite: true
 
 
-      # ────────────────────────────────────────────────────────────────
-      - name: Upload compose & config files to EC2
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.AWS_IP }}
-          username: ubuntu
-          key: ${{ secrets.AWS_KEY }}
-          source: |
-            docker-compose.yml
-            docker-compose.app.yml
-            docker-compose.monitor.yml
-            backend-secret.env
-            k6/**
-            traefik/**
-            newrelic/**
-          target: /home/ubuntu/techeer-resume
-          overwrite: true
-          tar_exec: "sudo tar"        # ← untar를 root 권한으로
