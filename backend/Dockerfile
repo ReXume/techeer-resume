@@ -14,7 +14,7 @@ COPY newrelic/newrelic.jar /app/newrelic/
 COPY newrelic/newrelic.yml /app/newrelic/
 
 # 자주 쓰는 환경 변수 설정 (옵션)
-ENV NEW_RELIC_APP_NAME="techeer-resume"
+ENV NEW_RELIC_APP_NAME="backend"
 ENV NEW_RELIC_LOG_LEVEL="info"
 
 # -javaagent 옵션으로 New Relic Java Agent 활성화

@@ -1,5 +1,9 @@
 version: "3.8"
 
+networks:
+  web:
+    external: true
+
 services:
   newrelic-infra:
     image: newrelic/infrastructure:latest
@@ -20,4 +24,9 @@ services:
     container_name: k6-load-test
     volumes:
       - ./k6/load_test.js:/scripts/load_test.js:ro
-    command: run /scripts/load_test.js
+    command: /scripts/stress.js
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - web
+
