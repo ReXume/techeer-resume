@@ -9,6 +9,7 @@ on:
       - backend/**
       - k6/**
       - traefik/**
+      - .github/workflows/**
 
 jobs:
   build-and-push:
