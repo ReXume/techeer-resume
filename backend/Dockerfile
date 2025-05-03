@@ -10,8 +10,8 @@ WORKDIR /app
 COPY build/libs/*.jar /app/app.jar
 
 # 빌드 단계에서 만든 newrelic 디렉토리 복사
-COPY newrelic/newrelic.jar /app/newrelic/
-COPY newrelic/newrelic.yml /app/newrelic/
+COPY ../newrelic/newrelic.jar /app/newrelic/
+COPY ../newrelic/newrelic.yml /app/newrelic/
 
 # 자주 쓰는 환경 변수 설정 (옵션)
 ENV NEW_RELIC_APP_NAME="backend"
