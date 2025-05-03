@@ -62,11 +62,13 @@ jobs:
           username: ubuntu
           key: ${{ secrets.AWS_KEY }}
           source: |
-            docker-compose.yml
-            docker-compose.app.yml
-            docker-compose.monitor.yml
-            k6/**
-            traefik/**
-            newrelic/**
+            ../docker-compose.yml
+            ../docker-compose.app.yml
+            ../docker-compose.monitor.yml
+            ../backend-secret.env
+            ../k6/**
+            ../traefik/**
+            ../newrelic/**
+
           target: /home/ubuntu/techeer-resume
 
