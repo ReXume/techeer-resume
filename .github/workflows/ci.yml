@@ -58,7 +58,6 @@ jobs:
           tags: ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-be:latest
 
       - name: Upload files to EC2
-        working-directory: .  # ✅ 루트 기준으로 전환
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.AWS_IP }}
