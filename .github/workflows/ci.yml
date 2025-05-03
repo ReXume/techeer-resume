@@ -53,3 +53,19 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-be:latest
+
+      - name: Upload files to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.AWS_IP }}
+          username: ubuntu
+          key: ${{ secrets.AWS_KEY }}
+          source: |
+            docker-compose.yml
+            docker-compose.app.yml
+            docker-compose.monitor.yml
+            k6/**
+            traefik/**
+            newrelic/**
+          target: /home/ubuntu/techeer-resume
+

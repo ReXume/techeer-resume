@@ -25,7 +25,6 @@ jobs:
           key: ${{ secrets.AWS_KEY }}
           script: |
             cd /home/ubuntu/techeer-resume
-            git pull origin develop
             
             sudo mkdir -p traefik/letsencrypt
             sudo touch traefik/letsencrypt/acme.json
