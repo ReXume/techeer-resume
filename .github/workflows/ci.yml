@@ -10,6 +10,7 @@ on:
       - k6/**
       - traefik/**
       - .github/workflows/**
+    workflow_dispatch:  # 수동 실행을 위한 트리거
 
 jobs:
   build-and-push:
@@ -71,4 +72,5 @@ jobs:
             k6/**
             traefik/**
             newrelic/**
+
           target: /home/ubuntu/techeer-resume
