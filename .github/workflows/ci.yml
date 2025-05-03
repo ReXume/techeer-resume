@@ -1,16 +1,14 @@
-name: CI - Build & Push Image
+name: CI - Build & Push Backend Image
 
 on:
   push:
+    branches:
+      - develop
+      - main
     paths:
+      - backend/**
       - k6/**
       - traefik/**
-      - backend/**
-
-  pull_request:
-    branches:
-      - main
-      - develop
 
 jobs:
   build-and-push:
@@ -18,13 +16,14 @@ jobs:
     defaults:
       run:
         working-directory: backend
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up JDK 17 (Amazon Corretto)
         uses: actions/setup-java@v3
         with:
-          distribution: 'corretto'        # 올바른 배포판 이름
+          distribution: 'corretto'
           java-version: '17'
 
       - name: Grant execute permission
@@ -37,8 +36,6 @@ jobs:
         run: |
           mkdir -p ../newrelic
           curl -o ../newrelic/newrelic.jar https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic.jar
-#          cp ../newrelic/newrelic.yml ../newrelic/ || echo "No newrelic.yml found"
-      
 
       - name: Docker Login
         uses: docker/login-action@v3
