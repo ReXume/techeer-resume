@@ -9,8 +9,8 @@ import com.techeer.backend.api.resume.dto.request.ResumeSearchRequest;
 import com.techeer.backend.api.resume.dto.response.PageableResumeResponse;
 import com.techeer.backend.api.resume.dto.response.ResumeDetailResponse;
 import com.techeer.backend.api.resume.dto.response.ResumeResponse;
+import com.techeer.backend.api.resume.service.ResumeRateLimitService;
 import com.techeer.backend.api.resume.service.ResumeService;
-import com.techeer.backend.api.resume.service.facade.ResumeCreateFacade;
 import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.common.response.CommonResponse;
@@ -30,6 +30,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,6 +53,7 @@ public class ResumeController {
     private final ResumeService resumeService;
     private final FeedbackService feedbackService;
     private final UserService userService;
+    private final ResumeRateLimitService resumeRateLimitService;
 
     // 이력서 등록
     @Operation(summary = "이력서 등록")
@@ -60,6 +62,9 @@ public class ResumeController {
                                                 @RequestPart(name = "resume_file")
                                                 @Valid MultipartFile resumeFile) {
         User user = userService.getLoginUser();
+        if (resumeRateLimitService.isLimited(user.getId())) {
+            return CommonResponse.of(HttpStatus.TOO_MANY_REQUESTS.value(), "[ERROR] 너무 빠르게 요청했습니다. 잠시 후 다시 시도하세요.", null);
+        }
         // 파일 유효성 검사 -> 나중에 vaildtor로 변경해서 유효성 검사할 예정
         if (resumeFile.isEmpty()) {
             throw new BusinessException(ErrorCode.RESUME_FILE_EMPTY);
