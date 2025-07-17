@@ -31,4 +31,8 @@ public class CommonResponse<T> {
                 status.getReason().getMessage(),
                 null);
     }
+
+    public static <T> CommonResponse<T> of(HttpStatus httpStatus, String message, T result) {
+        return new CommonResponse<>(httpStatus, String.valueOf(httpStatus.value()), message, result);
+    }
 }

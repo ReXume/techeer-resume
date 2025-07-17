@@ -11,6 +11,7 @@ import com.techeer.backend.api.resume.dto.response.ResumeDetailResponse;
 import com.techeer.backend.api.resume.dto.response.ResumeResponse;
 import com.techeer.backend.api.resume.service.ResumeRateLimitService;
 import com.techeer.backend.api.resume.service.ResumeService;
+import com.techeer.backend.api.resume.service.facade.ResumeCreateFacade;
 import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.common.response.CommonResponse;
@@ -63,7 +64,7 @@ public class ResumeController {
                                                 @Valid MultipartFile resumeFile) {
         User user = userService.getLoginUser();
         if (resumeRateLimitService.isLimited(user.getId())) {
-            return CommonResponse.of(HttpStatus.TOO_MANY_REQUESTS.value(), "[ERROR] 너무 빠르게 요청했습니다. 잠시 후 다시 시도하세요.", null);
+            return CommonResponse.of(HttpStatus.TOO_MANY_REQUESTS, "[ERROR] 너무 빠르게 요청했습니다. 잠시 후 다시 시도하세요.", null);
         }
         // 파일 유효성 검사 -> 나중에 vaildtor로 변경해서 유효성 검사할 예정
         if (resumeFile.isEmpty()) {
