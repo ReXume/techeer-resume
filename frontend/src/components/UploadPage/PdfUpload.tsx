@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import { Upload, FileUp, Trash2 } from "lucide-react";
-import { Document, Page, pdfjs } from "react-pdf";
+import { Document, Page } from "react-pdf";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import * as pdfjsLib from "pdfjs-dist";
 
-// PDF.js worker 설정
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).href;
+// PDF.js worker 설정 (CDN 경로 사용)
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js";
 interface PdfUploadProps {
   // 파일이 선택되거나 삭제될 때 호출되는 콜백
   onFileSelect: (file: File | null) => void;
