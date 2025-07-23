@@ -11,6 +11,7 @@ export const addFeedbackApi = async (
   resumeId: number,
   feedbackData: AddFeedbackPoint
 ): Promise<FeedbackPoint> => {
+  console.log(feedbackData);
   const response = await axiosInstance.post(
     `/resumes/${resumeId}/feedbacks`,
     feedbackData

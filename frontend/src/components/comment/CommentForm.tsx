@@ -10,8 +10,8 @@ import { Send } from "lucide-react";
 import useAuthStore from "../../store/authStore";
 
 interface Position {
-  x: number; // 백분율
-  y: number; // 백분율
+  x1: number; // 백분율
+  y1: number; // 백분율
 }
 
 interface CommentFormProps {
@@ -86,9 +86,9 @@ function CommentForm({
   // 폼이 메인 영역에 위치할 경우 스타일 적용
   const formStyles: React.CSSProperties = position
     ? {
-        left: `${position.x}%`,
+        left: `${position.x1}%`,
         position: "absolute",
-        top: `${position.y}%`,
+        top: `${position.y1}%`,
         transform: "translate(0%, -100%)",
         width: "400px",
         zIndex: 10,
@@ -102,9 +102,11 @@ function CommentForm({
 
   return (
     <div
-      className="bg-white border rounded shadow-lg p-2 z-10 transition-transform duration-300 ease-in-out"
+      className="bg-white border rounded shadow-lg p-2 z-100 transition-transform duration-300 ease-in-out"
       style={formStyles}
       onClick={(e) => e.stopPropagation()} // 이벤트 전파 중단
+      onMouseDown={(e) => e.stopPropagation()}
+      onMouseUp={(e) => e.stopPropagation()}
     >
       <form onSubmit={handleSubmit} className="flex flex-col">
         <div className="flex items-start">

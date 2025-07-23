@@ -2,23 +2,23 @@ import ResumePage from "./ResumePage";
 import { AddFeedbackPoint, FeedbackPoint } from "../../types.ts";
 
 type ResumePageGroupProps = {
-  // pages: number;
   feedbackPoints: FeedbackPoint[];
   addFeedbackPoint: (point: Omit<AddFeedbackPoint, "id" | "type">) => void;
   deleteFeedbackPoint: (id: number) => void;
   editFeedbackPoint: (item: AddFeedbackPoint) => void;
   hoveredCommentId: number | null;
   setHoveredCommentId: (id: number | null) => void;
+  setClickedCommentId: (id: number | null) => void;
 };
 
 function ResumePageGroup({
-  // pages,
   feedbackPoints,
   addFeedbackPoint,
   deleteFeedbackPoint,
   editFeedbackPoint,
   hoveredCommentId,
   setHoveredCommentId,
+  setClickedCommentId,
 }: ResumePageGroupProps) {
   // 단일 페이지만 렌더링
   return (
@@ -31,6 +31,7 @@ function ResumePageGroup({
       editFeedbackPoint={editFeedbackPoint}
       hoveredCommentId={hoveredCommentId}
       setHoveredCommentId={setHoveredCommentId}
+      setClickedCommentId={setClickedCommentId}
     />
   );
 }

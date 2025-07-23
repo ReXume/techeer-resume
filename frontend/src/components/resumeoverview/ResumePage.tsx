@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
-import CommentForm from "../comment/CommentForm.tsx";
 import { AddFeedbackPoint, FeedbackPoint } from "../../types.ts";
-import PDFPage from "./PDFPage.tsx";
 import useResumeStore from "../../store/ResumeStore.ts";
+import PDF from "./PDF.tsx";
+import PDFViewer from "./PDFViewer.tsx";
 
 type ResumePageProps = {
   pageNumber: number;
@@ -12,6 +12,7 @@ type ResumePageProps = {
   editFeedbackPoint: (item: AddFeedbackPoint) => void;
   hoveredCommentId: number | null;
   setHoveredCommentId: (id: number | null) => void;
+  setClickedCommentId: (id: number | null) => void;
 };
 
 function ResumePage({
@@ -21,6 +22,7 @@ function ResumePage({
   editFeedbackPoint,
   hoveredCommentId,
   setHoveredCommentId,
+  setClickedCommentId,
 }: ResumePageProps) {
   const pageRef = useRef<HTMLDivElement>(null);
   const [addingFeedback, setAddingFeedback] = useState<{
@@ -80,48 +82,16 @@ function ResumePage({
         className="w-full h-[903px] items-center relative cursor-pointer -mt-1"
         onClick={handleClick}
       >
-        {/* PDF 미리보기 */}
-        <PDFPage pdfUrl={ResumeUrl} />
-        <>
-          {feedbackPoints.map((point) => (
-            <div
-              key={point.id}
-              className={`absolute w-4 h-4 rounded-full transform -translate-x-1/2 -translate-y-1/2 cursor-pointer ${
-                point.id === hoveredCommentId ? "bg-sky-500" : "bg-red-500"
-              }`}
-              style={{
-                left: `${point.xCoordinate}%`,
-                top: `${point.yCoordinate}%`,
-              }}
-              onMouseEnter={() => setHoveredCommentId(point.id)}
-              onMouseLeave={() => setHoveredCommentId(null)}
-              onClick={(e) => {
-                e.stopPropagation(); // 페이지 클릭 방지
-                handleMarkerClick(point);
-              }}
-            ></div>
-          ))}
-          {/* 피드백 추가 폼 */}
-          {addingFeedback && (
-            <CommentForm
-              position={{ x: addingFeedback.x, y: addingFeedback.y }}
-              onSubmit={handleAddSubmit}
-              onCancel={handleCancel}
-            />
-          )}
-          {/* 피드백 수정 폼 */}
-          {editingFeedback && (
-            <CommentForm
-              position={{
-                x: editingFeedback.xCoordinate,
-                y: editingFeedback.yCoordinate,
-              }}
-              initialComment={editingFeedback.content}
-              onSubmit={handleEditSubmit}
-              onCancel={handleCancel}
-            />
-          )}
-        </>
+        <PDFViewer
+          pdfSrc={ResumeUrl}
+          pageNumber={pageNumber}
+          addFeedbackPoint={addFeedbackPoint}
+          editFeedbackPoint={editFeedbackPoint}
+          feedbackPoints={feedbackPoints}
+          hoveredCommentId={hoveredCommentId}
+          setHoveredCommentId={setHoveredCommentId}
+          setClickedCommentId={setClickedCommentId}
+        />
       </div>
     </div>
   );

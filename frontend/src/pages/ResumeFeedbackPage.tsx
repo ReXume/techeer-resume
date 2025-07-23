@@ -33,6 +33,7 @@ function ResumeFeedbackPage() {
   const resumeId = Number(id);
   const { setResumeUrl } = useResumeStore();
   const { bookmarks, setBookmarks, isBookmarked } = useBookmarkStore();
+  const [onClickedCommentId, setClickedCommentId] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,12 +44,11 @@ function ResumeFeedbackPage() {
       try {
         setLoading(true);
         setError(null);
-
         const data = await getResumeApi(resumeId);
         setResumeData(data);
         setFeedbackPoints(data.feedbackResponses || []);
+        console.log(data.feedbackResponses);
         setResumeUrl(data.fileUrl);
-
         const userId = 1;
         const bookmarksData = await getBookmarkById(userId);
         setBookmarks(bookmarksData.result || []);
@@ -101,7 +101,9 @@ function ResumeFeedbackPage() {
       });
     }
   };
-
+  useEffect(() => {
+    console.log("dkfasdfndla" + onClickedCommentId);
+  }, [onClickedCommentId]);
   const handleAiFeedback = async () => {
     setLoading(true);
     try {
@@ -116,16 +118,12 @@ function ResumeFeedbackPage() {
 
   const addFeedbackPoint = async (point: Omit<AddFeedbackPoint, "id">) => {
     try {
-      if (
-        !point.content ||
-        point.xCoordinate === undefined ||
-        point.yCoordinate === undefined
-      ) {
+      if (!point.content || point.x1 === undefined || point.y1 === undefined) {
         setError("All fields are required to add a feedback point.");
         return;
       }
       setLoading(true);
-      const newPoint: AddFeedbackPoint = { ...point, pageNumber: 1 };
+      const newPoint: AddFeedbackPoint = { ...point };
       await addFeedbackApi(resumeId, newPoint);
       const updatedData = await getResumeApi(resumeId);
       setFeedbackPoints(updatedData.feedbackResponses);
@@ -161,10 +159,10 @@ function ResumeFeedbackPage() {
   const bookmarked = isBookmarked(resumeId);
 
   return (
-    <div className="flex flex-col flex-grow ">
+    <div className="flex flex-col z-10 flex-grow bg-[#F9FAFB]">
       <Layout
         sidebar={
-          <div className="flex flex-col justify-between bg-white p-2 mt-10">
+          <div className="flex flex-col justify-between bg-[#F9FAFB] p-2 mt-10">
             <button
               onClick={toggleBookmark}
               className={`flex items-center px-6 py-3 rounded-lg ${
@@ -202,6 +200,7 @@ function ResumeFeedbackPage() {
                 hoveredCommentId={hoveredCommentId}
                 handleAiFeedback={handleAiFeedback}
                 setHoveredCommentId={setHoveredCommentId}
+                onClickedCommentId={onClickedCommentId}
               />
             </div>
           </div>
@@ -216,6 +215,7 @@ function ResumeFeedbackPage() {
           setHoveredCommentId={setHoveredCommentId}
           laterResumeId={resumeData.laterResumeId}
           previousResumeId={resumeData.previousResumeId}
+          setClickedCommentId={setClickedCommentId}
         />
       </Layout>
     </div>
