@@ -3,19 +3,21 @@
 #COPY ${JAR_FILE} techeer-resume-0.0.1-SNAPSHOT.jar
 #ENTRYPOINT ["java","-jar","/techeer-resume-0.0.1-SNAPSHOT.jar"]
 
+# 1단계: 빌드용 이미지
+FROM gradle:8.7.0-jdk17 AS build
+WORKDIR /app
+
+# 소스코드 전체 복사 (gradle/wrapper 포함)
+COPY . .
+
+# JAR 빌드 (bootJar)
+RUN gradle bootJar --no-daemon
+
+# 2단계: 실행용 이미지
 FROM openjdk:17-jdk
 WORKDIR /app
 
-# 빌드 결과물 복사 (bootJar 작업물)
-COPY build/libs/*.jar /app/app.jar
+# 빌드 결과물만 복사
+COPY --from=build /app/build/libs/*.jar /app/app.jar
 
-# 빌드 단계에서 만든 newrelic 디렉토리 복사
-COPY ../newrelic/newrelic.jar /app/newrelic/
-COPY ../newrelic/newrelic.yml /app/newrelic/
-
-# 자주 쓰는 환경 변수 설정 (옵션)
-ENV NEW_RELIC_APP_NAME="backend"
-ENV NEW_RELIC_LOG_LEVEL="info"
-
-# -javaagent 옵션으로 New Relic Java Agent 활성화
-ENTRYPOINT ["java", "-javaagent:/app/newrelic/newrelic.jar", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

@@ -35,7 +35,7 @@
     "msw": "^2.4.9",
     "mui": "^0.0.1",
     "nouislider": "^15.8.1",
-    "pdfjs-dist": "^5.0.375",
+    "pdfjs-dist": "3.4.120",
     "postcss": "^8.4.45",
     "react": "^18.3.1",
     "react-cookie": "^7.2.2",

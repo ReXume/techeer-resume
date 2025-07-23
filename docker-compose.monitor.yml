@@ -5,19 +5,24 @@ networks:
     external: true
 
 services:
-  newrelic-infra:
-    image: newrelic/infrastructure:latest
-    container_name: newrelic-infra
-    restart: always
-    privileged: true
-    network_mode: host
-    pid: host
-    env_file:
-      - backend-secret.env
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
     volumes:
-      - /:/host:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./newrelic/newrelic.yml:/etc/newrelic-infra.yml:ro
+      - ./grafana-provisioning:/etc/grafana/provisioning
+      - ./grafana-dashboard:/dashboard
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    command:
+      - --web.enable-remote-write-receiver
+      - --enable-feature=native-histograms
+      - --config.file=/etc/prometheus/prometheus.yml
 
   k6:
     image: grafana/k6:latest
