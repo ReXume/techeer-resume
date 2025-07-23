@@ -6,25 +6,33 @@ services:
       - "3306:3306"
     env_file:
       - backend-secret.env
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   redis:
     image: redis:6.0
     container_name: redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
 
   backend:
     build:
       context: .
-      dockerfile: Dockerfile-develop
+      dockerfile: Dockerfile
     container_name: backend
     restart: always
     depends_on:
       - db
+      - redis
     env_file:
       - backend-secret.env
     ports:
       - "8080:8080"
-    volumes:
-      - .:/app
+    # volumes:
 #      - ./logs:/var/log/spring-boot
+
+volumes:
+  mysql_data:
+  redis_data:
