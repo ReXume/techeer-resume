@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ResumeRateLimitService {
+public class ResumeCreateLimitService {
     private final StringRedisTemplate redisTemplate;
+
     private static final Duration TTL = Duration.ofSeconds(5);
 
     public boolean isLimited(Long userId) {
@@ -25,4 +26,4 @@ public class ResumeRateLimitService {
     private String buildKey(Long userId) {
         return "resume:create:" + userId;
     }
-} 
+}

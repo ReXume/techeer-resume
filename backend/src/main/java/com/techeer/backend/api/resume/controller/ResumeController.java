@@ -9,14 +9,13 @@ import com.techeer.backend.api.resume.dto.request.ResumeSearchRequest;
 import com.techeer.backend.api.resume.dto.response.PageableResumeResponse;
 import com.techeer.backend.api.resume.dto.response.ResumeDetailResponse;
 import com.techeer.backend.api.resume.dto.response.ResumeResponse;
-import com.techeer.backend.api.resume.service.ResumeRateLimitService;
+import com.techeer.backend.api.resume.service.ResumeCreateLimitService;
 import com.techeer.backend.api.resume.service.ResumeService;
 import com.techeer.backend.api.resume.service.facade.ResumeCreateFacade;
+import com.techeer.backend.api.resume.validator.ValidPdfFile;
 import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.common.response.CommonResponse;
-import com.techeer.backend.global.error.ErrorCode;
-import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,29 +53,17 @@ public class ResumeController {
     private final ResumeService resumeService;
     private final FeedbackService feedbackService;
     private final UserService userService;
-    private final ResumeRateLimitService resumeRateLimitService;
+    private final ResumeCreateLimitService resumeCreateLimitService;
 
     // 이력서 등록
     @Operation(summary = "이력서 등록")
     @PostMapping(value = "/resumes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CommonResponse<?> resumeRegistration(@Valid @RequestPart("resume") CreateResumeRequest createResumeReq,
-                                                @RequestPart(name = "resume_file")
-                                                @Valid MultipartFile resumeFile) {
+                                                @ValidPdfFile @RequestPart(name = "resume_file") MultipartFile resumeFile) {
         User user = userService.getLoginUser();
-        if (resumeRateLimitService.isLimited(user.getId())) {
+        if (resumeCreateLimitService.isLimited(user.getId())) {
             return CommonResponse.of(HttpStatus.TOO_MANY_REQUESTS, "[ERROR] 너무 빠르게 요청했습니다. 잠시 후 다시 시도하세요.", null);
         }
-        // 파일 유효성 검사 -> 나중에 vaildtor로 변경해서 유효성 검사할 예정
-        if (resumeFile.isEmpty()) {
-            throw new BusinessException(ErrorCode.RESUME_FILE_EMPTY);
-        }
-        if (!resumeFile.getContentType().equals("application/pdf")) {
-            throw new BusinessException(ErrorCode.RESUME_FILE_TYPE_NOT_ALLOWED);
-        }
-        // todo 유저 이름으로 객체 탐색
-        //        Optional<User> registrars = userService.findUserByName(createResumeReq.getUsername());
-        //        User registrar = null;
-        //        if (registrars.isPresent()) {registrar = registrars.get();}
 
         resumeCreateFacade.createResume(user, createResumeReq, resumeFile);
         return CommonResponse.of(SuccessCode.RESUME_CREATED, null);
