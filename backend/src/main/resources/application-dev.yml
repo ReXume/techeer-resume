@@ -1,0 +1,77 @@
+# Development Profile Configuration
+# 로컬 개발 환경용 설정 (Docker Compose dev 환경과 연동)
+spring:
+  #  profiles:
+  #    active: dev
+  config:
+    import: "optional:file:backend-secret.env[.properties]"
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/techeer?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    username: ${MYSQL_USER:sa}
+    password: ${MYSQL_PASSWORD:1234}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:1234}
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # 개발 시 테이블 재생성
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:dev-google-client-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:dev-google-client-secret}
+            scope:
+              - email
+              - profile
+            redirect-uri: ${GOOGLE_REDIRECT_URI:http://localhost:8080/login/oauth2/code/google}
+          github:
+            client-id: ${GITHUB_CLIENT_ID:dev-github-client-id}
+            client-secret: ${GITHUB_CLIENT_SECRET:dev-github-client-secret}
+            scope:
+              - user:email
+              - read:user
+            redirect-uri: ${GITHUB_REDIRECT_URI:http://localhost:8080/login/oauth2/code/github}
+
+# JWT 설정 (환경변수 우선, 기본값 제공)
+jwt:
+  secret: ${JWT_SECRET:ZGV2LXNlY3JldC1rZXktZm9yLWxvY2FsLWRldmVsb3BtZW50LW9ubHk=}
+  access:
+    expiration: ${JWT_ACCESS_EXPIRATION:3600000}
+    header: ${JWT_ACCESS_HEADER:Authorization}
+  refresh:
+    expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+    header: ${JWT_REFRESH_HEADER:Authorization-refresh}
+
+# AWS 설정 (로컬 개발 시 기본값 제공)
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY:dev-access-key}
+      secret-key: ${AWS_SECRET_KEY:dev-secret-key}
+    s3:
+      bucket: ${AWS_S3_BUCKET_NAME:dev-bucket}
+    region:
+      static: ${AWS_S3_REGION:ap-northeast-2}
+    stack:
+      auto: false
+
+# ChatGPT 설정 (환경변수 우선, 기본값 제공)
+chatgpt:
+  api:
+    key: ${GPT_API_KEY:dev-gpt-key}
+    url: ${GPT_API_URL:https://api.openai.com/v1/chat/completions}
