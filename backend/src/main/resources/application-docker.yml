@@ -1,0 +1,94 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 200MB
+
+  application:
+    name: backend
+
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://mysql:3306/techeer?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    username: ${MYSQL_USER:sa}
+    password: ${MYSQL_PASSWORD:1234}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+  config:
+    import: "optional:file:backend-secret.env[.properties]"
+
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope:
+              - user:email
+              - read:user
+            redirect-uri: ${GITHUB_REDIRECT_URI}
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    s3:
+      bucket: ${AWS_S3_BUCKET_NAME}
+    region:
+      static: ${AWS_S3_REGION}
+    stack:
+      auto: false
+
+jwt:
+  secret: ${JWT_SECRET:ZGV2LXNlY3JldC1rZXktZm9yLWxvY2FsLWRldmVsb3BtZW50LW9ubHk=}
+
+  access:
+    expiration: 3600000 # 1시간(60분) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
+    header: Authorization
+
+  refresh:
+    expiration: 604800000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 7(1주))
+    header: Authorization-refresh
+
+chatgpt:
+  api:
+    key: ${GPT_API_KEY}
+    url: ${GPT_API_URL}
