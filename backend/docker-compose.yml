@@ -1,38 +1,73 @@
+# Backend Development Environment
+# Spring Boot + MySQL + Redis for local development
+
+networks:
+  backend-network:
+    driver: bridge
+
 services:
-  db:
+  # MySQL Database
+  mysql:
     image: mysql:8.0
-    container_name: mysqldb
-    ports:
-      - "3306:3306"
+    container_name: techeer-mysql
+    restart: unless-stopped
     env_file:
       - backend-secret.env
+    ports:
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - backend-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
+  # Redis Cache
   redis:
-    image: redis:6.0
-    container_name: redis
+    image: redis:7-alpine
+    container_name: techeer-redis
+    restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    networks:
+      - backend-network
+    env_file:
+      - backend-secret.env
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 3s
+      retries: 5
 
+  # Spring Boot Application
   backend:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: backend
-    restart: always
-    depends_on:
-      - db
-      - redis
+    restart: unless-stopped
     env_file:
       - backend-secret.env
     ports:
       - "8080:8080"
-    # volumes:
-#      - ./logs:/var/log/spring-boot
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - backend-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
 volumes:
   mysql_data:
+    driver: local
   redis_data:
+    driver: local
