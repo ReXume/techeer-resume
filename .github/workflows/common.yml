@@ -23,10 +23,22 @@ on:
 env:
   # Common environment variables
   NODE_VERSION: ${{ inputs.node-version || '18' }}
-  JAVA_VERSION: ${{ inputs.java-version || '17' }}
+  JAVA_VERSION: ${{ inputs.java-version || '21' }}
   GRADLE_OPTS: -Dorg.gradle.daemon=false
   GRADLE_USER_HOME: ${{ github.workspace }}/.gradle
 
 jobs:
-  # This file contains reusable workflows that can be called from other workflows
-  # Individual workflows will be defined in separate files for better maintainability
+  setup-environment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure Node.js
+        if: inputs.node-version != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Configure Java
+        if: inputs.java-version != ''
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: temurin
