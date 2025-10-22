@@ -1,59 +1,59 @@
-# # Backend Java 컴파일 검증 워크플로우
-# # 라벨 기반 실행: ci:backend, ci:all, ci:quick
-# name: Backend Compile
+# Backend Java 컴파일 검증 워크플로우
+# 라벨 기반 실행: ci:backend, ci:all, ci:quick
+name: Backend Compile
 
-# on:
-#   pull_request:
-#     types: [opened, synchronize, labeled, unlabeled] # PR 생성, 업데이트, 라벨 변경 시 실행
-#     branches: [main, develop] # main, develop 브랜치 대상
+on:
+  pull_request:
+    types: [labeled, unlabeled] # 라벨 추가/제거 시에만 실행
+    branches: [main, develop] # main, develop 브랜치 대상
 
-# jobs:
-#   compile:
-#     runs-on: ubuntu-latest
-#     # 라벨 조건: ci:backend, ci:all, ci:quick 중 하나가 있어야 실행
-#     if: |
-#       contains(github.event.pull_request.labels.*.name, 'ci:backend') ||
-#       contains(github.event.pull_request.labels.*.name, 'ci:all') ||
-#       contains(github.event.pull_request.labels.*.name, 'ci:quick')
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    # 라벨 조건: ci:backend, ci:all, ci:quick 중 하나가 있어야 실행
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'ci:backend') ||
+      contains(github.event.pull_request.labels.*.name, 'ci:all') ||
+      contains(github.event.pull_request.labels.*.name, 'ci:quick')
 
-#     steps:
-#       # 1. 소스코드 체크아웃
-#       - name: Checkout code
-#         uses: actions/checkout@v4
+    steps:
+      # 1. 소스코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-#       # 2. Java 21 환경 설정
-#       - name: Set up JDK 21
-#         uses: actions/setup-java@v4
-#         with:
-#           java-version: "21"
-#           distribution: "temurin" # Eclipse Temurin JDK 사용
+      # 2. Java 21 환경 설정
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin" # Eclipse Temurin JDK 사용
 
-#       # 3. Gradle 캐시 설정 (빌드 속도 향상)
-#       - name: Cache Gradle packages
-#         uses: actions/cache@v4
-#         with:
-#           path: |
-#             ~/.gradle/caches
-#             ~/.gradle/wrapper
-#           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-#           restore-keys: |
-#             ${{ runner.os }}-gradle-
+      # 3. Gradle 캐시 설정 (빌드 속도 향상)
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-#       # 4. Gradle wrapper 실행 권한 부여
-#       - name: Make gradlew executable
-#         run: chmod +x backend/gradlew
+      # 4. Gradle wrapper 실행 권한 부여
+      - name: Make gradlew executable
+        run: chmod +x backend/gradlew
 
-#       # 5. Java 코드 컴파일 (의존성 다운로드 없이)
-#       - name: Compile Java code
-#         working-directory: ./backend
-#         run: ./gradlew compileJava --no-daemon
+      # 5. Java 코드 컴파일 (의존성 다운로드 없이)
+      - name: Compile Java code
+        working-directory: ./backend
+        run: ./gradlew compileJava --no-daemon
 
-#       # 6. 컴파일 결과 검증
-#       - name: Check for compilation errors
-#         working-directory: ./backend
-#         run: |
-#           if [ $? -ne 0 ]; then
-#             echo "Compilation failed"
-#             exit 1
-#           fi
-#           echo "Compilation successful"
+      # 6. 컴파일 결과 검증
+      - name: Check for compilation errors
+        working-directory: ./backend
+        run: |
+          if [ $? -ne 0 ]; then
+            echo "Compilation failed"
+            exit 1
+          fi
+          echo "Compilation successful"
