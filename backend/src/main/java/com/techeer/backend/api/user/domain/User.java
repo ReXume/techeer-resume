@@ -42,13 +42,8 @@ public class User extends BaseEntity {
     @Column(name = "refresh_token")
     private String refreshToken;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Resume> resumes = new ArrayList<>();
 //    @Column(name = "profile_image")
 //    private String profileImage;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Feedback> feedbacks = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bookmark> bookmarks = new ArrayList<>();
@@ -84,10 +79,5 @@ public class User extends BaseEntity {
         this.refreshToken = newRefreshToken;
         return oldRefreshToken;
     }
-
-    public void addResume(Resume resume) {
-        this.resumes.add(resume);
-    }
-
 
 }
