@@ -45,7 +45,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 : (String) attributes.get("name");
 
         if (userRepository.findByUsernameAndSocialType(username, extractAttributes.getSocialType()).isEmpty()) {
-            userService.CreateRegularUser(attributes, username, extractAttributes.getSocialType());
+            userService.createRegularUser(attributes, username, extractAttributes.getSocialType());
         }
 
         // DefaultOAuth2User를 구현한 CustomOAuth2User 객체를 생성해서 반환

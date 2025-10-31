@@ -21,6 +21,9 @@ public enum ErrorCode {
     // User Error
     USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "USER_401", "로그인 정보가 없습니다."),
     USER_NOT_AUTHENTICATED(HttpStatus.UNAUTHORIZED, "USER_401", "로그인 하지 않았습니다."),
+    USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER_409", "이미 존재하는 이메일입니다."),
+    USER_PASSWORD_MISMATCH(HttpStatus.UNAUTHORIZED, "USER_401", "비밀번호가 일치하지 않습니다."),
+    USER_SOCIAL_LOGIN_ONLY(HttpStatus.BAD_REQUEST, "USER_400", "소셜 로그인 사용자는 자체 로그인을 사용할 수 없습니다."),
 
     // Token Error
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN_401", "리프레시 토큰이 유효하지 않습니다.")

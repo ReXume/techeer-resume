@@ -1,5 +1,5 @@
 package com.techeer.backend.api.user.domain;
 
 public enum Role {
-    REGULAR, PREMIUM, ADMIN
+    ADMIN, REGULAR, PREMIUM, HR
 }

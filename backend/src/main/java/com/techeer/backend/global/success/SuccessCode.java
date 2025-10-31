@@ -15,6 +15,8 @@ public enum SuccessCode implements BaseStatus {
     NO_CONTENT(HttpStatus.NO_CONTENT, "COMMON_204", "성공적으로 삭제되었습니다."),
 
     // User Success
+    USER_REGISTER_SUCCESS(HttpStatus.CREATED, "USER_201", "회원가입이 완료되었습니다."),
+    USER_LOGIN_SUCCESS(HttpStatus.OK, "USER_200", "로그인에 성공했습니다."),
     USER_FETCH_OK(HttpStatus.OK, "USER_200", "유저 정보 조회 성공"),
     USER_ADDITIONAL_INFO_OK(HttpStatus.OK, "USER_201", "유저 추가정보 입력 성공"),
     USER_LOGOUT_OK(HttpStatus.OK, "USER_200", "유저 로그아웃 성공"),
