@@ -32,9 +32,9 @@ public class S3Uploader {
     public String uploadPdf(MultipartFile multipartFile) {
         String originalFileName = multipartFile.getOriginalFilename();
         String s3PdfName = UUID.randomUUID().toString().substring(0, 10) + "_" + originalFileName;
-        String s3Key = "resume/" + s3PdfName;
+        String s3Key = "files/" + s3PdfName;
         String fileUrl = uploadToS3(multipartFile, s3Key);
-        log.info("resume_pdf_url length: {}", fileUrl.length());
+        log.info("file_url length: {}", fileUrl.length());
         return fileUrl;
     }
 
@@ -85,7 +85,7 @@ public class S3Uploader {
             return s3Object.getObjectContent();
         } catch (Exception e) {
             log.error("Error retrieving file from S3. Bucket: '{}', Key: '{}'", bucketName, key, e);
-            throw new BusinessException(ErrorCode.RESUME_UPLOAD_ERROR);
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 

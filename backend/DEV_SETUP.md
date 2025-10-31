@@ -3,7 +3,8 @@
 ## 1. 환경 변수 설정
 
 ```bash
-backend-secret.env 파일 생성
+# backend-secret.env 파일 생성
+-> secret 
 ```
 
 ## 2. 데이터베이스 실행 (Docker)
