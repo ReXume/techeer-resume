@@ -2,7 +2,6 @@ package com.techeer.backend.global.jwt.service;
 
 import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.repository.UserRepository;
-import com.techeer.backend.global.redis.RedisService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -49,7 +48,6 @@ public class JwtService {
     private static final String BEARER = "Bearer ";
 
     private final UserRepository userRepository;
-    private final RedisService redisService;
 
     private Key key;
 
@@ -74,12 +72,8 @@ public class JwtService {
 
     public String reIssueRefreshToken(User user) {
         String reIssuedRefreshToken = this.createRefreshToken();
-        String oldRefreshToken= user.updateRefreshToken(reIssuedRefreshToken);
-
-        if (oldRefreshToken != null) {redisService.deleteCacheRefreshToken(oldRefreshToken);}
+        user.updateRefreshToken(reIssuedRefreshToken);
         userRepository.saveAndFlush(user);
-
-        redisService.cacheRefreshToken(reIssuedRefreshToken);
         return reIssuedRefreshToken;
     }
 
@@ -124,16 +118,18 @@ public class JwtService {
 
     public boolean isRefreshTokenValid(String refreshToken) {
         // 만료시간 검증
-        //if(isTokenExpired(refreshToken)) {return false;}
-
-        // cache에 refreshToken이 유효성 검증
-        String userRefreshToken = redisService.refreshTokenGet(refreshToken);
-        if (userRefreshToken != null) {return userRefreshToken.equals(refreshToken);}
+        if(isTokenExpired(refreshToken)) {
+            return false;
+        }
 
         // DB에 refreshToken이 유효성 검증
         Optional<User> user = userRepository.findByRefreshToken(refreshToken);
-        userRefreshToken = user.get().getRefreshToken();
-        return userRefreshToken.equals(refreshToken);
+        if (user.isEmpty()) {
+            return false;
+        }
+        
+        String userRefreshToken = user.get().getRefreshToken();
+        return userRefreshToken != null && userRefreshToken.equals(refreshToken);
     }
 
     public boolean isTokenExpired(String token) {

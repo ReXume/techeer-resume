@@ -25,11 +25,14 @@ public class User extends BaseEntity {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "username")
     private String username;
+
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "refresh_token")
     private String refreshToken;
@@ -42,13 +45,14 @@ public class User extends BaseEntity {
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "social_type")
+    @Column(name = "social_type", nullable = true)
     private SocialType socialType;
 
     @Builder
-    public User(String email, String username, String refreshToken, Role role, SocialType socialType) {
+    public User(String email, String username, String password, String refreshToken, Role role, SocialType socialType) {
         this.email = email;
         this.username = username;
+        this.password = password;
         this.refreshToken = refreshToken;
         this.role = role;
         this.socialType = socialType;

@@ -1,6 +1,7 @@
 package com.techeer.backend.global.dto;
 
 import com.techeer.backend.global.error.ErrorCode;
+import com.techeer.backend.global.success.SuccessCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,70 +24,18 @@ public class ApiResponse<T> {
     private String errorCode;
     private LocalDateTime timestamp;
     
-    public static <T> ApiResponse<T> success(T data) {
+    public static <T> ApiResponse<T> success(SuccessCode successCode) {
         return ApiResponse.<T>builder()
                 .success(true)
-                .data(data)
+                .message(successCode.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
     
-    public static <T> ApiResponse<T> success(T data, String message) {
+    public static <T> ApiResponse<T> success(SuccessCode successCode, T data) {
         return ApiResponse.<T>builder()
                 .success(true)
-                .message(message)
-                .data(data)
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
-    
-    public static <T> ApiResponse<T> success(String message) {
-        return ApiResponse.<T>builder()
-                .success(true)
-                .message(message)
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
-    
-    public static <T> ApiResponse<T> created(T data, String message) {
-        return ApiResponse.<T>builder()
-                .success(true)
-                .message(message)
-                .data(data)
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
-    
-    public static <T> ApiResponse<T> noContent(String message) {
-        return ApiResponse.<T>builder()
-                .success(true)
-                .message(message)
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
-    
-    public static <T> ApiResponse<T> error(String message) {
-        return ApiResponse.<T>builder()
-                .success(false)
-                .message(message)
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
-    
-    public static <T> ApiResponse<T> error(String message, String errorCode) {
-        return ApiResponse.<T>builder()
-                .success(false)
-                .message(message)
-                .errorCode(errorCode)
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
-    
-    public static <T> ApiResponse<T> error(String message, String errorCode, T data) {
-        return ApiResponse.<T>builder()
-                .success(false)
-                .message(message)
-                .errorCode(errorCode)
+                .message(successCode.getMessage())
                 .data(data)
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -107,15 +56,6 @@ public class ApiResponse<T> {
                 .message(errorCode.getMessage())
                 .errorCode(errorCode.getCode())
                 .data(data)
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
-    
-    public static <T> ApiResponse<T> error(ErrorCode errorCode, String customMessage) {
-        return ApiResponse.<T>builder()
-                .success(false)
-                .message(customMessage)
-                .errorCode(errorCode.getCode())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
