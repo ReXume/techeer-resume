@@ -42,12 +42,7 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
         // 백엔드 배포 테스트v1
         config.setAllowedOrigins(
-                List.of("http://localhost:8080", "http://localhost:5173",
-                        "http://backend:8080", "http://backend:5173",
-                        "http://api.rexume.site", "http://52.78.85.237",
-                        "http://rexume.site", "http://www.rexume.site",
-                        "https://rexume.site", "https://www.rexume.site",
-                        "https://api.rexume.site"
+                List.of("http://localhost:8080", "http://localhost:5173"
                 ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

@@ -10,7 +10,7 @@ import com.techeer.backend.api.feedback.dto.response.FeedbackResponse;
 import com.techeer.backend.api.feedback.service.FeedbackService;
 import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.service.UserService;
-import com.techeer.backend.global.common.response.CommonResponse;
+import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +40,7 @@ public class FeedbackController {
 
     @Operation(summary = "피드백 등록", description = "원하는 위치(또는 영역)에 피드백을 작성합니다.")
     @PostMapping("/{resume_id}/feedbacks")
-    public CommonResponse<FeedbackResponse> createFeedback(
+    public ResponseEntity<ApiResponse<FeedbackResponse>> createFeedback(
             @PathVariable("resume_id") Long resumeId,
             @Valid @RequestBody FeedbackCreateRequest feedbackRequest) {
 
@@ -55,7 +56,7 @@ public class FeedbackController {
 
         log.info("피드백 생성 완료: {}", feedbackResponse);
 
-        return CommonResponse.of(SuccessCode.CREATED, feedbackResponse);
+        return ResponseEntity.ok(ApiResponse.created(feedbackResponse, SuccessCode.CREATED.getMessage()));
     }
 
     /**
@@ -65,7 +66,7 @@ public class FeedbackController {
     @Operation(summary = "AI 피드백, 일반 피드백 조회",
             description = "해당 이력서의 모든 일반 피드백과 AI 피드백을 조회합니다.")
     @GetMapping("/{resume_id}/feedbacks")
-    public CommonResponse<AllFeedbackResponse> getAllFeedbackWithAIFeedback(
+    public ResponseEntity<ApiResponse<AllFeedbackResponse>> getAllFeedbackWithAIFeedback(
             @PathVariable("resume_id") Long resumeId) {
 
         // 일반 피드백 조회 (이력서 ID 기준)
@@ -77,12 +78,12 @@ public class FeedbackController {
         // 두 결과를 하나의 DTO로 변환
         AllFeedbackResponse response = FeedbackConverter.toAllFeedbackResponse(feedbacks, aiFeedback);
 
-        return CommonResponse.of(SuccessCode.FEEDBACK_FETCH_OK, response);
+        return ResponseEntity.ok(ApiResponse.success(response, SuccessCode.FEEDBACK_FETCH_OK.getMessage()));
     }
 
     @Operation(summary = "피드백 삭제")
     @DeleteMapping("/{resume_id}/feedbacks/{feedback_id}")
-    public CommonResponse<Void> deleteFeedback(
+    public ResponseEntity<ApiResponse<Void>> deleteFeedback(
             @PathVariable("resume_id") Long resumeId,
             @PathVariable("feedback_id") Long feedbackId) {
 
@@ -92,6 +93,6 @@ public class FeedbackController {
 
         feedbackService.deleteFeedbackById(user, resumeId, feedbackId);
 
-        return CommonResponse.of(SuccessCode.NO_CONTENT, null);
+        return ResponseEntity.ok(ApiResponse.noContent(SuccessCode.NO_CONTENT.getMessage()));
     }
 }
