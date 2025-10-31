@@ -68,14 +68,6 @@ public class SecurityConfig {
 //                        .anyRequest().permitAll()
 //                )
                 .authorizeHttpRequests(authorize -> authorize
-
-                        // 특정 엔드포인트에서 GET 요청만 허용
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/v1/resumes",
-                                "/api/v1/resumes/view",
-                                "/api/v1/resumes/search/**"
-                        ).permitAll()
-
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/oauth2/**",
