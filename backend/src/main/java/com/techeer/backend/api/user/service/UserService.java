@@ -15,6 +15,7 @@ import java.util.Map;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -133,11 +134,24 @@ public class UserService {
     /**
      * 현재 로그인한 사용자 조회
      * SecurityContext에서 인증 정보를 가져와 사용자 엔티티 반환
+     * 
+     * 보안: 인증되지 않은 요청에 대해 명시적 검증을 수행하여
+     * NullPointerException이나 ClassCastException을 방지합니다.
      */
     public User getLoginUser() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        // 인증 정보가 없거나 인증되지 않은 경우
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getPrincipal())) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+
+        // Principal이 UserDetails 타입인지 확인
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof UserDetails userDetails)) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
         
         String email = userDetails.getUsername();
         log.debug("현재 로그인한 사용자 조회: email={}", email);
