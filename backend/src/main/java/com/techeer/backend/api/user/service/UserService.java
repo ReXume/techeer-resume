@@ -44,6 +44,7 @@ public class UserService {
     /**
      * 자체 회원가입 (이메일/비밀번호)
      * 비즈니스 로직: 이메일 중복 확인, 비밀번호 암호화, 사용자 생성
+     * 보안: 자체 회원가입 시 항상 REGULAR 역할로 고정하여 권한 상승 방지
      */
     @Transactional
     public void register(RegisterRequest request) {
@@ -57,13 +58,13 @@ public class UserService {
                 .email(request.getEmail())
                 .username(request.getUsername())
                 .password(encodedPassword)
-                .role(request.getRole())
+                .role(Role.REGULAR) // 자체 회원가입 시 항상 REGULAR 역할 부여
                 .socialType(null)
                 .build();
 
         // 새로운 엔티티이므로 save() 필요
         userRepository.save(user);
-        log.info("새로운 사용자 가입 완료: email={}, role={}", request.getEmail(), request.getRole());
+        log.info("새로운 사용자 가입 완료: email={}, role=REGULAR", request.getEmail());
     }
 
     /**
