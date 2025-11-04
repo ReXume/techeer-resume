@@ -128,8 +128,8 @@ public class JwtService {
             return false;
         }
         
-        String userRefreshToken = user.get().getRefreshToken();
-        return userRefreshToken != null && userRefreshToken.equals(refreshToken);
+        return user.get().getRefreshToken() != null 
+            && user.get().getRefreshToken().equals(refreshToken);
     }
 
     public boolean isTokenExpired(String token) {
