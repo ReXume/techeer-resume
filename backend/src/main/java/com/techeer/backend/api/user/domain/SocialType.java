@@ -7,5 +7,5 @@ public enum SocialType {
     GITHUB,
     GOOGLE,
     KAKAO,
-    LinkEDIN
+    LINKEDIN
 }
