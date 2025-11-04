@@ -149,6 +149,9 @@ public class UserService {
     /**
      * 액세스 토큰 재발급
      * 비즈니스 로직: RefreshToken 검증, AccessToken 재발급, RefreshToken 갱신, 쿠키 설정
+     * 
+     * 주의: AccessToken이 만료된 상태에서 호출되므로 SecurityContext에서 사용자를
+     * 조회할 수 없습니다. 따라서 RefreshToken으로 DB에서 사용자를 조회합니다.
      */
     @Transactional
     public void reissueAccessToken(String refreshToken, HttpServletResponse response) {
@@ -157,7 +160,14 @@ public class UserService {
             throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        User user = this.getLoginUser();
+        // RefreshToken으로 사용자 조회 (AccessToken이 만료되어 SecurityContext에 없을 수 있음)
+        User user = userRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN));
+        
+        // DB의 RefreshToken과 일치하는지 한 번 더 확인
+        if (!refreshToken.equals(user.getRefreshToken())) {
+            throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
         
         // 새로운 AccessToken 생성
         String accessToken = jwtService.createAccessToken(user.getEmail());
