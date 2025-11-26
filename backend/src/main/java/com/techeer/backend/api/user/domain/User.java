@@ -2,7 +2,10 @@ package com.techeer.backend.api.user.domain;
 
 import com.techeer.backend.api.user.dto.request.SignUpRequest;
 import com.techeer.backend.global.common.BaseEntity;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -37,8 +40,14 @@ public class User extends BaseEntity {
     @Column(name = "refresh_token")
     private String refreshToken;
 
-//    @Column(name = "profile_image")
-//    private String profileImage;
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "fileUrl", column = @Column(name = "profile_image_url", columnDefinition = "TEXT")),
+        @AttributeOverride(name = "fileType", column = @Column(name = "profile_image_type")),
+        @AttributeOverride(name = "fileName", column = @Column(name = "profile_image_name")),
+        @AttributeOverride(name = "fileUUID", column = @Column(name = "profile_image_uuid"))
+    })
+    private File profileImage;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
@@ -49,11 +58,12 @@ public class User extends BaseEntity {
     private SocialType socialType;
 
     @Builder
-    public User(String email, String username, String password, String refreshToken, Role role, SocialType socialType) {
+    public User(String email, String username, String password, String refreshToken, File profileImage, Role role, SocialType socialType) {
         this.email = email;
         this.username = username;
         this.password = password;
         this.refreshToken = refreshToken;
+        this.profileImage = profileImage;
         this.role = role;
         this.socialType = socialType;
     }
@@ -71,6 +81,10 @@ public class User extends BaseEntity {
         String oldRefreshToken = this.refreshToken;
         this.refreshToken = newRefreshToken;
         return oldRefreshToken;
+    }
+
+    public void updateProfileImage(File profileImage) {
+        this.profileImage = profileImage;
     }
 
 }
