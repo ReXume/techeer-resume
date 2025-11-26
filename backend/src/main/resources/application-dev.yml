@@ -28,6 +28,11 @@ spring:
         use_sql_comments: true
         dialect: org.hibernate.dialect.MySQLDialect
 
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
   security:
     oauth2:
       client:
@@ -57,21 +62,15 @@ jwt:
     expiration: ${JWT_REFRESH_EXPIRATION:604800000}
     header: ${JWT_REFRESH_HEADER:Authorization-refresh}
 
-# AWS 설정 (로컬 개발 시 기본값 제공)
-cloud:
-  aws:
-    credentials:
-      access-key: ${AWS_ACCESS_KEY:dev-access-key}
-      secret-key: ${AWS_SECRET_KEY:dev-secret-key}
-    s3:
-      bucket: ${AWS_S3_BUCKET_NAME:dev-bucket}
-    region:
-      static: ${AWS_S3_REGION:ap-northeast-2}
-    stack:
-      auto: false
-
-# ChatGPT 설정 (환경변수 우선, 기본값 제공)
-chatgpt:
-  api:
-    key: ${GPT_API_KEY:dev-gpt-key}
-    url: ${GPT_API_URL:https://api.openai.com/v1/chat/completions}
+# Google Cloud Storage 설정
+gcp:
+  project-id: ${GCP_PROJECT_ID}
+  service-account:
+    key-path: ${GCP_SERVICE_ACCOUNT_KEY_PATH}
+  gcs:
+    bucket: ${GCS_BUCKET_NAME}
+    region: ${GCS_REGION}
+    folders:
+      profile: ${GCS_PROFILE_FOLDER}
+      document: ${GCS_DOCUMENT_FOLDER}
+      verification: ${GCS_VERIFICATION_FOLDER}
