@@ -20,9 +20,15 @@ public enum SuccessCode implements BaseStatus {
     USER_FETCH_OK(HttpStatus.OK, "USER_200", "유저 정보 조회 성공"),
     USER_ADDITIONAL_INFO_OK(HttpStatus.OK, "USER_201", "유저 추가정보 입력 성공"),
     USER_LOGOUT_OK(HttpStatus.OK, "USER_200", "유저 로그아웃 성공"),
+    USER_PROFILE_IMAGE_UPDATE_OK(HttpStatus.OK, "USER_200", "프로필 이미지가 업데이트되었습니다."),
 
     // Token Success
-    TOKEN_REISSUE_OK(HttpStatus.OK, "TOKEN_200", "토큰 재발급 성공")
+    TOKEN_REISSUE_OK(HttpStatus.OK, "TOKEN_200", "토큰 재발급 성공"),
+
+    // File Success
+    FILE_UPLOAD_SUCCESS(HttpStatus.OK, "FILE_200", "파일 업로드가 완료되었습니다."),
+    FILE_DELETE_SUCCESS(HttpStatus.OK, "FILE_200", "파일 삭제가 완료되었습니다."),
+    FILE_DOWNLOAD_SUCCESS(HttpStatus.OK, "FILE_200", "파일 다운로드가 완료되었습니다.")
     ;
 
     private final HttpStatus httpStatus;
