@@ -6,10 +6,15 @@ import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.dto.request.LoginRequest;
 import com.techeer.backend.api.user.dto.request.RegisterRequest;
 import com.techeer.backend.api.user.dto.request.SignUpRequest;
+import com.techeer.backend.api.user.domain.File;
+import com.techeer.backend.api.user.domain.FileType;
 import com.techeer.backend.api.user.repository.UserRepository;
 import com.techeer.backend.global.error.ErrorCode;
 import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.jwt.service.JwtService;
+import com.techeer.backend.infra.gcp.FileMetadata;
+import com.techeer.backend.infra.gcp.FileTypeMapper;
+import com.techeer.backend.infra.gcp.GcsUploader;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import lombok.AccessLevel;
@@ -21,6 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
@@ -30,6 +36,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final GcsUploader gcsUploader;
+    private final FileTypeMapper fileTypeMapper;
 
     /**
      * 사용자 추가 정보 입력
@@ -59,6 +67,8 @@ public class UserService {
                 .email(request.getEmail())
                 .username(request.getUsername())
                 .password(encodedPassword)
+                .refreshToken(null)
+                .profileImage(null)
                 .role(Role.REGULAR) // 자체 회원가입 시 항상 REGULAR 역할 부여
                 .socialType(null)
                 .build();
@@ -111,6 +121,9 @@ public class UserService {
         User user = User.builder()
                 .email(email)
                 .username(name)
+                .password(null)
+                .refreshToken(null)
+                .profileImage(null)
                 .socialType(socialType)
                 .role(Role.REGULAR)
                 .build();
@@ -217,6 +230,7 @@ public class UserService {
                 .username("mock")
                 .password(null)
                 .refreshToken(refreshToken)
+                .profileImage(null)
                 .role(Role.REGULAR)
                 .socialType(SocialType.GOOGLE)
                 .build();
@@ -253,5 +267,75 @@ public class UserService {
         if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
             throw new BusinessException(ErrorCode.USER_PASSWORD_MISMATCH);
         }
+    }
+
+    /**
+     * 프로필 이미지 업데이트
+     * 비즈니스 로직: 현재 로그인한 사용자의 프로필 이미지를 GCS에 업로드하고 File 객체로 저장
+     * 기존 프로필 이미지가 있으면 GCS에서 삭제
+     */
+    @Transactional
+    public String updateProfileImage(MultipartFile file) {
+        User user = this.getLoginUser();
+        
+        // 기존 프로필 이미지가 있으면 GCS에서 삭제
+        if (user.getProfileImage() != null && user.getProfileImage().getFileUrl() != null 
+            && !user.getProfileImage().getFileUrl().isEmpty()) {
+            String oldImageUrl = user.getProfileImage().getFileUrl();
+            String oldGcsPath = extractGcsPathFromUrl(oldImageUrl);
+            if (oldGcsPath != null) {
+                gcsUploader.deleteFile(oldGcsPath);
+                log.info("기존 프로필 이미지 삭제 완료: gcsPath={}", oldGcsPath);
+            }
+        }
+        
+        // 새로운 프로필 이미지 업로드
+        FileMetadata fileMetadata = gcsUploader.uploadProfileImage(file, user.getId());
+        FileType fileType = fileTypeMapper.determineFileType(fileMetadata.getContentType());
+        
+        // File 객체 생성
+        File profileImage = File.builder()
+                .fileUrl(fileMetadata.getFileUrl())
+                .fileType(fileType)
+                .fileName(fileMetadata.getFileName())
+                .fileUUID(fileMetadata.getFileUUID())
+                .build();
+        
+        // 사용자 엔티티에 프로필 이미지 저장
+        user.updateProfileImage(profileImage);
+        // @Transactional 내에서 엔티티 수정 시 변경 감지로 자동 저장
+        
+        log.info("프로필 이미지 업데이트 완료: userId={}, profileImageUrl={}, fileType={}", 
+            user.getId(), fileMetadata.getFileUrl(), fileType);
+        
+        return fileMetadata.getFileUrl();
+    }
+
+    /**
+     * GCS URL에서 경로 추출
+     * 예: https://storage.googleapis.com/download/storage/v1/b/bucket/o/profile%2Ffilename.png?generation=...
+     * -> profile/filename.png
+     */
+    private String extractGcsPathFromUrl(String url) {
+        if (url == null || url.isEmpty()) {
+            return null;
+        }
+        
+        // URL에서 "o/" 다음 부분 추출
+        int oIndex = url.indexOf("/o/");
+        if (oIndex == -1) {
+            return null;
+        }
+        
+        String pathPart = url.substring(oIndex + 3);
+        
+        // 쿼리 파라미터 제거
+        int queryIndex = pathPart.indexOf("?");
+        if (queryIndex != -1) {
+            pathPart = pathPart.substring(0, queryIndex);
+        }
+        
+        // URL 디코딩 (%2F -> /)
+        return java.net.URLDecoder.decode(pathPart, java.nio.charset.StandardCharsets.UTF_8);
     }
 }
