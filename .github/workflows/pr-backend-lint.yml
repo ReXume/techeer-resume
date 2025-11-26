@@ -36,6 +36,10 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x backend/gradlew
 
+      - name: Check Spring Java Format
+        working-directory: ./backend
+        run: ./gradlew checkFormat --no-daemon
+
       - name: Run Checkstyle
         working-directory: ./backend
         run: ./gradlew checkstyleMain checkstyleTest --no-daemon
