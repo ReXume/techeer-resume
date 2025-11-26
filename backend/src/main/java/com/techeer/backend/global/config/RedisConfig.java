@@ -10,26 +10,28 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 @Configuration
 public class RedisConfig {
-    @Value("${spring.data.redis.port}")
-    private int redisPort;
 
-    @Value("${spring.data.redis.host}")
-    private String redisHost;
+	@Value("${spring.data.redis.port}")
+	private int redisPort;
 
-    @Value("${spring.data.redis.password}")
-    private String redisPassword;
+	@Value("${spring.data.redis.host}")
+	private String redisHost;
 
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName(redisHost);
-        redisStandaloneConfiguration.setPort(redisPort);
-        redisStandaloneConfiguration.setPassword(redisPassword);
-        return new LettuceConnectionFactory(redisStandaloneConfiguration);
-    }
+	@Value("${spring.data.redis.password}")
+	private String redisPassword;
 
-    @Bean
-    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
-        return new StringRedisTemplate(connectionFactory);
-    }
+	@Bean
+	public RedisConnectionFactory redisConnectionFactory() {
+		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+		redisStandaloneConfiguration.setHostName(redisHost);
+		redisStandaloneConfiguration.setPort(redisPort);
+		redisStandaloneConfiguration.setPassword(redisPassword);
+		return new LettuceConnectionFactory(redisStandaloneConfiguration);
+	}
+
+	@Bean
+	public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+		return new StringRedisTemplate(connectionFactory);
+	}
+
 }

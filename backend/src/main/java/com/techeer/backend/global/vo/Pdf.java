@@ -14,29 +14,32 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Pdf {
 
-    private String pdfUrl;
-    private String pdfName;
-    private String pdfUUID;
+	private String pdfUrl;
 
-    public void setUrl(String url) {
-        this.pdfUrl = url;
-    }
+	private String pdfName;
 
-    @Override
-    public int hashCode() {
-        return pdfUUID.hashCode();
-    }
+	private String pdfUUID;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
+	public void setUrl(String url) {
+		this.pdfUrl = url;
+	}
 
-        Pdf pdf = (Pdf) obj;
-        return pdfUUID.equals(pdf.pdfUUID);
-    }
+	@Override
+	public int hashCode() {
+		return pdfUUID.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+
+		Pdf pdf = (Pdf) obj;
+		return pdfUUID.equals(pdf.pdfUUID);
+	}
+
 }

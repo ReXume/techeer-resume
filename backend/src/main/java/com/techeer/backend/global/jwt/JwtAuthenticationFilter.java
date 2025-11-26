@@ -22,66 +22,67 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
-    private final UserRepository userRepository;
+	private final JwtService jwtService;
 
-    private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
+	private final UserRepository userRepository;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        String requestURI = request.getRequestURI();
+	private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
-        // 특정 경로 이외에는 필터를 건너뜀
-        if (!requestURI.startsWith("/api/v1/")) {
-            //log.info("requestURI: {}", requestURI);
-            filterChain.doFilter(request, response);
-            return;
-        }
-        log.info("requestURI: {}", requestURI);
-        checkAccessTokenAndAuthentication(request, response, filterChain);
-    }
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		String requestURI = request.getRequestURI();
 
-    public void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                                  FilterChain filterChain) throws ServletException, IOException {
-        log.info("checkAccessTokenAndAuthentication() 호출");
-        jwtService.extractAccessTokenFromCookie(request)
-                .filter(jwtService::isAccessTokenValid)
-                .ifPresent(accessToken -> {
-                    log.info("유효한 Access Token이 발견되었습니다: {}", accessToken);
+		// 특정 경로 이외에는 필터를 건너뜀
+		if (!requestURI.startsWith("/api/v1/")) {
+			// log.info("requestURI: {}", requestURI);
+			filterChain.doFilter(request, response);
+			return;
+		}
+		log.info("requestURI: {}", requestURI);
+		checkAccessTokenAndAuthentication(request, response, filterChain);
+	}
 
-                    // 이메일 및 소셜 타입 추출
-                    Object[] emailAndSocialType = jwtService.extractEmailAndSocialType(accessToken);
-                    if (emailAndSocialType.length >= 1) {
-                        String email = (String) emailAndSocialType[0];
-                        log.info("이메일이 추출되었습니다: {}", email);
+	public void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,
+			FilterChain filterChain) throws ServletException, IOException {
+		log.info("checkAccessTokenAndAuthentication() 호출");
+		jwtService.extractAccessTokenFromCookie(request)
+			.filter(jwtService::isAccessTokenValid)
+			.ifPresent(accessToken -> {
+				log.info("유효한 Access Token이 발견되었습니다: {}", accessToken);
 
-                        // 사용자 정보 조회
-                        userRepository.findByEmail(email)
-                                .ifPresent(user -> {
-                                    log.info("사용자 정보가 발견되었습니다: {}", user);
-                                    saveAuthentication(user);
-                                    log.info("사용자 인증 정보가 저장되었습니다: {}", user);
-                                });
-                    } else {
-                        log.warn("이메일 추출 실패. 반환된 배열 길이: {}", emailAndSocialType.length);
-                    }
-                });
-        filterChain.doFilter(request, response);
-    }
+				// 이메일 및 소셜 타입 추출
+				Object[] emailAndSocialType = jwtService.extractEmailAndSocialType(accessToken);
+				if (emailAndSocialType.length >= 1) {
+					String email = (String) emailAndSocialType[0];
+					log.info("이메일이 추출되었습니다: {}", email);
 
-    public void saveAuthentication(User user) {
+					// 사용자 정보 조회
+					userRepository.findByEmail(email).ifPresent(user -> {
+						log.info("사용자 정보가 발견되었습니다: {}", user);
+						saveAuthentication(user);
+						log.info("사용자 인증 정보가 저장되었습니다: {}", user);
+					});
+				}
+				else {
+					log.warn("이메일 추출 실패. 반환된 배열 길이: {}", emailAndSocialType.length);
+				}
+			});
+		filterChain.doFilter(request, response);
+	}
 
-        UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
-                .password("Google")
-                .roles(user.getRole().name())
-                .build();
+	public void saveAuthentication(User user) {
 
-        Authentication authentication =
-                new UsernamePasswordAuthenticationToken(userDetailsUser, null,
-                        authoritiesMapper.mapAuthorities(userDetailsUser.getAuthorities()));
+		UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
+			.username(user.getEmail())
+			.password("Google")
+			.roles(user.getRole().name())
+			.build();
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
+		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsUser, null,
+				authoritiesMapper.mapAuthorities(userDetailsUser.getAuthorities()));
+
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+	}
+
 }

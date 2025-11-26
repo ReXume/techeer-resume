@@ -11,21 +11,21 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @SpringBootTest
 public class UserServiceTest {
 
-    @MockBean
-    private UserRepository userRepository;
+	@MockBean
+	private UserRepository userRepository;
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @Test
-    @DisplayName("리프레시 토큰 재발급 테스트")
-    public void RefrashTokenReIssueTest() {
-        // given
-        
-        // when
+	@Test
+	@DisplayName("리프레시 토큰 재발급 테스트")
+	public void RefrashTokenReIssueTest() {
+		// given
 
-        // then
+		// when
 
-    }
+		// then
+
+	}
 
 }

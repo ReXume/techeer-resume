@@ -4,8 +4,7 @@ import lombok.ToString;
 
 @ToString
 public enum SocialType {
-    GITHUB,
-    GOOGLE,
-    KAKAO,
-    LINKEDIN
+
+	GITHUB, GOOGLE, KAKAO, LINKEDIN
+
 }
