@@ -6,9 +6,13 @@ import lombok.Getter;
 @Getter
 @Builder
 public class FileMetadata {
-    private String fileUrl;
-    private String fileName;
-    private String fileUUID;
-    private String contentType;
-}
 
+	private String fileUrl;
+
+	private String fileName;
+
+	private String fileUUID;
+
+	private String contentType;
+
+}

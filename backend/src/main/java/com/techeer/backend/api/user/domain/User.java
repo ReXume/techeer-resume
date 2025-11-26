@@ -23,68 +23,70 @@ import lombok.RequiredArgsConstructor;
 @Table(name = "`User`")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
 
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "user_id")
+	private Long id;
 
-    @Column(name = "username")
-    private String username;
+	@Column(name = "email", nullable = false, unique = true)
+	private String email;
 
-    @Column(name = "password")
-    private String password;
+	@Column(name = "username")
+	private String username;
 
-    @Column(name = "refresh_token")
-    private String refreshToken;
+	@Column(name = "password")
+	private String password;
 
-    @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name = "fileUrl", column = @Column(name = "profile_image_url", columnDefinition = "TEXT")),
-        @AttributeOverride(name = "fileType", column = @Column(name = "profile_image_type")),
-        @AttributeOverride(name = "fileName", column = @Column(name = "profile_image_name")),
-        @AttributeOverride(name = "fileUUID", column = @Column(name = "profile_image_uuid"))
-    })
-    private File profileImage;
+	@Column(name = "refresh_token")
+	private String refreshToken;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private Role role;
+	@Embedded
+	@AttributeOverrides({
+			@AttributeOverride(name = "fileUrl",
+					column = @Column(name = "profile_image_url", columnDefinition = "TEXT")),
+			@AttributeOverride(name = "fileType", column = @Column(name = "profile_image_type")),
+			@AttributeOverride(name = "fileName", column = @Column(name = "profile_image_name")),
+			@AttributeOverride(name = "fileUUID", column = @Column(name = "profile_image_uuid")) })
+	private File profileImage;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "social_type", nullable = true)
-    private SocialType socialType;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "role")
+	private Role role;
 
-    @Builder
-    public User(String email, String username, String password, String refreshToken, File profileImage, Role role, SocialType socialType) {
-        this.email = email;
-        this.username = username;
-        this.password = password;
-        this.refreshToken = refreshToken;
-        this.profileImage = profileImage;
-        this.role = role;
-        this.socialType = socialType;
-    }
+	@Enumerated(EnumType.STRING)
+	@Column(name = "social_type", nullable = true)
+	private SocialType socialType;
 
-    public void updateUser(SignUpRequest req) {
-        this.username = req.getUsername();
-        this.role = req.getRole();
-    }
+	@Builder
+	public User(String email, String username, String password, String refreshToken, File profileImage, Role role,
+			SocialType socialType) {
+		this.email = email;
+		this.username = username;
+		this.password = password;
+		this.refreshToken = refreshToken;
+		this.profileImage = profileImage;
+		this.role = role;
+		this.socialType = socialType;
+	}
 
-    public void onLogout() {
-        this.refreshToken = null;
-    }
+	public void updateUser(SignUpRequest req) {
+		this.username = req.getUsername();
+		this.role = req.getRole();
+	}
 
-    public String updateRefreshToken(String newRefreshToken) {
-        String oldRefreshToken = this.refreshToken;
-        this.refreshToken = newRefreshToken;
-        return oldRefreshToken;
-    }
+	public void onLogout() {
+		this.refreshToken = null;
+	}
 
-    public void updateProfileImage(File profileImage) {
-        this.profileImage = profileImage;
-    }
+	public String updateRefreshToken(String newRefreshToken) {
+		String oldRefreshToken = this.refreshToken;
+		this.refreshToken = newRefreshToken;
+		return oldRefreshToken;
+	}
+
+	public void updateProfileImage(File profileImage) {
+		this.profileImage = profileImage;
+	}
 
 }

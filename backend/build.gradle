@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.6'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'io.spring.javaformat'
 }
 
 group = 'com.techeer'
@@ -99,3 +100,7 @@ clean {
 tasks.withType(JavaCompile) {
     options.generatedSourceOutputDirectory = file(querydslSrcDir)
 }
+
+// Spring Java Format 설정
+// 포맷팅 적용: ./gradlew format
+// 포맷팅 검사: ./gradlew checkFormat

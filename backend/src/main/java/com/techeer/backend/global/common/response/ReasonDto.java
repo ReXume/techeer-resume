@@ -8,7 +8,10 @@ import org.springframework.http.HttpStatus;
 @Builder
 public class ReasonDto {
 
-    private HttpStatus status;
-    private String code;
-    private String message;
+	private HttpStatus status;
+
+	private String code;
+
+	private String message;
+
 }

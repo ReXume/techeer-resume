@@ -17,44 +17,48 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final JwtService jwtService;
-    private final UserRepository userRepository;
+	private final JwtService jwtService;
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) {
-        log.info("OAuth2 Login 성공!");
+	private final UserRepository userRepository;
 
-        try {
-            CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) {
+		log.info("OAuth2 Login 성공!");
 
-            // 이메일로 사용자가 이미 있는지 확인
-            userRepository.findByUsernameAndSocialType(oAuth2User.getName(), oAuth2User.getSocialType())
-                    .ifPresent(user -> {
-                        // AccessToken 생성
-                        String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
+		try {
+			CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
-                        // DB  RefreshToken 업데이트
-                       String refreshToken = jwtService.reIssueRefreshToken(user);
+			// 이메일로 사용자가 이미 있는지 확인
+			userRepository.findByUsernameAndSocialType(oAuth2User.getName(), oAuth2User.getSocialType())
+				.ifPresent(user -> {
+					// AccessToken 생성
+					String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
 
-                        response.setContentType("application/json");
-                        response.setCharacterEncoding("UTF-8");
+					// DB RefreshToken 업데이트
+					String refreshToken = jwtService.reIssueRefreshToken(user);
 
-                        // 쿠키에 accessToken과 refreshToken 저장
-                        jwtService.addTokenCookies(response, accessToken, refreshToken);
+					response.setContentType("application/json");
+					response.setCharacterEncoding("UTF-8");
 
-                        // 로그인 성공 처리
-                        String redirectUrl = "http://localhost:5173";
-                        try {
-                            response.sendRedirect(redirectUrl);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
+					// 쿠키에 accessToken과 refreshToken 저장
+					jwtService.addTokenCookies(response, accessToken, refreshToken);
 
-        } catch (Exception e) {
-            throw e;
-        }
+					// 로그인 성공 처리
+					String redirectUrl = "http://localhost:5173";
+					try {
+						response.sendRedirect(redirectUrl);
+					}
+					catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				});
 
-    }
+		}
+		catch (Exception e) {
+			throw e;
+		}
+
+	}
+
 }

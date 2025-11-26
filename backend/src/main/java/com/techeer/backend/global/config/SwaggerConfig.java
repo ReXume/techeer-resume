@@ -10,27 +10,24 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
-    @Bean
-    public OpenAPI openAPI() {
-        String jwt = "JWT";
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
-        Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
-                .name("accessToken")
-                .type(SecurityScheme.Type.APIKEY)
-                .in(SecurityScheme.In.COOKIE)
-        );
 
-        return new OpenAPI()
-                .components(new Components())
-                .info(apiInfo())
-                .addSecurityItem(securityRequirement)
-                .components(components);
-    }
+	@Bean
+	public OpenAPI openAPI() {
+		String jwt = "JWT";
+		SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
+		Components components = new Components().addSecuritySchemes(jwt,
+				new SecurityScheme().name("accessToken").type(SecurityScheme.Type.APIKEY).in(SecurityScheme.In.COOKIE));
 
-    private Info apiInfo() {
-        return new Info()
-                .title("Techeer Resume") // API의 제목
-                .description("Let's practice Swagger UI") // API에 대한 설명
-                .version("1.0.0"); // API의 버전
-    }
+		return new OpenAPI().components(new Components())
+			.info(apiInfo())
+			.addSecurityItem(securityRequirement)
+			.components(components);
+	}
+
+	private Info apiInfo() {
+		return new Info().title("Techeer Resume") // API의 제목
+			.description("Let's practice Swagger UI") // API에 대한 설명
+			.version("1.0.0"); // API의 버전
+	}
+
 }

@@ -1,6 +1,5 @@
 package com.techeer.backend.api.user.dto.request;
 
-
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotBlank;
@@ -14,9 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserTokenRequest {
-    @NotBlank(message = "accessToken 을 입력해주세요.")
-    private String accessToken;
 
-    @NotBlank(message = "refreshToken 을 입력해주세요.")
-    private String refreshToken;
+	@NotBlank(message = "accessToken 을 입력해주세요.")
+	private String accessToken;
+
+	@NotBlank(message = "refreshToken 을 입력해주세요.")
+	private String refreshToken;
+
 }

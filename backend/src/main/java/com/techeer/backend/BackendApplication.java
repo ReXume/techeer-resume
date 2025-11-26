@@ -8,11 +8,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
-@OpenAPIDefinition(
-		servers = {
-				@Server(url="/", description = "Default Server url")
-		}
-)
+@OpenAPIDefinition(servers = { @Server(url = "/", description = "Default Server url") })
 @EnableCaching
 public class BackendApplication {
 

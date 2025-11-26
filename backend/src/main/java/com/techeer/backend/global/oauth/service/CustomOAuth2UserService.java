@@ -21,41 +21,43 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    final private UserRepository userRepository;
-    final private UserService userService;
+	final private UserRepository userRepository;
 
-    @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuthAttributes extractAttributes;
-        OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
-        OAuth2User oAuth2User = delegate.loadUser(userRequest);
+	final private UserService userService;
 
-        // OAuth2 로그인 시 키(PK)가 되는 값
-        String userNameAttributeName = userRequest.getClientRegistration()
-                .getProviderDetails()
-                .getUserInfoEndpoint()
-                .getUserNameAttributeName();
+	@Override
+	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+		OAuthAttributes extractAttributes;
+		OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
+		OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        // 소셜 로그인에서 API가 제공하는 userInfo의 Json 값(유저 정보들)
-        Map<String, Object> attributes = oAuth2User.getAttributes();
+		// OAuth2 로그인 시 키(PK)가 되는 값
+		String userNameAttributeName = userRequest.getClientRegistration()
+			.getProviderDetails()
+			.getUserInfoEndpoint()
+			.getUserNameAttributeName();
 
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        extractAttributes = OAuthAttributes.of(registrationId, userNameAttributeName, attributes);
-        String username = extractAttributes.getSocialType().equals(SocialType.GITHUB) ? (String) attributes.get("login")
-                : (String) attributes.get("name");
+		// 소셜 로그인에서 API가 제공하는 userInfo의 Json 값(유저 정보들)
+		Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        if (userRepository.findByUsernameAndSocialType(username, extractAttributes.getSocialType()).isEmpty()) {
-            userService.createRegularUser(attributes, username, extractAttributes.getSocialType());
-        }
+		String registrationId = userRequest.getClientRegistration().getRegistrationId();
+		extractAttributes = OAuthAttributes.of(registrationId, userNameAttributeName, attributes);
+		String username = extractAttributes.getSocialType().equals(SocialType.GITHUB) ? (String) attributes.get("login")
+				: (String) attributes.get("name");
 
-        // DefaultOAuth2User를 구현한 CustomOAuth2User 객체를 생성해서 반환
-        return CustomOAuth2User.builder()
-                .authorities(Collections.emptyList())
-                .attributes(attributes)
-                .nameAttributeKey(userNameAttributeName)
-                .name(extractAttributes.getOauth2UserInfo().getName())
-                .email(extractAttributes.getOauth2UserInfo().getEmail())
-                .socialType(extractAttributes.getSocialType())
-                .build();
-    }
+		if (userRepository.findByUsernameAndSocialType(username, extractAttributes.getSocialType()).isEmpty()) {
+			userService.createRegularUser(attributes, username, extractAttributes.getSocialType());
+		}
+
+		// DefaultOAuth2User를 구현한 CustomOAuth2User 객체를 생성해서 반환
+		return CustomOAuth2User.builder()
+			.authorities(Collections.emptyList())
+			.attributes(attributes)
+			.nameAttributeKey(userNameAttributeName)
+			.name(extractAttributes.getOauth2UserInfo().getName())
+			.email(extractAttributes.getOauth2UserInfo().getEmail())
+			.socialType(extractAttributes.getSocialType())
+			.build();
+	}
+
 }

@@ -10,7 +10,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -29,77 +28,66 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserRepository userRepository;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-    private final JwtService jwtService;
+	private final UserRepository userRepository;
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
+	private final CustomOAuth2UserService customOAuth2UserService;
 
-        config.setAllowCredentials(true);
-        // 백엔드 배포 테스트v1
-        config.setAllowedOrigins(
-                List.of("http://localhost:8080", "http://localhost:5173"
-                ));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("*"));
+	private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
+	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
-                .httpBasic(HttpBasicConfigurer::disable)
-                .sessionManagement(configurer -> configurer
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-//                .authorizeHttpRequests(requests -> requests
-//                        .requestMatchers("/api/v1/resumes/search").hasRole("ADMIN") // resume
-//                        .requestMatchers("/api/v1/resumes/**").hasAnyRole("ADMIN", "REGULAR") // resume
-//                        .anyRequest().permitAll()
-//                )
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/oauth2/**",
-                                "/oauth2/authorization/google",
-                                "/index.html",
-                                "/swagger/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui/index.html/**",
-                                "/api-docs/**",
-                                "/signup.html",
-                                "/login",
-                                "/api/v1/auth/register",
-                                "/api/v1/auth/login",
-                                "/api/v1/mock/signup"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
-                // 로그아웃 성공 시 / 주소로 이동
-//          .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/"))
-                .oauth2Login(oauth2Login -> oauth2Login
-                        .userInfoEndpoint(endpoint -> endpoint
-                                .userService(customOAuth2UserService))
-                        .successHandler(oAuth2LoginSuccessHandler) // 2.
-                        .failureHandler(oAuth2LoginFailureHandler) // 3.
-                )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtService, userRepository),
-                        UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
+	private final JwtService jwtService;
 
-    @Bean
-    public RedirectStrategy redirectStrategy() {
-        return new DefaultRedirectStrategy(); // 기본 리다이렉트 전략 사용
-    }
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration config = new CorsConfiguration();
+
+		config.setAllowCredentials(true);
+		// 백엔드 배포 테스트v1
+		config.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:5173"));
+		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+		config.setAllowedHeaders(List.of("*"));
+		config.setExposedHeaders(List.of("*"));
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", config);
+		return source;
+	}
+
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(AbstractHttpConfigurer::disable)
+			.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
+			.httpBasic(HttpBasicConfigurer::disable)
+			.sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			// .authorizeHttpRequests(requests -> requests
+			// .requestMatchers("/api/v1/resumes/search").hasRole("ADMIN") // resume
+			// .requestMatchers("/api/v1/resumes/**").hasAnyRole("ADMIN", "REGULAR") //
+			// resume
+			// .anyRequest().permitAll()
+			// )
+			.authorizeHttpRequests(authorize -> authorize
+				.requestMatchers("/v3/api-docs/**", "/oauth2/**", "/oauth2/authorization/google", "/index.html",
+						"/swagger/**", "/swagger-ui/**", "/swagger-ui/index.html/**", "/api-docs/**", "/signup.html",
+						"/login", "/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/mock/signup")
+				.permitAll()
+				.anyRequest()
+				.authenticated())
+			// 로그아웃 성공 시 / 주소로 이동
+			// .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/"))
+			.oauth2Login(oauth2Login -> oauth2Login
+				.userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
+				.successHandler(oAuth2LoginSuccessHandler) // 2.
+				.failureHandler(oAuth2LoginFailureHandler) // 3.
+			)
+			.addFilterBefore(new JwtAuthenticationFilter(jwtService, userRepository),
+					UsernamePasswordAuthenticationFilter.class);
+		return http.build();
+	}
+
+	@Bean
+	public RedirectStrategy redirectStrategy() {
+		return new DefaultRedirectStrategy(); // 기본 리다이렉트 전략 사용
+	}
+
 }
