@@ -71,17 +71,18 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
-    // AWS SDK for S3 access
-//    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.1")
-//    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-    implementation 'software.amazon.awssdk:s3:2.17.89'
+    // Google Cloud Storage 라이브러리
+    implementation 'com.google.cloud:google-cloud-storage:2.40.0'
 
     // Apache PDFBox for extracting text from PDF files
     implementation 'org.apache.pdfbox:pdfbox:2.0.24'
 
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // MapStruct
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 }
 
 //tasks.named('test') {

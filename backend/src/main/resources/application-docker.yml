@@ -65,18 +65,6 @@ logging:
             sql:
               BasicBinder: TRACE
 
-cloud:
-  aws:
-    credentials:
-      access-key: ${AWS_ACCESS_KEY}
-      secret-key: ${AWS_SECRET_KEY}
-    s3:
-      bucket: ${AWS_S3_BUCKET_NAME}
-    region:
-      static: ${AWS_S3_REGION}
-    stack:
-      auto: false
-
 jwt:
   secret: ${JWT_SECRET:ZGV2LXNlY3JldC1rZXktZm9yLWxvY2FsLWRldmVsb3BtZW50LW9ubHk=}
 
@@ -88,7 +76,16 @@ jwt:
     expiration: 604800000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 7(1주))
     header: Authorization-refresh
 
-chatgpt:
-  api:
-    key: ${GPT_API_KEY}
-    url: ${GPT_API_URL}
+
+# Google Cloud Storage 설정
+gcp:
+  project-id: ${GCP_PROJECT_ID}
+  service-account:
+    key-path: ${GCP_SERVICE_ACCOUNT_KEY_PATH}
+  gcs:
+    bucket: ${GCS_BUCKET_NAME}
+    region: ${GCS_REGION}
+    folders:
+      profile: ${GCS_PROFILE_FOLDER}
+      document: ${GCS_DOCUMENT_FOLDER}
+      verification: ${GCS_VERIFICATION_FOLDER}
