@@ -43,3 +43,10 @@ out/
 backend-secret.env
 .env_*
 .DS_Store
+
+# Resources - 민감한 정보 파일들
+src/main/resources/*-key.json
+src/main/resources/*service-account*.json
+src/main/resources/*secret*.json
+src/main/resources/*.key
+src/main/resources/*.pem
