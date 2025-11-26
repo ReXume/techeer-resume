@@ -2,15 +2,15 @@ package com.techeer.backend.api.user.converter;
 
 import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.dto.response.UserInfoResponse;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
-public class UserConverter {
+@Mapper(componentModel = "spring")
+public interface UserConverter {
+    UserConverter INSTANCE = Mappers.getMapper(UserConverter.class);
 
-    public static UserInfoResponse ofUserInfoResponse(User user) {
-        return UserInfoResponse.builder()
-                .userId(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build();
-    }
+    @Mapping(source = "id", target = "userId")
+    @Mapping(source = "profileImage.fileUrl", target = "profileImage")
+    UserInfoResponse toUserInfoResponse(User user);
 }
