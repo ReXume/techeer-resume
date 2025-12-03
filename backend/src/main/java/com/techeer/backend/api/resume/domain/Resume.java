@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,6 +32,7 @@ public class Resume {
 	@JoinColumn(name = "file_id", nullable = false)
 	private UserFile file;
 
+	@Size(max = 255)
 	@Column(name = "title", length = 255)
 	private String title;
 

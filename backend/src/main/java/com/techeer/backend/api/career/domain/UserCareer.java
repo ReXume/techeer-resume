@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,9 +43,12 @@ public class UserCareer {
 	@JoinColumn(name = "company_id")
 	private Company company;
 
+	@NotNull
+	@Size(max = 100)
 	@Column(name = "company_name", nullable = false, length = 100)
 	private String companyName;
 
+	@Size(max = 100)
 	@Column(name = "job_title", length = 100)
 	private String jobTitle;
 

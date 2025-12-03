@@ -13,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -34,13 +36,18 @@ public class UserFile {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "category", nullable = false, length = 50)
 	private FileCategory category;
 
+	@NotNull
+	@Size(max = 36)
 	@Column(name = "uuid", nullable = false, length = 36, unique = true)
 	private String uuid;
 
+	@NotNull
+	@Size(max = 2083)
 	@Column(name = "file_url", nullable = false, length = 2083)
 	private String fileUrl;
 
@@ -48,6 +55,7 @@ public class UserFile {
 	@Column(name = "file_type", length = 50)
 	private FileType fileType;
 
+	@Size(max = 255)
 	@Column(name = "original_name", length = 255)
 	private String originalName;
 

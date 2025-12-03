@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -23,15 +25,20 @@ public class Company {
 	@Column(name = "company_id")
 	private Long id;
 
+	@NotNull
+	@Size(max = 100)
 	@Column(name = "name", nullable = false, length = 100)
 	private String name;
 
+	@Size(max = 100)
 	@Column(name = "industry_domain", length = 100)
 	private String industryDomain;
 
+	@Size(max = 2083)
 	@Column(name = "website_url", length = 2083)
 	private String websiteUrl;
 
+	@Size(max = 200)
 	@Column(name = "location", length = 200)
 	private String location;
 

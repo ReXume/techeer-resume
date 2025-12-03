@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +24,8 @@ public class Skill {
 	@Column(name = "skill_id")
 	private Long id;
 
+	@NotNull
+	@Size(max = 100)
 	@Column(name = "name", nullable = false, length = 100, unique = true)
 	private String name;
 
