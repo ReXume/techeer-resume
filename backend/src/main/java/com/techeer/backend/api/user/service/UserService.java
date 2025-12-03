@@ -268,6 +268,20 @@ public class UserService {
 	public String updateProfileImage(MultipartFile file) {
 		User user = this.getLoginUser();
 
+		// 파일 타입 검증: 프로필 이미지는 이미지 파일만 허용
+		String contentType = file.getContentType();
+		if (contentType == null || !contentType.startsWith("image/")) {
+			log.warn("프로필 이미지 업로드 실패: 이미지 파일이 아님. contentType={}", contentType);
+			throw new BusinessException(ErrorCode.INVALID_FILE_TYPE);
+		}
+
+		// 파일 크기 검증 (10MB 제한 - 프로필 이미지용)
+		long maxFileSize = 10 * 1024 * 1024; // 10MB
+		if (file.getSize() > maxFileSize) {
+			log.warn("프로필 이미지 업로드 실패: 파일 크기 초과. size={} bytes", file.getSize());
+			throw new BusinessException(ErrorCode.FILE_SIZE_EXCEEDED);
+		}
+
 		// 기존 프로필 이미지가 있으면 GCS에서 삭제
 		if (user.getProfileImage() != null && user.getProfileImage().getFileUrl() != null
 				&& !user.getProfileImage().getFileUrl().isEmpty()) {
