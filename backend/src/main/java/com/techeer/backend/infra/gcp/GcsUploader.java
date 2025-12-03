@@ -254,8 +254,7 @@ public class GcsUploader {
 	 * @return 허용 여부
 	 */
 	private boolean isAllowedContentType(String contentType) {
-		return contentType.startsWith("image/")
-				|| contentType.equals("application/pdf")
+		return contentType.startsWith("image/") || contentType.equals("application/pdf")
 				|| contentType.equals("application/msword") // .doc
 				|| contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document") // .docx
 				|| contentType.equals("application/vnd.ms-excel") // .xls
