@@ -13,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,6 +35,8 @@ public class JobPosting extends BaseEntity {
 	@JoinColumn(name = "company_id", nullable = false)
 	private Company company;
 
+	@NotNull
+	@Size(max = 200)
 	@Column(name = "title", nullable = false, length = 200)
 	private String title;
 
@@ -42,13 +46,16 @@ public class JobPosting extends BaseEntity {
 	@Column(name = "exp_years", columnDefinition = "TINYINT COMMENT '요구 경력 년수'")
 	private Integer expYears;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "source_type", nullable = false)
 	private SourceType sourceType = SourceType.DIRECT;
 
+	@Size(max = 2083)
 	@Column(name = "origin_url", length = 2083)
 	private String originUrl;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
 	private JobPostingStatus status = JobPostingStatus.OPEN;

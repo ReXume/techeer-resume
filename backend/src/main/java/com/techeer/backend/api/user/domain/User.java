@@ -13,6 +13,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,15 +32,21 @@ public class User extends BaseEntity {
 	@Column(name = "user_id")
 	private Long id;
 
+	@NotNull
+	@Email
+	@Size(max = 255)
 	@Column(name = "email", nullable = false, unique = true, length = 255)
 	private String email;
 
+	@Size(max = 50)
 	@Column(name = "name", length = 50)
 	private String name;
 
+	@Size(max = 255)
 	@Column(name = "password", length = 255)
 	private String password;
 
+	@Size(max = 500)
 	@Column(name = "refresh_token", length = 500)
 	private String refreshToken;
 
