@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "`User`")
+@Table(name = "users")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
@@ -29,16 +29,16 @@ public class User extends BaseEntity {
 	@Column(name = "user_id")
 	private Long id;
 
-	@Column(name = "email", nullable = false, unique = true)
+	@Column(name = "email", nullable = false, unique = true, length = 255)
 	private String email;
 
-	@Column(name = "username")
-	private String username;
+	@Column(name = "name", length = 50)
+	private String name;
 
-	@Column(name = "password")
+	@Column(name = "password", length = 255)
 	private String password;
 
-	@Column(name = "refresh_token")
+	@Column(name = "refresh_token", length = 500)
 	private String refreshToken;
 
 	@Embedded
@@ -51,28 +51,40 @@ public class User extends BaseEntity {
 	private File profileImage;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "role")
-	private Role role;
+	@Column(name = "role", nullable = false, length = 20)
+	private Role role = Role.USER;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "social_type", nullable = true)
+	@Column(name = "social_type", nullable = false, length = 20)
 	private SocialType socialType;
 
 	@Builder
-	public User(String email, String username, String password, String refreshToken, File profileImage, Role role,
+	public User(String email, String name, String password, String refreshToken, File profileImage, Role role,
 			SocialType socialType) {
 		this.email = email;
-		this.username = username;
+		this.name = name;
 		this.password = password;
 		this.refreshToken = refreshToken;
 		this.profileImage = profileImage;
-		this.role = role;
+		this.role = role != null ? role : Role.USER;
 		this.socialType = socialType;
 	}
 
 	public void updateUser(SignUpRequest req) {
-		this.username = req.getUsername();
+		this.name = req.getUsername();
 		this.role = req.getRole();
+	}
+
+	public void updateName(String name) {
+		if (name != null) {
+			this.name = name;
+		}
+	}
+
+	public void updateRole(Role role) {
+		if (role != null) {
+			this.role = role;
+		}
 	}
 
 	public void onLogout() {
