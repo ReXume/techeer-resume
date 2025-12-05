@@ -45,7 +45,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		String username = extractAttributes.getSocialType().equals(SocialType.GITHUB) ? (String) attributes.get("login")
 				: (String) attributes.get("name");
 
-		if (userRepository.findByUsernameAndSocialType(username, extractAttributes.getSocialType()).isEmpty()) {
+		if (userRepository.findByNameAndSocialType(username, extractAttributes.getSocialType()).isEmpty()) {
 			userService.createRegularUser(attributes, username, extractAttributes.getSocialType());
 		}
 
