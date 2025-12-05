@@ -60,24 +60,24 @@ public class UserService {
 	@Transactional
 	public void register(RegisterRequest request) {
 		// 이메일 중복 확인
-		validateEmailNotExists(request.getEmail());
+		validateEmailNotExists(request.email());
 
 		// 비밀번호 암호화 후 사용자 생성
-		String encodedPassword = passwordEncoder.encode(request.getPassword());
+		String encodedPassword = passwordEncoder.encode(request.password());
 
 		User user = User.builder()
-			.email(request.getEmail())
-			.username(request.getUsername())
+			.email(request.email())
+			.name(request.username())
 			.password(encodedPassword)
 			.refreshToken(null)
 			.profileImage(null)
-			.role(Role.REGULAR) // 자체 회원가입 시 항상 REGULAR 역할 부여
-			.socialType(null)
+			.role(Role.USER) // 자체 회원가입 시 항상 USER 역할 부여
+			.socialType(SocialType.LOCAL) // 자체 회원가입은 LOCAL 타입
 			.build();
 
 		// 새로운 엔티티이므로 save() 필요
 		userRepository.save(user);
-		log.info("새로운 사용자 가입 완료: email={}, role=REGULAR", request.getEmail());
+		log.info("새로운 사용자 가입 완료: email={}, role=REGULAR", request.email());
 	}
 
 	/**
@@ -86,15 +86,15 @@ public class UserService {
 	@Transactional
 	public void login(LoginRequest request, HttpServletResponse response) {
 		// 사용자 조회
-		User user = findUserByEmail(request.getEmail());
+		User user = findUserByEmail(request.email());
 
 		// 소셜 로그인 사용자는 자체 로그인 불가
-		if (user.getSocialType() != null) {
+		if (user.getSocialType() != null && user.getSocialType() != SocialType.LOCAL) {
 			throw new BusinessException(ErrorCode.USER_SOCIAL_LOGIN_ONLY);
 		}
 
 		// 비밀번호 확인
-		validatePassword(request.getPassword(), user.getPassword());
+		validatePassword(request.password(), user.getPassword());
 
 		// 토큰 생성 및 저장
 		String accessToken = jwtService.createAccessToken(user.getEmail());
@@ -104,7 +104,7 @@ public class UserService {
 
 		// 쿠키에 토큰 저장
 		jwtService.addTokenCookies(response, accessToken, refreshToken);
-		log.info("사용자 로그인 완료: email={}", request.getEmail());
+		log.info("사용자 로그인 완료: email={}", request.email());
 	}
 
 	/**
@@ -119,12 +119,12 @@ public class UserService {
 		// 새로운 사용자 생성
 		User user = User.builder()
 			.email(email)
-			.username(name)
+			.name(name)
 			.password(null)
 			.refreshToken(null)
 			.profileImage(null)
 			.socialType(socialType)
-			.role(Role.REGULAR)
+			.role(Role.USER)
 			.build();
 
 		userRepository.save(user);
@@ -219,11 +219,11 @@ public class UserService {
 
 		User user = User.builder()
 			.email(id)
-			.username("mock")
+			.name("mock")
 			.password(null)
 			.refreshToken(refreshToken)
 			.profileImage(null)
-			.role(Role.REGULAR)
+			.role(Role.USER)
 			.socialType(SocialType.GOOGLE)
 			.build();
 
