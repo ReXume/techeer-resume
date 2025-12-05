@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 
 @Slf4j
 @Configuration
+@org.springframework.context.annotation.Profile("!test")
 public class GcsConfig {
 
 	@Value("${gcp.project-id}")
