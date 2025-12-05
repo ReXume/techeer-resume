@@ -30,7 +30,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 			CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
 			// 이메일로 사용자가 이미 있는지 확인
-			userRepository.findByUsernameAndSocialType(oAuth2User.getName(), oAuth2User.getSocialType())
+			userRepository.findByNameAndSocialType(oAuth2User.getName(), oAuth2User.getSocialType())
 				.ifPresent(user -> {
 					// AccessToken 생성
 					String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
