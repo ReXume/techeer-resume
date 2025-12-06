@@ -80,8 +80,8 @@ public class User extends BaseEntity {
 	}
 
 	public void updateUser(SignUpRequest req) {
-		this.name = req.getUsername();
-		this.role = req.getRole();
+		this.name = req.name();
+		this.role = req.role();
 	}
 
 	public void updateName(String name) {
