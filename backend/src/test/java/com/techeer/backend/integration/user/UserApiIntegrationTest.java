@@ -1,4 +1,4 @@
-package com.techeer.backend.api.user.controller;
+package com.techeer.backend.integration.user;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -8,7 +8,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,7 +35,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @Import(FakeGcsServerTestConfig.class)
 @org.springframework.test.context.ActiveProfiles("test")
-class UserControllerTest {
+class UserApiIntegrationTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -52,7 +51,7 @@ class UserControllerTest {
 
 		// When & Then
 		mockMvc
-			.perform(post("/api/v1/auth/register").with(csrf())
+			.perform(post("/api/v1/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andDo(print())
@@ -79,7 +78,7 @@ class UserControllerTest {
 	void login() throws Exception {
 		// Given: 먼저 사용자를 생성
 		RegisterRequest registerRequest = new RegisterRequest("login@example.com", "LoginUser", "password1234");
-		mockMvc.perform(post("/api/v1/auth/register").with(csrf())
+		mockMvc.perform(post("/api/v1/auth/register")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(registerRequest)));
 
@@ -87,7 +86,7 @@ class UserControllerTest {
 
 		// When & Then
 		mockMvc
-			.perform(post("/api/v1/auth/login").with(csrf())
+			.perform(post("/api/v1/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andDo(print())
