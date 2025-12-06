@@ -77,7 +77,7 @@ public class UserService {
 
 		// 새로운 엔티티이므로 save() 필요
 		userRepository.save(user);
-		log.info("새로운 사용자 가입 완료: email={}, role=REGULAR", request.email());
+		log.info("새로운 사용자 가입 완료: email={}, role=USER", request.email());
 	}
 
 	/**
