@@ -31,6 +31,10 @@ public enum ErrorCode {
 
 	// Company Error
 	COMPANY_ALREADY_EXISTS(HttpStatus.CONFLICT, "COMPANY_409", "이미 존재하는 기업입니다."),
+	COMPANY_NOT_FOUND(HttpStatus.NOT_FOUND, "COMPANY_404", "기업을 찾을 수 없습니다."),
+
+	// JobPosting Error
+	JOB_POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "JOB_404", "채용공고를 찾을 수 없습니다."),
 
 	// File Upload Error
 	FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_500", "파일 업로드 중 오류가 발생했습니다."),
