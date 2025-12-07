@@ -2,6 +2,7 @@ package com.techeer.backend.api.bookmark.domain;
 
 import com.techeer.backend.api.job.domain.JobPosting;
 import com.techeer.backend.api.user.domain.User;
+import com.techeer.backend.global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 		uniqueConstraints = {
 				@UniqueConstraint(name = "uk_user_jobposting", columnNames = { "user_id", "jobposting_id" }) })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Bookmark {
+public class Bookmark extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
