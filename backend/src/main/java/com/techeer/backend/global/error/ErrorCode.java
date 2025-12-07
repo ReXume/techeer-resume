@@ -32,6 +32,8 @@ public enum ErrorCode {
 	// Company Error
 	COMPANY_ALREADY_EXISTS(HttpStatus.CONFLICT, "COMPANY_409", "이미 존재하는 기업입니다."),
 	COMPANY_NOT_FOUND(HttpStatus.NOT_FOUND, "COMPANY_404", "기업을 찾을 수 없습니다."),
+	COMPANY_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "COMPANY_404", "기업 멤버를 찾을 수 없습니다."),
+	COMPANY_FORBIDDEN(HttpStatus.FORBIDDEN, "COMPANY_403", "기업에 대한 권한이 없습니다."),
 
 	// JobPosting Error
 	JOB_POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "JOB_404", "채용공고를 찾을 수 없습니다."),
@@ -41,15 +43,22 @@ public enum ErrorCode {
 
 	// Application Error
 	APPLICATION_ALREADY_EXISTS(HttpStatus.CONFLICT, "APPLICATION_409", "이미 지원한 공고입니다."),
+	APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "APPLICATION_404", "지원 내역을 찾을 수 없습니다."),
 
 	// Bookmark Error
 	BOOKMARK_ALREADY_EXISTS(HttpStatus.CONFLICT, "BOOKMARK_409", "이미 북마크한 채용공고입니다."),
+	BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOKMARK_404", "북마크를 찾을 수 없습니다."),
 
 	// Company Like Error
 	COMPANY_LIKE_ALREADY_EXISTS(HttpStatus.CONFLICT, "COMPANY_LIKE_409", "이미 좋아요한 기업입니다."),
+	COMPANY_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "COMPANY_LIKE_404", "좋아요를 찾을 수 없습니다."),
+
+	// User Career Error
+	USER_CAREER_NOT_FOUND(HttpStatus.NOT_FOUND, "CAREER_404", "경력을 찾을 수 없습니다."),
 
 	// Skill Error
 	SKILL_NOT_FOUND(HttpStatus.NOT_FOUND, "SKILL_404", "스킬을 찾을 수 없습니다."),
+	USER_SKILL_NOT_FOUND(HttpStatus.NOT_FOUND, "SKILL_404", "등록된 스킬을 찾을 수 없습니다."),
 	USER_SKILL_ALREADY_EXISTS(HttpStatus.CONFLICT, "SKILL_409", "이미 등록된 스킬입니다."),
 
 	// File Upload Error

@@ -24,27 +24,39 @@ public enum SuccessCode implements BaseStatus {
 
 	// Company Success
 	COMPANY_REGISTER_SUCCESS(HttpStatus.CREATED, "COMPANY_201", "기업 등록이 완료되었습니다."),
+	COMPANY_UPDATE_SUCCESS(HttpStatus.OK, "COMPANY_200", "기업 정보가 수정되었습니다."),
+	COMPANY_DELETE_SUCCESS(HttpStatus.OK, "COMPANY_200", "기업이 삭제되었습니다."),
 
 	// JobPosting Success
 	JOB_POSTING_CREATE_SUCCESS(HttpStatus.CREATED, "JOB_201", "채용공고가 등록되었습니다."),
+	JOB_POSTING_UPDATE_SUCCESS(HttpStatus.OK, "JOB_200", "채용공고가 수정되었습니다."),
+	JOB_POSTING_DELETE_SUCCESS(HttpStatus.OK, "JOB_200", "채용공고가 삭제되었습니다."),
 
 	// Resume Success
 	RESUME_CREATE_SUCCESS(HttpStatus.CREATED, "RESUME_201", "이력서가 등록되었습니다."),
+	RESUME_UPDATE_SUCCESS(HttpStatus.OK, "RESUME_200", "이력서가 수정되었습니다."),
+	RESUME_DELETE_SUCCESS(HttpStatus.OK, "RESUME_200", "이력서가 삭제되었습니다."),
 
 	// Application Success
 	APPLICATION_APPLY_SUCCESS(HttpStatus.CREATED, "APPLICATION_201", "채용공고에 지원하였습니다."),
+	APPLICATION_CANCEL_SUCCESS(HttpStatus.OK, "APPLICATION_200", "지원이 취소되었습니다."),
 
 	// Bookmark Success
 	BOOKMARK_CREATE_SUCCESS(HttpStatus.CREATED, "BOOKMARK_201", "채용공고를 북마크했습니다."),
+	BOOKMARK_CANCEL_SUCCESS(HttpStatus.OK, "BOOKMARK_200", "북마크가 취소되었습니다."),
 
 	// Company Like Success
 	COMPANY_LIKE_CREATE_SUCCESS(HttpStatus.CREATED, "COMPANY_LIKE_201", "기업을 좋아요했습니다."),
+	COMPANY_LIKE_CANCEL_SUCCESS(HttpStatus.OK, "COMPANY_LIKE_200", "좋아요가 취소되었습니다."),
 
 	// UserCareer Success
 	USER_CAREER_CREATE_SUCCESS(HttpStatus.CREATED, "CAREER_201", "경력이 등록되었습니다."),
+	USER_CAREER_UPDATE_SUCCESS(HttpStatus.OK, "CAREER_200", "경력이 수정되었습니다."),
+	USER_CAREER_DELETE_SUCCESS(HttpStatus.OK, "CAREER_200", "경력이 삭제되었습니다."),
 
 	// UserSkill Success
 	USER_SKILL_CREATE_SUCCESS(HttpStatus.CREATED, "SKILL_201", "스킬이 등록되었습니다."),
+	USER_SKILL_DELETE_SUCCESS(HttpStatus.OK, "SKILL_200", "스킬이 삭제되었습니다."),
 
 	// Token Success
 	TOKEN_REISSUE_OK(HttpStatus.OK, "TOKEN_200", "토큰 재발급 성공"),

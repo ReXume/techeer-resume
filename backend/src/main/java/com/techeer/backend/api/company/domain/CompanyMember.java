@@ -1,6 +1,7 @@
 package com.techeer.backend.api.company.domain;
 
 import com.techeer.backend.api.user.domain.User;
+import com.techeer.backend.global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "company_members")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CompanyMember {
+public class CompanyMember extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,9 +44,6 @@ public class CompanyMember {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	private MemberStatus status = MemberStatus.ACTIVE;
-
-	@Column(name = "created_at", nullable = false, updatable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
 
 	@Builder
 	public CompanyMember(User user, Company company, CompanyRole role, MemberStatus status) {

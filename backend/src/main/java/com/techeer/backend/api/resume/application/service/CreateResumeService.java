@@ -17,22 +17,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CreateResumeService implements CreateResumeUseCase {
 
-	private final SaveResumePort saveResumePort;
+    private final SaveResumePort saveResumePort;
+    private final LoadUserFilePort loadUserFilePort;
 
-	private final LoadUserFilePort loadUserFilePort;
+    @Override
+    public Long createResume(ResumeCreateRequest request) {
+        UserFile file = loadUserFilePort.findById(request.fileId())
+            .orElseThrow(() -> new BusinessException(ErrorCode.FILE_NOT_FOUND));
 
-	@Override
-	public Long createResume(ResumeCreateRequest request) {
-		UserFile file = loadUserFilePort.findById(request.fileId())
-			.orElseThrow(() -> new BusinessException(ErrorCode.FILE_NOT_FOUND));
+        if (!file.getUser().getId().equals(request.userId())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
 
-		Resume resume = Resume.builder()
-			.file(file)
-			.title(request.title())
-			.isDefault(request.isDefault())
-			.build();
+        Resume resume = Resume.builder()
+            .file(file)
+            .title(request.title())
+            .isDefault(request.isDefault())
+            .build();
 
-		return saveResumePort.saveResume(resume).getId();
-	}
+        return saveResumePort.saveResume(resume).getId();
+    }
 }
-
