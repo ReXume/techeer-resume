@@ -1,0 +1,61 @@
+# Environment Variables
+# 환경변수 파일들 (민감한 정보 포함)
+*.env
+.env
+.env.*
+**/*.env
+**/*secret*.env
+backend-secret.env
+backend/backend-secret.env
+**/backend-secret.env
+
+# Google Cloud Service Account Keys
+# GCP 인증 키 파일들
+*.json
+**/gcp-service-account-key.json
+**/*service-account*.json
+**/*gcp*.json
+backend/src/main/resources/gcp-service-account-key.json
+
+# AWS Credentials
+.aws/
+**/.aws/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Build
+build/
+target/
+dist/
+*.class
+*.jar
+*.war
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+env/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
