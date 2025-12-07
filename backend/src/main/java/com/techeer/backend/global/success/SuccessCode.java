@@ -34,6 +34,12 @@ public enum SuccessCode implements BaseStatus {
 	// Application Success
 	APPLICATION_APPLY_SUCCESS(HttpStatus.CREATED, "APPLICATION_201", "채용공고에 지원하였습니다."),
 
+	// Bookmark Success
+	BOOKMARK_CREATE_SUCCESS(HttpStatus.CREATED, "BOOKMARK_201", "채용공고를 북마크했습니다."),
+
+	// Company Like Success
+	COMPANY_LIKE_CREATE_SUCCESS(HttpStatus.CREATED, "COMPANY_LIKE_201", "기업을 좋아요했습니다."),
+
 	// Token Success
 	TOKEN_REISSUE_OK(HttpStatus.OK, "TOKEN_200", "토큰 재발급 성공"),
 
