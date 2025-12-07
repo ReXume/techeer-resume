@@ -1,6 +1,7 @@
 package com.techeer.backend.api.resume.domain;
 
 import com.techeer.backend.api.file.domain.UserFile;
+import com.techeer.backend.global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,7 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "resumes")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Resume {
+public class Resume extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,9 +38,6 @@ public class Resume {
 
 	@Column(name = "is_default")
 	private Boolean isDefault = false;
-
-	@Column(name = "created_at", nullable = false, updatable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
 
 	@Builder
 	public Resume(UserFile file, String title, Boolean isDefault) {
