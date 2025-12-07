@@ -31,6 +31,9 @@ public enum SuccessCode implements BaseStatus {
 	// Resume Success
 	RESUME_CREATE_SUCCESS(HttpStatus.CREATED, "RESUME_201", "이력서가 등록되었습니다."),
 
+	// Application Success
+	APPLICATION_APPLY_SUCCESS(HttpStatus.CREATED, "APPLICATION_201", "채용공고에 지원하였습니다."),
+
 	// Token Success
 	TOKEN_REISSUE_OK(HttpStatus.OK, "TOKEN_200", "토큰 재발급 성공"),
 

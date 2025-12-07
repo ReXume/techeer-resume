@@ -2,6 +2,7 @@ package com.techeer.backend.api.application.domain;
 
 import com.techeer.backend.api.job.domain.JobPosting;
 import com.techeer.backend.api.user.domain.User;
+import com.techeer.backend.global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,7 +14,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "applications")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Application {
+public class Application extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,9 +41,6 @@ public class Application {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	private ApplicationStatus status = ApplicationStatus.APPLIED;
-
-	@Column(name = "created_at", nullable = false, updatable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
 
 	@Builder
 	public Application(User user, JobPosting jobPosting, ApplicationStatus status) {

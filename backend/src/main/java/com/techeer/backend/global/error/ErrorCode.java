@@ -39,6 +39,9 @@ public enum ErrorCode {
 	// Resume Error
 	RESUME_NOT_FOUND(HttpStatus.NOT_FOUND, "RESUME_404", "이력서를 찾을 수 없습니다."),
 
+	// Application Error
+	APPLICATION_ALREADY_EXISTS(HttpStatus.CONFLICT, "APPLICATION_409", "이미 지원한 공고입니다."),
+
 	// File Upload Error
 	FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_500", "파일 업로드 중 오류가 발생했습니다."),
 	FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_500", "파일 삭제 중 오류가 발생했습니다."),
