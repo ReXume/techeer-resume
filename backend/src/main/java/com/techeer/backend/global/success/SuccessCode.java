@@ -25,6 +25,9 @@ public enum SuccessCode implements BaseStatus {
 	// Company Success
 	COMPANY_REGISTER_SUCCESS(HttpStatus.CREATED, "COMPANY_201", "기업 등록이 완료되었습니다."),
 
+	// JobPosting Success
+	JOB_POSTING_CREATE_SUCCESS(HttpStatus.CREATED, "JOB_201", "채용공고가 등록되었습니다."),
+
 	// Token Success
 	TOKEN_REISSUE_OK(HttpStatus.OK, "TOKEN_200", "토큰 재발급 성공"),
 
