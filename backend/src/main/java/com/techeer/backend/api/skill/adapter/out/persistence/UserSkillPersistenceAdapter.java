@@ -8,20 +8,26 @@ import com.techeer.backend.api.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class UserSkillPersistenceAdapter implements SaveUserSkillPort, LoadUserSkillPort {
 
-	private final UserSkillJpaRepository userSkillJpaRepository;
+    private final UserSkillJpaRepository userSkillJpaRepository;
 
-	@Override
-	public UserSkill saveUserSkill(UserSkill userSkill) {
-		return userSkillJpaRepository.save(userSkill);
-	}
+    @Override
+    public UserSkill saveUserSkill(UserSkill userSkill) {
+        return userSkillJpaRepository.save(userSkill);
+    }
 
-	@Override
-	public boolean existsByUserAndSkill(User user, Skill skill) {
-		return userSkillJpaRepository.existsByUserAndSkill(user, skill);
-	}
+    @Override
+    public boolean existsByUserAndSkill(User user, Skill skill) {
+        return userSkillJpaRepository.existsByUserAndSkill(user, skill);
+    }
+
+    @Override
+    public Optional<UserSkill> findById(Long id) {
+        return userSkillJpaRepository.findById(id);
+    }
 }
-

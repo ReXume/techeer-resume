@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record JobPostingCreateRequest(
+	@NotNull(message = "사용자 ID는 필수입니다")
+	Long userId,
+
 	@NotNull(message = "회사 ID는 필수입니다")
 	Long companyId,
 
@@ -16,4 +19,3 @@ public record JobPostingCreateRequest(
 	Integer expYears
 ) {
 }
-

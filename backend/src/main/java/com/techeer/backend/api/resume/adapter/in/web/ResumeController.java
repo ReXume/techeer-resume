@@ -1,7 +1,12 @@
 package com.techeer.backend.api.resume.adapter.in.web;
 
 import com.techeer.backend.api.resume.application.port.in.CreateResumeUseCase;
+import com.techeer.backend.api.resume.application.port.in.DeleteResumeUseCase;
+import com.techeer.backend.api.resume.application.port.in.GetResumeUseCase;
+import com.techeer.backend.api.resume.application.port.in.UpdateResumeUseCase;
 import com.techeer.backend.api.resume.dto.request.ResumeCreateRequest;
+import com.techeer.backend.api.resume.dto.request.ResumeUpdateRequest;
+import com.techeer.backend.api.resume.dto.response.ResumeInfoResponse;
 import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,9 +15,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Resume", description = "이력서 API")
@@ -21,13 +31,43 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ResumeController {
 
-	private final CreateResumeUseCase createResumeUseCase;
+    private final CreateResumeUseCase createResumeUseCase;
+    private final GetResumeUseCase getResumeUseCase;
+    private final UpdateResumeUseCase updateResumeUseCase;
+    private final DeleteResumeUseCase deleteResumeUseCase;
 
-	@Operation(summary = "이력서 등록", description = "새로운 이력서를 등록합니다.")
-	@PostMapping
-	public ResponseEntity<ApiResponse<Long>> createResume(@Valid @RequestBody ResumeCreateRequest request) {
-		Long resumeId = createResumeUseCase.createResume(request);
-		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(ApiResponse.success(SuccessCode.RESUME_CREATE_SUCCESS, resumeId));
-	}
+    @Operation(summary = "이력서 등록", description = "새로운 이력서를 등록합니다.")
+    @PostMapping
+    public ResponseEntity<ApiResponse<Long>> createResume(@Valid @RequestBody ResumeCreateRequest request) {
+        Long resumeId = createResumeUseCase.createResume(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(ApiResponse.success(SuccessCode.RESUME_CREATE_SUCCESS, resumeId));
+    }
+
+    @Operation(summary = "이력서 단건 조회", description = "이력서 ID로 이력서 정보를 조회합니다.")
+    @GetMapping("/{resumeId}")
+    public ResponseEntity<ApiResponse<ResumeInfoResponse>> getResume(@PathVariable Long resumeId) {
+        ResumeInfoResponse response = getResumeUseCase.getResume(resumeId);
+        return ResponseEntity.ok(ApiResponse.success(SuccessCode.OK, response));
+    }
+
+    @Operation(summary = "이력서 수정", description = "이력서를 수정합니다. 본인만 가능합니다.")
+    @PutMapping("/{resumeId}")
+    public ResponseEntity<ApiResponse<Void>> updateResume(
+        @PathVariable Long resumeId,
+        @Valid @RequestBody ResumeUpdateRequest request
+    ) {
+        updateResumeUseCase.updateResume(resumeId, request);
+        return ResponseEntity.ok(ApiResponse.success(SuccessCode.RESUME_UPDATE_SUCCESS));
+    }
+
+    @Operation(summary = "이력서 삭제", description = "이력서를 삭제합니다. 본인만 가능합니다.")
+    @DeleteMapping("/{resumeId}")
+    public ResponseEntity<ApiResponse<Void>> deleteResume(
+        @PathVariable Long resumeId,
+        @RequestParam Long userId
+    ) {
+        deleteResumeUseCase.deleteResume(resumeId, userId);
+        return ResponseEntity.ok(ApiResponse.success(SuccessCode.RESUME_DELETE_SUCCESS));
+    }
 }
