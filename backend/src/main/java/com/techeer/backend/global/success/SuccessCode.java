@@ -22,6 +22,9 @@ public enum SuccessCode implements BaseStatus {
 	USER_LOGOUT_OK(HttpStatus.OK, "USER_200", "유저 로그아웃 성공"),
 	USER_PROFILE_IMAGE_UPDATE_OK(HttpStatus.OK, "USER_200", "프로필 이미지가 업데이트되었습니다."),
 
+	// Company Success
+	COMPANY_REGISTER_SUCCESS(HttpStatus.CREATED, "COMPANY_201", "기업 등록이 완료되었습니다."),
+
 	// Token Success
 	TOKEN_REISSUE_OK(HttpStatus.OK, "TOKEN_200", "토큰 재발급 성공"),
 

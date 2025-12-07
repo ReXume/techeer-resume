@@ -45,6 +45,22 @@ include::{snippets}/auth/login/http-response.adoc[]
 
 '''
 
+[[api-company]]
+== 🏢 기업 API
+
+[[company-register]]
+=== 기업 등록
+
+새로운 기업 정보를 등록합니다.
+
+.Request
+include::{snippets}/company/register/http-request.adoc[]
+
+.Response
+include::{snippets}/company/register/http-response.adoc[]
+
+'''
+
 [[api-resume]]
 == 📄 이력서 API
 

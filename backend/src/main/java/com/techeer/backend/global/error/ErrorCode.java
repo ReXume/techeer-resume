@@ -29,6 +29,9 @@ public enum ErrorCode {
 	// Token Error
 	INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN_401", "리프레시 토큰이 유효하지 않습니다."),
 
+	// Company Error
+	COMPANY_ALREADY_EXISTS(HttpStatus.CONFLICT, "COMPANY_409", "이미 존재하는 기업입니다."),
+
 	// File Upload Error
 	FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_500", "파일 업로드 중 오류가 발생했습니다."),
 	FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_500", "파일 삭제 중 오류가 발생했습니다."),
