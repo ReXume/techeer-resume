@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -93,12 +95,11 @@ public class UserController {
 	}
 
 	@Operation(summary = "프로필 이미지 수정", description = "현재 로그인한 사용자의 프로필 이미지를 업로드하고 업데이트합니다.")
-	@PatchMapping("/user/profile-image")
-	public ResponseEntity<ApiResponse<String>> updateProfileImage(@RequestParam("file") MultipartFile file) {
+	@PatchMapping(value = "/user/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<ApiResponse<String>> updateProfileImage(@RequestPart("file") MultipartFile file) {
 		String profileImageUrl = userService.updateProfileImage(file);
 
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_PROFILE_IMAGE_UPDATE_OK, profileImageUrl));
 	}
 
 }
-

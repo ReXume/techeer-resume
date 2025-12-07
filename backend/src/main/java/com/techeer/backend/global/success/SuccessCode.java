@@ -37,6 +37,16 @@ public enum SuccessCode implements BaseStatus {
 	RESUME_UPDATE_SUCCESS(HttpStatus.OK, "RESUME_200", "이력서가 수정되었습니다."),
 	RESUME_DELETE_SUCCESS(HttpStatus.OK, "RESUME_200", "이력서가 삭제되었습니다."),
 
+	// Portfolio Success
+	PORTFOLIO_CREATE_SUCCESS(HttpStatus.CREATED, "PORTFOLIO_201", "포트폴리오가 등록되었습니다."),
+	PORTFOLIO_UPDATE_SUCCESS(HttpStatus.OK, "PORTFOLIO_200", "포트폴리오가 수정되었습니다."),
+	PORTFOLIO_DELETE_SUCCESS(HttpStatus.OK, "PORTFOLIO_200", "포트폴리오가 삭제되었습니다."),
+
+	// Education Success
+	EDUCATION_CREATE_SUCCESS(HttpStatus.CREATED, "EDUCATION_201", "학력이 등록되었습니다."),
+	EDUCATION_UPDATE_SUCCESS(HttpStatus.OK, "EDUCATION_200", "학력이 수정되었습니다."),
+	EDUCATION_DELETE_SUCCESS(HttpStatus.OK, "EDUCATION_200", "학력이 삭제되었습니다."),
+
 	// Application Success
 	APPLICATION_APPLY_SUCCESS(HttpStatus.CREATED, "APPLICATION_201", "채용공고에 지원하였습니다."),
 	APPLICATION_CANCEL_SUCCESS(HttpStatus.OK, "APPLICATION_200", "지원이 취소되었습니다."),
