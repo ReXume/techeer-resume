@@ -8,6 +8,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techeer.backend.api.company.dto.request.CompanyRegisterRequest;
+import com.techeer.backend.api.user.domain.Role;
+import com.techeer.backend.api.user.domain.SocialType;
+import com.techeer.backend.api.user.domain.User;
+import com.techeer.backend.api.user.repository.UserRepository;
 import com.techeer.backend.config.FakeGcsServerTestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,16 +41,29 @@ class CompanyApiIntegrationTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@Autowired
+	private UserRepository userRepository;
+
 	@Test
 	@DisplayName("기업 등록 성공 시 201 Created 반환")
 	@org.springframework.security.test.context.support.WithMockUser
 	void registerCompany_Success() throws Exception {
 		// given
+		User user = User.builder()
+			.email("company_creator@example.com")
+			.name("Creator")
+			.password("password1234")
+			.role(Role.USER)
+			.socialType(SocialType.LOCAL)
+			.build();
+		userRepository.save(user);
+
 		CompanyRegisterRequest request = new CompanyRegisterRequest(
 			"Techeer",
 			"IT",
 			"https://techeer.com",
-			"Seoul"
+			"Seoul",
+			user.getId()
 		);
 
 		// when & then
@@ -60,4 +77,3 @@ class CompanyApiIntegrationTest {
 			.andDo(document("company/register"));
 	}
 }
-

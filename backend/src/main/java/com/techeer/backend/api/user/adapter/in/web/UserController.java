@@ -1,4 +1,4 @@
-package com.techeer.backend.api.user.controller;
+package com.techeer.backend.api.user.adapter.in.web;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -12,6 +12,7 @@ import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Tag(name = "User", description = "회원 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -99,3 +101,4 @@ public class UserController {
 	}
 
 }
+
