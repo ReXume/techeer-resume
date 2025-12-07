@@ -96,6 +96,7 @@ class UserServiceTest {
 				.email("test@example.com")
 				.password("encodedPassword")
 				.role(Role.USER)
+				.socialType(SocialType.LOCAL)
 				.build();
 			HttpServletResponse response = mock(HttpServletResponse.class);
 

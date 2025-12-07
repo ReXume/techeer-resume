@@ -4,6 +4,8 @@ import com.techeer.backend.api.career.application.port.in.CreateUserCareerUseCas
 import com.techeer.backend.api.career.dto.request.UserCareerCreateRequest;
 import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,13 +15,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "UserCareer", description = "경력 API")
 @RestController
-@RequestMapping("/api/v1/careers")
+@RequestMapping("/api/v1/user-careers")
 @RequiredArgsConstructor
 public class UserCareerController {
 
 	private final CreateUserCareerUseCase createUserCareerUseCase;
 
+	@Operation(summary = "경력 등록", description = "사용자의 경력 정보를 등록합니다.")
 	@PostMapping
 	public ResponseEntity<ApiResponse<Long>> createUserCareer(@Valid @RequestBody UserCareerCreateRequest request) {
 		Long careerId = createUserCareerUseCase.createUserCareer(request);
@@ -27,4 +31,3 @@ public class UserCareerController {
 			.body(ApiResponse.success(SuccessCode.USER_CAREER_CREATE_SUCCESS, careerId));
 	}
 }
-
