@@ -3,6 +3,7 @@ package com.techeer.backend.api.career.domain;
 import com.techeer.backend.api.company.domain.Company;
 import com.techeer.backend.api.file.domain.UserFile;
 import com.techeer.backend.api.user.domain.User;
+import com.techeer.backend.global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "user_careers")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserCareer {
+public class UserCareer extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

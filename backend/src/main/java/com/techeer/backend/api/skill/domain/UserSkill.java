@@ -1,6 +1,7 @@
 package com.techeer.backend.api.skill.domain;
 
 import com.techeer.backend.api.user.domain.User;
+import com.techeer.backend.global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "user_skills",
 		uniqueConstraints = { @UniqueConstraint(name = "uk_user_skill", columnNames = { "user_id", "skill_id" }) })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserSkill {
+public class UserSkill extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

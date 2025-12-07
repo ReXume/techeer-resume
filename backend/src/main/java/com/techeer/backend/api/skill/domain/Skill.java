@@ -1,5 +1,6 @@
 package com.techeer.backend.api.skill.domain;
 
+import com.techeer.backend.global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "skills")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Skill {
+public class Skill extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

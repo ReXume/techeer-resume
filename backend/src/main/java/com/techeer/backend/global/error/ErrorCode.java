@@ -48,6 +48,10 @@ public enum ErrorCode {
 	// Company Like Error
 	COMPANY_LIKE_ALREADY_EXISTS(HttpStatus.CONFLICT, "COMPANY_LIKE_409", "이미 좋아요한 기업입니다."),
 
+	// Skill Error
+	SKILL_NOT_FOUND(HttpStatus.NOT_FOUND, "SKILL_404", "스킬을 찾을 수 없습니다."),
+	USER_SKILL_ALREADY_EXISTS(HttpStatus.CONFLICT, "SKILL_409", "이미 등록된 스킬입니다."),
+
 	// File Upload Error
 	FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_500", "파일 업로드 중 오류가 발생했습니다."),
 	FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_500", "파일 삭제 중 오류가 발생했습니다."),

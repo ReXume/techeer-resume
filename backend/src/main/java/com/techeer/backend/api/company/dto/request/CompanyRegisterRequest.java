@@ -1,6 +1,7 @@
 package com.techeer.backend.api.company.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CompanyRegisterRequest(
@@ -15,7 +16,9 @@ public record CompanyRegisterRequest(
 	String websiteUrl,
 
 	@Size(max = 200, message = "위치는 200자를 초과할 수 없습니다")
-	String location
+	String location,
+
+	@NotNull(message = "사용자 ID는 필수입니다")
+	Long userId
 ) {
 }
-
