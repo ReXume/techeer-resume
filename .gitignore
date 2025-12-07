@@ -54,3 +54,7 @@ Thumbs.db
 
 # Docker
 .dockerignore
+
+# Cursor
+.cursorignore
+backend/tail_log.txt
