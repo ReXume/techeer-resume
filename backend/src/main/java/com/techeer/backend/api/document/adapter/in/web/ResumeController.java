@@ -7,6 +7,7 @@ import com.techeer.backend.api.document.application.port.in.UpdateResumeUseCase;
 import com.techeer.backend.api.document.dto.request.ResumeCreateRequest;
 import com.techeer.backend.api.document.dto.request.ResumeUpdateRequest;
 import com.techeer.backend.api.document.dto.response.ResumeInfoResponse;
+import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +41,7 @@ public class ResumeController {
     private final GetResumeUseCase getResumeUseCase;
     private final UpdateResumeUseCase updateResumeUseCase;
     private final DeleteResumeUseCase deleteResumeUseCase;
+    private final UserService userService;
 
     @Operation(summary = "이력서 등록", description = "새로운 이력서를 등록합니다. 파일과 함께 업로드하세요.")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -48,7 +50,8 @@ public class ResumeController {
         @Valid @RequestPart("request") ResumeCreateRequest request,
         @RequestPart("file") MultipartFile file
     ) {
-        Long resumeId = createResumeUseCase.createResume(request, file);
+        Long userId = userService.getLoginUser().getId();
+        Long resumeId = createResumeUseCase.createResume(request, file, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(ApiResponse.success(SuccessCode.RESUME_CREATE_SUCCESS, resumeId));
     }
@@ -66,16 +69,17 @@ public class ResumeController {
         @PathVariable Long resumeId,
         @Valid @RequestBody ResumeUpdateRequest request
     ) {
-        updateResumeUseCase.updateResume(resumeId, request);
+        Long userId = userService.getLoginUser().getId();
+        updateResumeUseCase.updateResume(resumeId, request, userId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.RESUME_UPDATE_SUCCESS));
     }
 
     @Operation(summary = "이력서 삭제", description = "이력서를 삭제합니다. 본인만 가능합니다.")
     @DeleteMapping("/{resumeId}")
     public ResponseEntity<ApiResponse<Void>> deleteResume(
-        @PathVariable Long resumeId,
-        @RequestParam Long userId
+        @PathVariable Long resumeId
     ) {
+        Long userId = userService.getLoginUser().getId();
         deleteResumeUseCase.deleteResume(resumeId, userId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.RESUME_DELETE_SUCCESS));
     }

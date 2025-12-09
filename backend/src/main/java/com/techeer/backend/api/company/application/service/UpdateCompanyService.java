@@ -25,11 +25,11 @@ public class UpdateCompanyService implements UpdateCompanyUseCase {
     private final LoadCompanyMemberPort loadCompanyMemberPort;
 
     @Override
-    public void updateCompany(Long companyId, CompanyUpdateRequest request) {
+    public void updateCompany(Long companyId, CompanyUpdateRequest request, Long userId) {
         Company company = loadCompanyPort.findById(companyId)
             .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
 
-        User user = loadUserPort.findById(request.userId())
+        User user = loadUserPort.findById(userId)
             .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         CompanyMember member = loadCompanyMemberPort.findByUserAndCompany(user, company)

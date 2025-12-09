@@ -31,8 +31,8 @@ public class CreatePortfolioService implements CreatePortfolioUseCase {
     private final GcsUploader gcsUploader;
 
     @Override
-    public Long createPortfolio(PortfolioCreateRequest request, MultipartFile file) {
-        User user = loadUserPort.findById(request.userId())
+    public Long createPortfolio(PortfolioCreateRequest request, MultipartFile file, Long userId) {
+        User user = loadUserPort.findById(userId)
             .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         FileMetadata metadata = gcsUploader.uploadDocument(file, user.getId(), "portfolio");

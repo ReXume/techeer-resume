@@ -28,11 +28,11 @@ public class CreateJobPostingService implements CreateJobPostingUseCase {
     private final LoadCompanyMemberPort loadCompanyMemberPort;
 
     @Override
-    public Long createJobPosting(JobPostingCreateRequest request) {
+    public Long createJobPosting(JobPostingCreateRequest request, Long userId) {
         Company company = loadCompanyPort.findById(request.companyId())
             .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
 
-        User user = loadUserPort.findById(request.userId())
+        User user = loadUserPort.findById(userId)
             .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         CompanyMember member = loadCompanyMemberPort.findByUserAndCompany(user, company)

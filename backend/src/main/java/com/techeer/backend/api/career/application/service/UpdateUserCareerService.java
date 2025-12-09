@@ -18,11 +18,11 @@ public class UpdateUserCareerService implements UpdateUserCareerUseCase {
     private final LoadUserCareerPort loadUserCareerPort;
 
     @Override
-    public void updateUserCareer(Long careerId, UserCareerUpdateRequest request) {
+    public void updateUserCareer(Long careerId, UserCareerUpdateRequest request, Long userId) {
         UserCareer userCareer = loadUserCareerPort.findById(careerId)
             .orElseThrow(() -> new BusinessException(ErrorCode.USER_CAREER_NOT_FOUND));
 
-        if (!userCareer.getUser().getId().equals(request.userId())) {
+        if (!userCareer.getUser().getId().equals(userId)) {
             throw new BusinessException(ErrorCode.FORBIDDEN);
         }
 

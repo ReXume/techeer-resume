@@ -31,8 +31,8 @@ public class CreateResumeService implements CreateResumeUseCase {
     private final GcsUploader gcsUploader;
 
     @Override
-    public Long createResume(ResumeCreateRequest request, MultipartFile file) {
-        User user = loadUserPort.findById(request.userId())
+    public Long createResume(ResumeCreateRequest request, MultipartFile file, Long userId) {
+        User user = loadUserPort.findById(userId)
             .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         // 1. 파일 업로드

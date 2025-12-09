@@ -7,6 +7,7 @@ import com.techeer.backend.api.job.application.port.in.UpdateJobPostingUseCase;
 import com.techeer.backend.api.job.dto.request.JobPostingCreateRequest;
 import com.techeer.backend.api.job.dto.request.JobPostingUpdateRequest;
 import com.techeer.backend.api.job.dto.response.JobPostingInfoResponse;
+import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,11 +36,13 @@ public class JobPostingController {
     private final GetJobPostingUseCase getJobPostingUseCase;
     private final UpdateJobPostingUseCase updateJobPostingUseCase;
     private final DeleteJobPostingUseCase deleteJobPostingUseCase;
+    private final UserService userService;
 
     @Operation(summary = "채용공고 등록", description = "새로운 채용공고를 등록합니다. 기업 관리자 권한이 필요합니다.")
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> createJobPosting(@Valid @RequestBody JobPostingCreateRequest request) {
-        Long jobPostingId = createJobPostingUseCase.createJobPosting(request);
+        Long userId = userService.getLoginUser().getId();
+        Long jobPostingId = createJobPostingUseCase.createJobPosting(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(ApiResponse.success(SuccessCode.JOB_POSTING_CREATE_SUCCESS, jobPostingId));
     }
@@ -57,16 +60,17 @@ public class JobPostingController {
         @PathVariable Long jobPostingId,
         @Valid @RequestBody JobPostingUpdateRequest request
     ) {
-        updateJobPostingUseCase.updateJobPosting(jobPostingId, request);
+        Long userId = userService.getLoginUser().getId();
+        updateJobPostingUseCase.updateJobPosting(jobPostingId, request, userId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.JOB_POSTING_UPDATE_SUCCESS));
     }
 
     @Operation(summary = "채용공고 삭제", description = "채용공고를 삭제합니다. 기업 관리자 권한이 필요합니다.")
     @DeleteMapping("/{jobPostingId}")
     public ResponseEntity<ApiResponse<Void>> deleteJobPosting(
-        @PathVariable Long jobPostingId,
-        @RequestParam Long userId
+        @PathVariable Long jobPostingId
     ) {
+        Long userId = userService.getLoginUser().getId();
         deleteJobPostingUseCase.deleteJobPosting(jobPostingId, userId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.JOB_POSTING_DELETE_SUCCESS));
     }

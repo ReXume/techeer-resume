@@ -7,6 +7,7 @@ import com.techeer.backend.api.career.application.port.in.UpdateUserCareerUseCas
 import com.techeer.backend.api.career.dto.request.UserCareerCreateRequest;
 import com.techeer.backend.api.career.dto.request.UserCareerUpdateRequest;
 import com.techeer.backend.api.career.dto.response.UserCareerInfoResponse;
+import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,11 +36,13 @@ public class UserCareerController {
     private final GetUserCareerUseCase getUserCareerUseCase;
     private final UpdateUserCareerUseCase updateUserCareerUseCase;
     private final DeleteUserCareerUseCase deleteUserCareerUseCase;
+    private final UserService userService;
 
     @Operation(summary = "경력 등록", description = "사용자의 경력 정보를 등록합니다.")
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> createUserCareer(@Valid @RequestBody UserCareerCreateRequest request) {
-        Long careerId = createUserCareerUseCase.createUserCareer(request);
+        Long userId = userService.getLoginUser().getId();
+        Long careerId = createUserCareerUseCase.createUserCareer(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(ApiResponse.success(SuccessCode.USER_CAREER_CREATE_SUCCESS, careerId));
     }
@@ -57,16 +60,17 @@ public class UserCareerController {
         @PathVariable Long careerId,
         @Valid @RequestBody UserCareerUpdateRequest request
     ) {
-        updateUserCareerUseCase.updateUserCareer(careerId, request);
+        Long userId = userService.getLoginUser().getId();
+        updateUserCareerUseCase.updateUserCareer(careerId, request, userId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_CAREER_UPDATE_SUCCESS));
     }
 
     @Operation(summary = "경력 삭제", description = "경력 정보를 삭제합니다. 본인만 가능합니다.")
     @DeleteMapping("/{careerId}")
     public ResponseEntity<ApiResponse<Void>> deleteUserCareer(
-        @PathVariable Long careerId,
-        @RequestParam Long userId
+        @PathVariable Long careerId
     ) {
+        Long userId = userService.getLoginUser().getId();
         deleteUserCareerUseCase.deleteUserCareer(careerId, userId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_CAREER_DELETE_SUCCESS));
     }

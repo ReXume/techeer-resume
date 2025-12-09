@@ -18,11 +18,11 @@ public class UpdateResumeService implements UpdateResumeUseCase {
     private final LoadResumePort loadResumePort;
 
     @Override
-    public void updateResume(Long resumeId, ResumeUpdateRequest request) {
+    public void updateResume(Long resumeId, ResumeUpdateRequest request, Long userId) {
         Resume resume = loadResumePort.findById(resumeId)
             .orElseThrow(() -> new BusinessException(ErrorCode.RESUME_NOT_FOUND));
 
-        if (!resume.getFile().getUser().getId().equals(request.userId())) {
+        if (!resume.getFile().getUser().getId().equals(userId)) {
             throw new BusinessException(ErrorCode.FORBIDDEN);
         }
 

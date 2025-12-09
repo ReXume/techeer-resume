@@ -5,6 +5,7 @@ import com.techeer.backend.api.skill.application.port.in.DeleteUserSkillUseCase;
 import com.techeer.backend.api.skill.application.port.in.GetUserSkillUseCase;
 import com.techeer.backend.api.skill.dto.request.UserSkillCreateRequest;
 import com.techeer.backend.api.skill.dto.response.UserSkillInfoResponse;
+import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,11 +32,13 @@ public class UserSkillController {
     private final CreateUserSkillUseCase createUserSkillUseCase;
     private final GetUserSkillUseCase getUserSkillUseCase;
     private final DeleteUserSkillUseCase deleteUserSkillUseCase;
+    private final UserService userService;
 
     @Operation(summary = "스킬 등록", description = "사용자의 스킬 정보를 등록합니다.")
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> createUserSkill(@Valid @RequestBody UserSkillCreateRequest request) {
-        Long userSkillId = createUserSkillUseCase.createUserSkill(request);
+        Long userId = userService.getLoginUser().getId();
+        Long userSkillId = createUserSkillUseCase.createUserSkill(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(ApiResponse.success(SuccessCode.USER_SKILL_CREATE_SUCCESS, userSkillId));
     }
@@ -50,9 +53,9 @@ public class UserSkillController {
     @Operation(summary = "스킬 삭제", description = "스킬 정보를 삭제합니다. 본인만 가능합니다.")
     @DeleteMapping("/{userSkillId}")
     public ResponseEntity<ApiResponse<Void>> deleteUserSkill(
-        @PathVariable Long userSkillId,
-        @RequestParam Long userId
+        @PathVariable Long userSkillId
     ) {
+        Long userId = userService.getLoginUser().getId();
         deleteUserSkillUseCase.deleteUserSkill(userSkillId, userId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_SKILL_DELETE_SUCCESS));
     }
