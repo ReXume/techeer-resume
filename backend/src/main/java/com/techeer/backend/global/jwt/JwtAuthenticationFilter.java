@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,44 +44,47 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		checkAccessTokenAndAuthentication(request, response, filterChain);
 	}
 
-	public void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,
+	/**
+	 * JWT Access Token을 검증하고 인증 정보를 SecurityContext에 저장합니다.
+	 */
+	private void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,
 			FilterChain filterChain) throws ServletException, IOException {
-		log.info("checkAccessTokenAndAuthentication() 호출");
-		jwtService.extractAccessTokenFromCookie(request)
+		log.debug("JWT 인증 필터 실행: {}", request.getRequestURI());
+		
+		jwtService.extractAccessToken(request)
 			.filter(jwtService::isAccessTokenValid)
-			.ifPresent(accessToken -> {
-				log.info("유효한 Access Token이 발견되었습니다: {}", accessToken);
-
-				// 이메일 및 소셜 타입 추출
-				Object[] emailAndSocialType = jwtService.extractEmailAndSocialType(accessToken);
-				if (emailAndSocialType.length >= 1) {
-					String email = (String) emailAndSocialType[0];
-					log.info("이메일이 추출되었습니다: {}", email);
-
-					// 사용자 정보 조회
-					userRepository.findByEmail(email).ifPresent(user -> {
-						log.info("사용자 정보가 발견되었습니다: {}", user);
-						saveAuthentication(user);
-						log.info("사용자 인증 정보가 저장되었습니다: {}", user);
-					});
+			.flatMap(accessToken -> {
+				String email = jwtService.extractEmail(accessToken);
+				if (email != null) {
+					log.info("유효한 Access Token 발견. 사용자: {}", email);
+					return userRepository.findByEmail(email);
 				}
-				else {
-					log.warn("이메일 추출 실패. 반환된 배열 길이: {}", emailAndSocialType.length);
-				}
+				log.warn("토큰에서 이메일 추출 실패");
+				return Optional.empty();
+			})
+			.ifPresent(user -> {
+				saveAuthentication(user);
+				log.info("인증 정보 저장 완료: {}", user.getEmail());
 			});
+		
 		filterChain.doFilter(request, response);
 	}
 
-	public void saveAuthentication(User user) {
-
-		UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
+	/**
+	 * 사용자 정보를 기반으로 Spring Security 인증 객체를 생성하고 SecurityContext에 저장합니다.
+	 */
+	private void saveAuthentication(User user) {
+		UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
 			.username(user.getEmail())
-			.password("Google")
+			.password("") // JWT 기반 인증이므로 비밀번호 불필요
 			.roles(user.getRole().name())
 			.build();
 
-		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsUser, null,
-				authoritiesMapper.mapAuthorities(userDetailsUser.getAuthorities()));
+		Authentication authentication = new UsernamePasswordAuthenticationToken(
+			userDetails, 
+			null,
+			authoritiesMapper.mapAuthorities(userDetails.getAuthorities())
+		);
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
