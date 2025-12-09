@@ -93,24 +93,36 @@ public class JwtService {
 		return newRefreshToken;
 	}
 
-	public Optional<String> extractAccessTokenFromCookie(HttpServletRequest request) {
-
+	/**
+	 * HttpServletRequest에서 Access Token을 추출합니다.
+	 * 우선순위: 1. Cookie (기본 인증 방식) 2. Authorization 헤더 (Swagger UI 테스트용)
+	 */
+	public Optional<String> extractAccessToken(HttpServletRequest request) {
+		// 1. 쿠키에서 먼저 확인 (프로덕션 환경의 기본 인증 방식)
 		if (request.getCookies() != null) {
 			for (Cookie cookie : request.getCookies()) {
 				if ("accessToken".equals(cookie.getName())) {
-					log.info("Access Token이 쿠키에서 추출되었습니다: {}", cookie.getValue());
+					log.info("Access Token이 쿠키에서 추출되었습니다.");
 					return Optional.of(cookie.getValue());
 				}
 			}
 		}
 
-		log.warn("Access Token이 쿠키에서 발견되지 않았습니다.");
+		// 2. Authorization 헤더에서 확인 (Swagger UI 등 테스트 도구용)
+		String authHeader = request.getHeader("Authorization");
+		if (authHeader != null && authHeader.startsWith(BEARER)) {
+			String token = authHeader.substring(BEARER.length());
+			log.info("Access Token이 Authorization 헤더에서 추출되었습니다.");
+			return Optional.of(token);
+		}
+
+		log.debug("Access Token을 찾을 수 없습니다.");
 		return Optional.empty();
 	}
 
 	public boolean isAccessTokenValid(String token) {
 		try {
-			Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token);
+			Jwts.parser().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
 		}
 		catch (Exception e) {
@@ -136,7 +148,7 @@ public class JwtService {
 
 	public boolean isTokenExpired(String token) {
 		try {
-			Claims claims = Jwts.parser().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(token).getBody();
+			Claims claims = Jwts.parser().setSigningKey(key).build().parseClaimsJws(token).getBody();
 			Date expiration = claims.getExpiration();
 			return expiration.before(new Date());
 		}
@@ -146,17 +158,23 @@ public class JwtService {
 		}
 	}
 
-	public Object[] extractEmailAndSocialType(String accessToken) {
-		Claims claims = decodeToken(accessToken);
-		if (claims != null) {
-			String email = claims.get("email", String.class);
-			return new Object[] { email };
+	/**
+	 * Access Token에서 사용자 이메일을 추출합니다.
+	 * @param accessToken JWT Access Token
+	 * @return 이메일 (추출 실패 시 null)
+	 */
+	public String extractEmail(String accessToken) {
+		try {
+			Claims claims = decodeToken(accessToken);
+			return claims != null ? claims.get(EMAIL_CLAIM, String.class) : null;
+		} catch (Exception e) {
+			log.error("토큰에서 이메일 추출 실패: {}", e.getMessage());
+			return null;
 		}
-		return null;
 	}
 
 	private Claims decodeToken(String token) {
-		return Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+		return Jwts.parser().setSigningKey(key).build().parseClaimsJws(token).getBody();
 	}
 
 	public void addTokenCookies(HttpServletResponse response, String accessToken, String refreshToken) {

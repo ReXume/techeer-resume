@@ -15,8 +15,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.DefaultRedirectStrategy;
-import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -60,34 +58,36 @@ public class SecurityConfig {
 			.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
 			.httpBasic(HttpBasicConfigurer::disable)
 			.sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			// .authorizeHttpRequests(requests -> requests
-			// .requestMatchers("/api/v1/resumes/search").hasRole("ADMIN") // resume
-			// .requestMatchers("/api/v1/resumes/**").hasAnyRole("ADMIN", "REGULAR") //
-			// resume
-			// .anyRequest().permitAll()
-			// )
+			// Swagger UI 및 API 문서 경로는 인증 없이 접근 가능
+			// 자체 로그인 API와 소셜 로그인 경로도 permitAll
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/v3/api-docs/**", "/oauth2/**", "/oauth2/authorization/google", "/index.html",
-						"/swagger/**", "/swagger-ui/**", "/swagger-ui/index.html/**", "/api-docs/**", "/signup.html",
-						"/login", "/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/mock/signup")
+				// Swagger UI 및 API 문서 (가장 먼저 체크하여 OAuth2 필터에 가로채이지 않도록)
+				.requestMatchers("/", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/index.html",
+						"/swagger/**", "/v3/api-docs/**", "/api-docs/**", "/index.html",
+						"/swagger-ui.html/**", "/swagger-resources/**", "/webjars/**")
 				.permitAll()
+				// 자체 로그인/회원가입 API
+				.requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/mock/signup")
+				.permitAll()
+				// 소셜 로그인 관련 경로
+				.requestMatchers("/oauth2/**", "/oauth2/authorization/**", "/login")
+				.permitAll()
+				// 기타 공개 경로
+				.requestMatchers("/signup.html")
+				.permitAll()
+				// 나머지는 인증 필요
 				.anyRequest()
 				.authenticated())
-			// 로그아웃 성공 시 / 주소로 이동
-			// .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/"))
+			// OAuth2 소셜 로그인 설정
 			.oauth2Login(oauth2Login -> oauth2Login
 				.userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
-				.successHandler(oAuth2LoginSuccessHandler) // 2.
-				.failureHandler(oAuth2LoginFailureHandler) // 3.
+				.successHandler(oAuth2LoginSuccessHandler)
+				.failureHandler(oAuth2LoginFailureHandler)
 			)
+			// JWT 인증 필터 추가 (자체 로그인 및 소셜 로그인 후 JWT 토큰 처리)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtService, userRepository),
 					UsernamePasswordAuthenticationFilter.class);
 		return http.build();
-	}
-
-	@Bean
-	public RedirectStrategy redirectStrategy() {
-		return new DefaultRedirectStrategy(); // 기본 리다이렉트 전략 사용
 	}
 
 }
