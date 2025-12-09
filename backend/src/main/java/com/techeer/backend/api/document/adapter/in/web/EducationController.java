@@ -2,6 +2,7 @@ package com.techeer.backend.api.document.adapter.in.web;
 
 import com.techeer.backend.api.document.application.port.in.CreateEducationUseCase;
 import com.techeer.backend.api.document.dto.request.EducationCreateRequest;
+import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class EducationController {
 
     private final CreateEducationUseCase createEducationUseCase;
+    private final UserService userService;
 
     @Operation(summary = "학력 등록", description = "새로운 학력을 등록합니다. 증명 파일과 함께 업로드하세요.")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -34,7 +36,8 @@ public class EducationController {
         @Valid @RequestPart("request") EducationCreateRequest request,
         @RequestPart("file") MultipartFile file
     ) {
-        Long educationId = createEducationUseCase.createEducation(request, file);
+        Long userId = userService.getLoginUser().getId();
+        Long educationId = createEducationUseCase.createEducation(request, file, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(ApiResponse.success(SuccessCode.EDUCATION_CREATE_SUCCESS, educationId));
     }

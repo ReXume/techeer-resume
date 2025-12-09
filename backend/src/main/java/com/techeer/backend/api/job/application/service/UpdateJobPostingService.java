@@ -25,11 +25,11 @@ public class UpdateJobPostingService implements UpdateJobPostingUseCase {
     private final LoadCompanyMemberPort loadCompanyMemberPort;
 
     @Override
-    public void updateJobPosting(Long jobPostingId, JobPostingUpdateRequest request) {
+    public void updateJobPosting(Long jobPostingId, JobPostingUpdateRequest request, Long userId) {
         JobPosting jobPosting = loadJobPostingPort.findById(jobPostingId)
             .orElseThrow(() -> new BusinessException(ErrorCode.JOB_POSTING_NOT_FOUND));
 
-        User user = loadUserPort.findById(request.userId())
+        User user = loadUserPort.findById(userId)
             .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         CompanyMember member = loadCompanyMemberPort.findByUserAndCompany(user, jobPosting.getCompany())

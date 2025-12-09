@@ -30,12 +30,12 @@ public class RegisterCompanyService implements RegisterCompanyUseCase {
 	private final LoadUserPort loadUserPort;
 
 	@Override
-	public Long registerCompany(CompanyRegisterRequest request) {
+	public Long registerCompany(CompanyRegisterRequest request, Long userId) {
 		if (loadCompanyPort.findByName(request.name()).isPresent()) {
 			throw new BusinessException(ErrorCode.COMPANY_ALREADY_EXISTS);
 		}
 
-		User user = loadUserPort.findById(request.userId())
+		User user = loadUserPort.findById(userId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		Company company = Company.builder()

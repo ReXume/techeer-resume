@@ -7,6 +7,7 @@ import com.techeer.backend.api.company.application.port.in.UpdateCompanyUseCase;
 import com.techeer.backend.api.company.dto.request.CompanyRegisterRequest;
 import com.techeer.backend.api.company.dto.request.CompanyUpdateRequest;
 import com.techeer.backend.api.company.dto.response.CompanyInfoResponse;
+import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,11 +36,13 @@ public class CompanyController {
     private final GetCompanyUseCase getCompanyUseCase;
     private final UpdateCompanyUseCase updateCompanyUseCase;
     private final DeleteCompanyUseCase deleteCompanyUseCase;
+    private final UserService userService;
 
     @Operation(summary = "기업 등록", description = "새로운 기업 정보를 등록합니다. 등록한 사용자는 자동으로 관리자가 됩니다.")
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> registerCompany(@Valid @RequestBody CompanyRegisterRequest request) {
-        Long companyId = registerCompanyUseCase.registerCompany(request);
+        Long userId = userService.getLoginUser().getId();
+        Long companyId = registerCompanyUseCase.registerCompany(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(ApiResponse.success(SuccessCode.COMPANY_REGISTER_SUCCESS, companyId));
     }
@@ -57,16 +60,17 @@ public class CompanyController {
         @PathVariable Long companyId,
         @Valid @RequestBody CompanyUpdateRequest request
     ) {
-        updateCompanyUseCase.updateCompany(companyId, request);
+        Long userId = userService.getLoginUser().getId();
+        updateCompanyUseCase.updateCompany(companyId, request, userId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.COMPANY_UPDATE_SUCCESS));
     }
 
     @Operation(summary = "기업 삭제", description = "기업을 삭제합니다. 기업 관리자 권한이 필요합니다.")
     @DeleteMapping("/{companyId}")
     public ResponseEntity<ApiResponse<Void>> deleteCompany(
-        @PathVariable Long companyId,
-        @RequestParam Long userId
+        @PathVariable Long companyId
     ) {
+        Long userId = userService.getLoginUser().getId();
         deleteCompanyUseCase.deleteCompany(companyId, userId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.COMPANY_DELETE_SUCCESS));
     }

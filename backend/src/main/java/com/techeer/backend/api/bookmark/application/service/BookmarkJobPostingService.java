@@ -29,8 +29,8 @@ public class BookmarkJobPostingService implements BookmarkJobPostingUseCase {
 	private final LoadUserPort loadUserPort;
 
 	@Override
-	public Long bookmarkJobPosting(BookmarkCreateRequest request) {
-		User user = loadUserPort.findById(request.userId())
+	public Long bookmarkJobPosting(BookmarkCreateRequest request, Long userId) {
+		User user = loadUserPort.findById(userId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		JobPosting jobPosting = loadJobPostingPort.findById(request.jobPostingId())

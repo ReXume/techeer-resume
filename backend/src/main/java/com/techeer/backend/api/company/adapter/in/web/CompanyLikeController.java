@@ -5,6 +5,7 @@ import com.techeer.backend.api.company.application.port.in.LikeCompanyUseCase;
 import com.techeer.backend.api.company.application.port.in.UnlikeCompanyUseCase;
 import com.techeer.backend.api.company.dto.request.CompanyLikeCreateRequest;
 import com.techeer.backend.api.company.dto.response.CompanyLikeInfoResponse;
+import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,11 +32,13 @@ public class CompanyLikeController {
     private final LikeCompanyUseCase likeCompanyUseCase;
     private final GetCompanyLikeUseCase getCompanyLikeUseCase;
     private final UnlikeCompanyUseCase unlikeCompanyUseCase;
+    private final UserService userService;
 
     @Operation(summary = "기업 좋아요", description = "기업에 좋아요를 표시합니다.")
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> likeCompany(@Valid @RequestBody CompanyLikeCreateRequest request) {
-        Long likeId = likeCompanyUseCase.likeCompany(request);
+        Long userId = userService.getLoginUser().getId();
+        Long likeId = likeCompanyUseCase.likeCompany(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(ApiResponse.success(SuccessCode.COMPANY_LIKE_CREATE_SUCCESS, likeId));
     }
@@ -50,9 +53,9 @@ public class CompanyLikeController {
     @Operation(summary = "좋아요 취소", description = "좋아요를 취소합니다. 본인만 가능합니다.")
     @DeleteMapping("/{companyLikeId}")
     public ResponseEntity<ApiResponse<Void>> unlikeCompany(
-        @PathVariable Long companyLikeId,
-        @RequestParam Long userId
+        @PathVariable Long companyLikeId
     ) {
+        Long userId = userService.getLoginUser().getId();
         unlikeCompanyUseCase.unlikeCompany(companyLikeId, userId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.COMPANY_LIKE_CANCEL_SUCCESS));
     }

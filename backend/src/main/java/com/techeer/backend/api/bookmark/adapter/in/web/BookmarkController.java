@@ -5,6 +5,7 @@ import com.techeer.backend.api.bookmark.application.port.in.CancelBookmarkUseCas
 import com.techeer.backend.api.bookmark.application.port.in.GetBookmarkUseCase;
 import com.techeer.backend.api.bookmark.dto.request.BookmarkCreateRequest;
 import com.techeer.backend.api.bookmark.dto.response.BookmarkInfoResponse;
+import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,11 +32,13 @@ public class BookmarkController {
     private final BookmarkJobPostingUseCase bookmarkJobPostingUseCase;
     private final GetBookmarkUseCase getBookmarkUseCase;
     private final CancelBookmarkUseCase cancelBookmarkUseCase;
+    private final UserService userService;
 
     @Operation(summary = "채용공고 북마크", description = "채용공고를 북마크합니다.")
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> bookmarkJobPosting(@Valid @RequestBody BookmarkCreateRequest request) {
-        Long bookmarkId = bookmarkJobPostingUseCase.bookmarkJobPosting(request);
+        Long userId = userService.getLoginUser().getId();
+        Long bookmarkId = bookmarkJobPostingUseCase.bookmarkJobPosting(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(ApiResponse.success(SuccessCode.BOOKMARK_CREATE_SUCCESS, bookmarkId));
     }
@@ -50,9 +53,9 @@ public class BookmarkController {
     @Operation(summary = "북마크 취소", description = "북마크를 취소합니다. 본인만 가능합니다.")
     @DeleteMapping("/{bookmarkId}")
     public ResponseEntity<ApiResponse<Void>> cancelBookmark(
-        @PathVariable Long bookmarkId,
-        @RequestParam Long userId
+        @PathVariable Long bookmarkId
     ) {
+        Long userId = userService.getLoginUser().getId();
         cancelBookmarkUseCase.cancelBookmark(bookmarkId, userId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.BOOKMARK_CANCEL_SUCCESS));
     }

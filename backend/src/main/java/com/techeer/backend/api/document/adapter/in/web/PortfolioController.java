@@ -2,6 +2,7 @@ package com.techeer.backend.api.document.adapter.in.web;
 
 import com.techeer.backend.api.document.application.port.in.CreatePortfolioUseCase;
 import com.techeer.backend.api.document.dto.request.PortfolioCreateRequest;
+import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.dto.ApiResponse;
 import com.techeer.backend.global.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class PortfolioController {
 
     private final CreatePortfolioUseCase createPortfolioUseCase;
+    private final UserService userService;
 
     @Operation(summary = "포트폴리오 등록", description = "새로운 포트폴리오를 등록합니다. 파일과 함께 업로드하세요.")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -34,7 +36,8 @@ public class PortfolioController {
         @Valid @RequestPart("request") PortfolioCreateRequest request,
         @RequestPart("file") MultipartFile file
     ) {
-        Long portfolioId = createPortfolioUseCase.createPortfolio(request, file);
+        Long userId = userService.getLoginUser().getId();
+        Long portfolioId = createPortfolioUseCase.createPortfolio(request, file, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(ApiResponse.success(SuccessCode.PORTFOLIO_CREATE_SUCCESS, portfolioId));
     }

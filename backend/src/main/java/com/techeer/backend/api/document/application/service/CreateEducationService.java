@@ -31,8 +31,8 @@ public class CreateEducationService implements CreateEducationUseCase {
     private final GcsUploader gcsUploader;
 
     @Override
-    public Long createEducation(EducationCreateRequest request, MultipartFile file) {
-        User user = loadUserPort.findById(request.userId())
+    public Long createEducation(EducationCreateRequest request, MultipartFile file, Long userId) {
+        User user = loadUserPort.findById(userId)
             .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         FileMetadata metadata = gcsUploader.uploadVerification(file, user.getId(), "education");

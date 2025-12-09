@@ -5,9 +5,6 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public record UserCareerUpdateRequest(
-    @NotNull(message = "사용자 ID는 필수입니다")
-    Long userId,
-
     @Size(max = 100, message = "회사명은 100자를 초과할 수 없습니다")
     String companyName,
 

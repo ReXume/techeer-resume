@@ -29,8 +29,8 @@ public class LikeCompanyService implements LikeCompanyUseCase {
 	private final LoadUserPort loadUserPort;
 
 	@Override
-	public Long likeCompany(CompanyLikeCreateRequest request) {
-		User user = loadUserPort.findById(request.userId())
+	public Long likeCompany(CompanyLikeCreateRequest request, Long userId) {
+		User user = loadUserPort.findById(userId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		Company company = loadCompanyPort.findById(request.companyId())

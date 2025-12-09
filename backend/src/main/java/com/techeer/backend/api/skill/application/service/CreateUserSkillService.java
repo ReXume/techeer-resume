@@ -29,8 +29,8 @@ public class CreateUserSkillService implements CreateUserSkillUseCase {
 	private final LoadUserPort loadUserPort;
 
 	@Override
-	public Long createUserSkill(UserSkillCreateRequest request) {
-		User user = loadUserPort.findById(request.userId())
+	public Long createUserSkill(UserSkillCreateRequest request, Long userId) {
+		User user = loadUserPort.findById(userId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		Skill skill = loadSkillPort.findById(request.skillId())

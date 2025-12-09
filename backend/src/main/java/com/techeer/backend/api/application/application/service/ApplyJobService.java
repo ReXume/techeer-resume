@@ -29,8 +29,10 @@ public class ApplyJobService implements ApplyJobUseCase {
 	private final LoadUserPort loadUserPort;
 
 	@Override
-	public Long applyJob(ApplicationApplyRequest request) {
-		User user = loadUserPort.findById(request.userId())
+	public Long applyJob(ApplicationApplyRequest request, Long userId) {
+		// userId로 User 조회 (영속성 컨텍스트 1차 캐시 활용)
+		// MSA 환경에서 다른 서비스 호출 시 명확한 계약
+		User user = loadUserPort.findById(userId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		JobPosting jobPosting = loadJobPostingPort.findById(request.jobPostingId())
