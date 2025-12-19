@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CompanyLikeJpaRepository extends JpaRepository<CompanyLike, Long> {
-	boolean existsByUserAndCompany(User user, Company company);
-}
 
+	boolean existsByUserAndCompany(User user, Company company);
+
+}

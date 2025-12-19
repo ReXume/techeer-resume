@@ -20,31 +20,27 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UpdateJobPostingService implements UpdateJobPostingUseCase {
 
-    private final LoadJobPostingPort loadJobPostingPort;
-    private final LoadUserPort loadUserPort;
-    private final LoadCompanyMemberPort loadCompanyMemberPort;
+	private final LoadJobPostingPort loadJobPostingPort;
 
-    @Override
-    public void updateJobPosting(Long jobPostingId, JobPostingUpdateRequest request, Long userId) {
-        JobPosting jobPosting = loadJobPostingPort.findById(jobPostingId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.JOB_POSTING_NOT_FOUND));
+	private final LoadUserPort loadUserPort;
 
-        User user = loadUserPort.findById(userId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+	private final LoadCompanyMemberPort loadCompanyMemberPort;
 
-        CompanyMember member = loadCompanyMemberPort.findByUserAndCompany(user, jobPosting.getCompany())
-            .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_MEMBER_NOT_FOUND));
+	@Override
+	public void updateJobPosting(Long jobPostingId, JobPostingUpdateRequest request, Long userId) {
+		JobPosting jobPosting = loadJobPostingPort.findById(jobPostingId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.JOB_POSTING_NOT_FOUND));
 
-        if (member.getRole() != CompanyRole.ADMIN) {
-            throw new BusinessException(ErrorCode.COMPANY_FORBIDDEN);
-        }
+		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        jobPosting.updateJobPosting(
-            request.title(),
-            request.contents(),
-            request.expYears(),
-            null
-        );
-    }
+		CompanyMember member = loadCompanyMemberPort.findByUserAndCompany(user, jobPosting.getCompany())
+			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_MEMBER_NOT_FOUND));
+
+		if (member.getRole() != CompanyRole.ADMIN) {
+			throw new BusinessException(ErrorCode.COMPANY_FORBIDDEN);
+		}
+
+		jobPosting.updateJobPosting(request.title(), request.contents(), request.expYears(), null);
+	}
+
 }
-

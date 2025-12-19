@@ -20,31 +20,27 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UpdateCompanyService implements UpdateCompanyUseCase {
 
-    private final LoadCompanyPort loadCompanyPort;
-    private final LoadUserPort loadUserPort;
-    private final LoadCompanyMemberPort loadCompanyMemberPort;
+	private final LoadCompanyPort loadCompanyPort;
 
-    @Override
-    public void updateCompany(Long companyId, CompanyUpdateRequest request, Long userId) {
-        Company company = loadCompanyPort.findById(companyId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
+	private final LoadUserPort loadUserPort;
 
-        User user = loadUserPort.findById(userId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+	private final LoadCompanyMemberPort loadCompanyMemberPort;
 
-        CompanyMember member = loadCompanyMemberPort.findByUserAndCompany(user, company)
-            .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_MEMBER_NOT_FOUND));
+	@Override
+	public void updateCompany(Long companyId, CompanyUpdateRequest request, Long userId) {
+		Company company = loadCompanyPort.findById(companyId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
 
-        if (member.getRole() != CompanyRole.ADMIN) {
-            throw new BusinessException(ErrorCode.COMPANY_FORBIDDEN);
-        }
+		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        company.updateInfo(
-            request.name(),
-            request.industryDomain(),
-            request.websiteUrl(),
-            request.location()
-        );
-    }
+		CompanyMember member = loadCompanyMemberPort.findByUserAndCompany(user, company)
+			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_MEMBER_NOT_FOUND));
+
+		if (member.getRole() != CompanyRole.ADMIN) {
+			throw new BusinessException(ErrorCode.COMPANY_FORBIDDEN);
+		}
+
+		company.updateInfo(request.name(), request.industryDomain(), request.websiteUrl(), request.location());
+	}
+
 }
-

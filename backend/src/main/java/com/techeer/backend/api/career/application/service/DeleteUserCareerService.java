@@ -14,18 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class DeleteUserCareerService implements DeleteUserCareerUseCase {
 
-    private final LoadUserCareerPort loadUserCareerPort;
+	private final LoadUserCareerPort loadUserCareerPort;
 
-    @Override
-    public void deleteUserCareer(Long careerId, Long userId) {
-        UserCareer userCareer = loadUserCareerPort.findById(careerId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.USER_CAREER_NOT_FOUND));
+	@Override
+	public void deleteUserCareer(Long careerId, Long userId) {
+		UserCareer userCareer = loadUserCareerPort.findById(careerId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.USER_CAREER_NOT_FOUND));
 
-        if (!userCareer.getUser().getId().equals(userId)) {
-            throw new BusinessException(ErrorCode.FORBIDDEN);
-        }
+		if (!userCareer.getUser().getId().equals(userId)) {
+			throw new BusinessException(ErrorCode.FORBIDDEN);
+		}
 
-        userCareer.softDelete();
-    }
+		userCareer.softDelete();
+	}
+
 }
-

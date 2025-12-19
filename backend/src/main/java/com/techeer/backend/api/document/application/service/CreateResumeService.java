@@ -25,47 +25,51 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class CreateResumeService implements CreateResumeUseCase {
 
-    private final SaveResumePort saveResumePort;
-    private final LoadUserPort loadUserPort;
-    private final SaveUserFilePort saveUserFilePort;
-    private final GcsUploader gcsUploader;
+	private final SaveResumePort saveResumePort;
 
-    @Override
-    public Long createResume(ResumeCreateRequest request, MultipartFile file, Long userId) {
-        User user = loadUserPort.findById(userId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+	private final LoadUserPort loadUserPort;
 
-        // 1. 파일 업로드
-        FileMetadata metadata = gcsUploader.uploadDocument(file, user.getId(), "resume");
+	private final SaveUserFilePort saveUserFilePort;
 
-        // 2. UserFile 생성
-        UserFile userFile = UserFile.builder()
-            .user(user)
-            .category(FileCategory.RESUME)
-            .uuid(metadata.getFileUUID() != null ? metadata.getFileUUID() : UUID.randomUUID().toString())
-            .fileUrl(metadata.getFileUrl())
-            .fileType(mapToFileType(file.getContentType()))
-            .originalName(file.getOriginalFilename())
-            .build();
+	private final GcsUploader gcsUploader;
 
-        saveUserFilePort.saveUserFile(userFile);
+	@Override
+	public Long createResume(ResumeCreateRequest request, MultipartFile file, Long userId) {
+		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        // 3. Resume 생성
-        Resume resume = Resume.builder()
-            .file(userFile)
-            .title(request.title())
-            .isDefault(request.isDefault())
-            .build();
+		// 1. 파일 업로드
+		FileMetadata metadata = gcsUploader.uploadDocument(file, user.getId(), "resume");
 
-        return saveResumePort.saveResume(resume).getId();
-    }
+		// 2. UserFile 생성
+		UserFile userFile = UserFile.builder()
+			.user(user)
+			.category(FileCategory.RESUME)
+			.uuid(metadata.getFileUUID() != null ? metadata.getFileUUID() : UUID.randomUUID().toString())
+			.fileUrl(metadata.getFileUrl())
+			.fileType(mapToFileType(file.getContentType()))
+			.originalName(file.getOriginalFilename())
+			.build();
 
-    private FileType mapToFileType(String contentType) {
-        if (contentType == null) return FileType.OTHER;
-        if (contentType.startsWith("image/")) return FileType.IMAGE;
-        if (contentType.equals("application/pdf")) return FileType.PDF;
-        if (contentType.contains("msword") || contentType.contains("wordprocessingml")) return FileType.WORD;
-        if (contentType.contains("excel") || contentType.contains("spreadsheetml")) return FileType.EXCEL;
-        return FileType.OTHER;
-    }
+		saveUserFilePort.saveUserFile(userFile);
+
+		// 3. Resume 생성
+		Resume resume = Resume.builder().file(userFile).title(request.title()).isDefault(request.isDefault()).build();
+
+		return saveResumePort.saveResume(resume).getId();
+	}
+
+	private FileType mapToFileType(String contentType) {
+		if (contentType == null)
+			return FileType.OTHER;
+		if (contentType.startsWith("image/"))
+			return FileType.IMAGE;
+		if (contentType.equals("application/pdf"))
+			return FileType.PDF;
+		if (contentType.contains("msword") || contentType.contains("wordprocessingml"))
+			return FileType.WORD;
+		if (contentType.contains("excel") || contentType.contains("spreadsheetml"))
+			return FileType.EXCEL;
+		return FileType.OTHER;
+	}
+
 }

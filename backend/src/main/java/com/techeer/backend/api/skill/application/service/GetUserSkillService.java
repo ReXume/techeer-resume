@@ -15,19 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetUserSkillService implements GetUserSkillUseCase {
 
-    private final LoadUserSkillPort loadUserSkillPort;
+	private final LoadUserSkillPort loadUserSkillPort;
 
-    @Override
-    public UserSkillInfoResponse getUserSkill(Long userSkillId) {
-        UserSkill userSkill = loadUserSkillPort.findById(userSkillId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.USER_SKILL_NOT_FOUND));
+	@Override
+	public UserSkillInfoResponse getUserSkill(Long userSkillId) {
+		UserSkill userSkill = loadUserSkillPort.findById(userSkillId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.USER_SKILL_NOT_FOUND));
 
-        return UserSkillInfoResponse.builder()
-            .id(userSkill.getId())
-            .userId(userSkill.getUser().getId())
-            .skillId(userSkill.getSkill().getId())
-            .skillName(userSkill.getSkill().getName())
-            .build();
-    }
+		return UserSkillInfoResponse.builder()
+			.id(userSkill.getId())
+			.userId(userSkill.getUser().getId())
+			.skillId(userSkill.getSkill().getId())
+			.skillName(userSkill.getSkill().getName())
+			.build();
+	}
+
 }
-

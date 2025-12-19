@@ -18,12 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class CreateUserCareerService implements CreateUserCareerUseCase {
 
 	private final SaveUserCareerPort saveUserCareerPort;
+
 	private final LoadUserPort loadUserPort;
 
 	@Override
 	public Long createUserCareer(UserCareerCreateRequest request, Long userId) {
-		User user = loadUserPort.findById(userId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		UserCareer userCareer = UserCareer.builder()
 			.user(user)
@@ -36,5 +36,5 @@ public class CreateUserCareerService implements CreateUserCareerUseCase {
 
 		return saveUserCareerPort.saveUserCareer(userCareer).getId();
 	}
-}
 
+}

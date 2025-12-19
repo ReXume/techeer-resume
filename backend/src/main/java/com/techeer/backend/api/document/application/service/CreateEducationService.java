@@ -25,45 +25,52 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class CreateEducationService implements CreateEducationUseCase {
 
-    private final SaveEducationPort saveEducationPort;
-    private final LoadUserPort loadUserPort;
-    private final SaveUserFilePort saveUserFilePort;
-    private final GcsUploader gcsUploader;
+	private final SaveEducationPort saveEducationPort;
 
-    @Override
-    public Long createEducation(EducationCreateRequest request, MultipartFile file, Long userId) {
-        User user = loadUserPort.findById(userId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+	private final LoadUserPort loadUserPort;
 
-        FileMetadata metadata = gcsUploader.uploadVerification(file, user.getId(), "education");
+	private final SaveUserFilePort saveUserFilePort;
 
-        UserFile userFile = UserFile.builder()
-            .user(user)
-            .category(FileCategory.EDUCATION)
-            .uuid(metadata.getFileUUID() != null ? metadata.getFileUUID() : UUID.randomUUID().toString())
-            .fileUrl(metadata.getFileUrl())
-            .fileType(mapToFileType(file.getContentType()))
-            .originalName(file.getOriginalFilename())
-            .build();
+	private final GcsUploader gcsUploader;
 
-        saveUserFilePort.saveUserFile(userFile);
+	@Override
+	public Long createEducation(EducationCreateRequest request, MultipartFile file, Long userId) {
+		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        Education education = Education.builder()
-            .file(userFile)
-            .title(request.title())
-            .isDefault(request.isDefault())
-            .build();
+		FileMetadata metadata = gcsUploader.uploadVerification(file, user.getId(), "education");
 
-        return saveEducationPort.saveEducation(education).getId();
-    }
+		UserFile userFile = UserFile.builder()
+			.user(user)
+			.category(FileCategory.EDUCATION)
+			.uuid(metadata.getFileUUID() != null ? metadata.getFileUUID() : UUID.randomUUID().toString())
+			.fileUrl(metadata.getFileUrl())
+			.fileType(mapToFileType(file.getContentType()))
+			.originalName(file.getOriginalFilename())
+			.build();
 
-    private FileType mapToFileType(String contentType) {
-        if (contentType == null) return FileType.OTHER;
-        if (contentType.startsWith("image/")) return FileType.IMAGE;
-        if (contentType.equals("application/pdf")) return FileType.PDF;
-        if (contentType.contains("msword") || contentType.contains("wordprocessingml")) return FileType.WORD;
-        if (contentType.contains("excel") || contentType.contains("spreadsheetml")) return FileType.EXCEL;
-        return FileType.OTHER;
-    }
+		saveUserFilePort.saveUserFile(userFile);
+
+		Education education = Education.builder()
+			.file(userFile)
+			.title(request.title())
+			.isDefault(request.isDefault())
+			.build();
+
+		return saveEducationPort.saveEducation(education).getId();
+	}
+
+	private FileType mapToFileType(String contentType) {
+		if (contentType == null)
+			return FileType.OTHER;
+		if (contentType.startsWith("image/"))
+			return FileType.IMAGE;
+		if (contentType.equals("application/pdf"))
+			return FileType.PDF;
+		if (contentType.contains("msword") || contentType.contains("wordprocessingml"))
+			return FileType.WORD;
+		if (contentType.contains("excel") || contentType.contains("spreadsheetml"))
+			return FileType.EXCEL;
+		return FileType.OTHER;
+	}
+
 }
-

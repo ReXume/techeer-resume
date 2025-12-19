@@ -6,6 +6,9 @@ import com.techeer.backend.api.user.domain.User;
 import java.util.Optional;
 
 public interface LoadApplicationPort {
-    boolean existsByUserAndJobPosting(User user, JobPosting jobPosting);
-    Optional<Application> findById(Long id);
+
+	boolean existsByUserAndJobPosting(User user, JobPosting jobPosting);
+
+	Optional<Application> findById(Long id);
+
 }

@@ -6,6 +6,9 @@ import com.techeer.backend.api.user.domain.User;
 import java.util.Optional;
 
 public interface LoadCompanyLikePort {
-    boolean existsByUserAndCompany(User user, Company company);
-    Optional<CompanyLike> findById(Long id);
+
+	boolean existsByUserAndCompany(User user, Company company);
+
+	Optional<CompanyLike> findById(Long id);
+
 }

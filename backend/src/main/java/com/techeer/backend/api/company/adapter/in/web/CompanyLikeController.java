@@ -29,34 +29,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CompanyLikeController {
 
-    private final LikeCompanyUseCase likeCompanyUseCase;
-    private final GetCompanyLikeUseCase getCompanyLikeUseCase;
-    private final UnlikeCompanyUseCase unlikeCompanyUseCase;
-    private final UserService userService;
+	private final LikeCompanyUseCase likeCompanyUseCase;
 
-    @Operation(summary = "기업 좋아요", description = "기업에 좋아요를 표시합니다.")
-    @PostMapping
-    public ResponseEntity<ApiResponse<Long>> likeCompany(@Valid @RequestBody CompanyLikeCreateRequest request) {
-        Long userId = userService.getLoginUser().getId();
-        Long likeId = likeCompanyUseCase.likeCompany(request, userId);
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .body(ApiResponse.success(SuccessCode.COMPANY_LIKE_CREATE_SUCCESS, likeId));
-    }
+	private final GetCompanyLikeUseCase getCompanyLikeUseCase;
 
-    @Operation(summary = "좋아요 단건 조회", description = "좋아요 ID로 좋아요 정보를 조회합니다.")
-    @GetMapping("/{companyLikeId}")
-    public ResponseEntity<ApiResponse<CompanyLikeInfoResponse>> getCompanyLike(@PathVariable Long companyLikeId) {
-        CompanyLikeInfoResponse response = getCompanyLikeUseCase.getCompanyLike(companyLikeId);
-        return ResponseEntity.ok(ApiResponse.success(SuccessCode.OK, response));
-    }
+	private final UnlikeCompanyUseCase unlikeCompanyUseCase;
 
-    @Operation(summary = "좋아요 취소", description = "좋아요를 취소합니다. 본인만 가능합니다.")
-    @DeleteMapping("/{companyLikeId}")
-    public ResponseEntity<ApiResponse<Void>> unlikeCompany(
-        @PathVariable Long companyLikeId
-    ) {
-        Long userId = userService.getLoginUser().getId();
-        unlikeCompanyUseCase.unlikeCompany(companyLikeId, userId);
-        return ResponseEntity.ok(ApiResponse.success(SuccessCode.COMPANY_LIKE_CANCEL_SUCCESS));
-    }
+	private final UserService userService;
+
+	@Operation(summary = "기업 좋아요", description = "기업에 좋아요를 표시합니다.")
+	@PostMapping
+	public ResponseEntity<ApiResponse<Long>> likeCompany(@Valid @RequestBody CompanyLikeCreateRequest request) {
+		Long userId = userService.getLoginUser().getId();
+		Long likeId = likeCompanyUseCase.likeCompany(request, userId);
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(ApiResponse.success(SuccessCode.COMPANY_LIKE_CREATE_SUCCESS, likeId));
+	}
+
+	@Operation(summary = "좋아요 단건 조회", description = "좋아요 ID로 좋아요 정보를 조회합니다.")
+	@GetMapping("/{companyLikeId}")
+	public ResponseEntity<ApiResponse<CompanyLikeInfoResponse>> getCompanyLike(@PathVariable Long companyLikeId) {
+		CompanyLikeInfoResponse response = getCompanyLikeUseCase.getCompanyLike(companyLikeId);
+		return ResponseEntity.ok(ApiResponse.success(SuccessCode.OK, response));
+	}
+
+	@Operation(summary = "좋아요 취소", description = "좋아요를 취소합니다. 본인만 가능합니다.")
+	@DeleteMapping("/{companyLikeId}")
+	public ResponseEntity<ApiResponse<Void>> unlikeCompany(@PathVariable Long companyLikeId) {
+		Long userId = userService.getLoginUser().getId();
+		unlikeCompanyUseCase.unlikeCompany(companyLikeId, userId);
+		return ResponseEntity.ok(ApiResponse.success(SuccessCode.COMPANY_LIKE_CANCEL_SUCCESS));
+	}
+
 }

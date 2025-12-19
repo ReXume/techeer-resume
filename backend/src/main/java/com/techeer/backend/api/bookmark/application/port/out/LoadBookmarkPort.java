@@ -8,7 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 public interface LoadBookmarkPort {
-    boolean existsByUserAndJobPosting(User user, JobPosting jobPosting);
-    Optional<Bookmark> findById(Long id);
-    Slice<Bookmark> findAllByUser(User user, Pageable pageable);
+
+	boolean existsByUserAndJobPosting(User user, JobPosting jobPosting);
+
+	Optional<Bookmark> findById(Long id);
+
+	Slice<Bookmark> findAllByUser(User user, Pageable pageable);
+
 }

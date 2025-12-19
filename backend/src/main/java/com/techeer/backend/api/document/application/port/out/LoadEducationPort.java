@@ -8,7 +8,9 @@ import org.springframework.data.domain.Slice;
 import java.util.Optional;
 
 public interface LoadEducationPort {
-    Optional<Education> findById(Long id);
-    Slice<Education> findAllByUser(User user, Pageable pageable);
-}
 
+	Optional<Education> findById(Long id);
+
+	Slice<Education> findAllByUser(User user, Pageable pageable);
+
+}

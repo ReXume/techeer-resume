@@ -51,26 +51,19 @@ class UserApiIntegrationTest {
 
 		// When & Then
 		mockMvc
-			.perform(post("/api/v1/auth/register")
-				.contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andDo(print())
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.success").value(true))
 			.andExpect(jsonPath("$.message").exists())
-			.andDo(document("auth/register",
-					preprocessRequest(prettyPrint()),
-					preprocessResponse(prettyPrint()),
-					requestFields(
-							fieldWithPath("email").description("사용자 이메일 (유효한 이메일 형식)"),
+			.andDo(document("auth/register", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+					requestFields(fieldWithPath("email").description("사용자 이메일 (유효한 이메일 형식)"),
 							fieldWithPath("username").description("사용자 이름"),
-							fieldWithPath("password").description("비밀번호 (최소 8자, 영문+숫자 포함)")
-					),
-					responseFields(
-							fieldWithPath("success").description("성공 여부"),
+							fieldWithPath("password").description("비밀번호 (최소 8자, 영문+숫자 포함)")),
+					responseFields(fieldWithPath("success").description("성공 여부"),
 							fieldWithPath("message").description("응답 메시지"),
-							fieldWithPath("timestamp").description("응답 시간")
-					)));
+							fieldWithPath("timestamp").description("응답 시간"))));
 	}
 
 	@Test
@@ -78,33 +71,25 @@ class UserApiIntegrationTest {
 	void login() throws Exception {
 		// Given: 먼저 사용자를 생성
 		RegisterRequest registerRequest = new RegisterRequest("login@example.com", "LoginUser", "password1234");
-		mockMvc.perform(post("/api/v1/auth/register")
-			.contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(registerRequest)));
 
 		LoginRequest request = new LoginRequest("login@example.com", "password1234");
 
 		// When & Then
 		mockMvc
-			.perform(post("/api/v1/auth/login")
-				.contentType(MediaType.APPLICATION_JSON)
+			.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.success").value(true))
 			.andExpect(jsonPath("$.message").exists())
-			.andDo(document("auth/login",
-					preprocessRequest(prettyPrint()),
-					preprocessResponse(prettyPrint()),
-					requestFields(
-							fieldWithPath("email").description("사용자 이메일"),
-							fieldWithPath("password").description("비밀번호")
-					),
-					responseFields(
-							fieldWithPath("success").description("성공 여부"),
+			.andDo(document("auth/login", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+					requestFields(fieldWithPath("email").description("사용자 이메일"),
+							fieldWithPath("password").description("비밀번호")),
+					responseFields(fieldWithPath("success").description("성공 여부"),
 							fieldWithPath("message").description("응답 메시지"),
-							fieldWithPath("timestamp").description("응답 시간")
-					)));
+							fieldWithPath("timestamp").description("응답 시간"))));
 	}
 
 }

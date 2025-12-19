@@ -35,8 +35,7 @@ public class RegisterCompanyService implements RegisterCompanyUseCase {
 			throw new BusinessException(ErrorCode.COMPANY_ALREADY_EXISTS);
 		}
 
-		User user = loadUserPort.findById(userId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		Company company = Company.builder()
 			.name(request.name())
@@ -58,4 +57,5 @@ public class RegisterCompanyService implements RegisterCompanyUseCase {
 
 		return savedCompany.getId();
 	}
+
 }

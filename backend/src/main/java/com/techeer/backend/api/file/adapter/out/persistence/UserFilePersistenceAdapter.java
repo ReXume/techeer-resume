@@ -12,15 +12,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserFilePersistenceAdapter implements LoadUserFilePort, SaveUserFilePort {
 
-    private final UserFileJpaRepository userFileJpaRepository;
+	private final UserFileJpaRepository userFileJpaRepository;
 
-    @Override
-    public Optional<UserFile> findById(Long id) {
-        return userFileJpaRepository.findById(id);
-    }
+	@Override
+	public Optional<UserFile> findById(Long id) {
+		return userFileJpaRepository.findById(id);
+	}
 
-    @Override
-    public UserFile saveUserFile(UserFile userFile) {
-        return userFileJpaRepository.save(userFile);
-    }
+	@Override
+	public UserFile saveUserFile(UserFile userFile) {
+		return userFileJpaRepository.save(userFile);
+	}
+
 }

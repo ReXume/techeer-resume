@@ -58,17 +58,12 @@ class CompanyApiIntegrationTest {
 			.build();
 		userRepository.save(user);
 
-		CompanyRegisterRequest request = new CompanyRegisterRequest(
-			"Techeer",
-			"IT",
-			"https://techeer.com",
-			"Seoul",
-			user.getId()
-		);
+		CompanyRegisterRequest request = new CompanyRegisterRequest("Techeer", "IT", "https://techeer.com", "Seoul",
+				user.getId());
 
 		// when & then
-		mockMvc.perform(post("/api/v1/companies")
-				.contentType(MediaType.APPLICATION_JSON)
+		mockMvc
+			.perform(post("/api/v1/companies").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.success").value(true))
@@ -76,4 +71,5 @@ class CompanyApiIntegrationTest {
 			.andDo(print())
 			.andDo(document("company/register"));
 	}
+
 }

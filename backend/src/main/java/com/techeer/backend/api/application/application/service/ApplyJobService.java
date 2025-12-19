@@ -32,8 +32,7 @@ public class ApplyJobService implements ApplyJobUseCase {
 	public Long applyJob(ApplicationApplyRequest request, Long userId) {
 		// userId로 User 조회 (영속성 컨텍스트 1차 캐시 활용)
 		// MSA 환경에서 다른 서비스 호출 시 명확한 계약
-		User user = loadUserPort.findById(userId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		JobPosting jobPosting = loadJobPostingPort.findById(request.jobPostingId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.JOB_POSTING_NOT_FOUND));
@@ -43,12 +42,9 @@ public class ApplyJobService implements ApplyJobUseCase {
 			throw new BusinessException(ErrorCode.APPLICATION_ALREADY_EXISTS);
 		}
 
-		Application application = Application.builder()
-			.user(user)
-			.jobPosting(jobPosting)
-			.build();
+		Application application = Application.builder().user(user).jobPosting(jobPosting).build();
 
 		return saveApplicationPort.saveApplication(application).getId();
 	}
-}
 
+}

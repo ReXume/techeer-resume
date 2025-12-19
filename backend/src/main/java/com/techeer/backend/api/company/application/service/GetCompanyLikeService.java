@@ -15,19 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetCompanyLikeService implements GetCompanyLikeUseCase {
 
-    private final LoadCompanyLikePort loadCompanyLikePort;
+	private final LoadCompanyLikePort loadCompanyLikePort;
 
-    @Override
-    public CompanyLikeInfoResponse getCompanyLike(Long companyLikeId) {
-        CompanyLike companyLike = loadCompanyLikePort.findById(companyLikeId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_LIKE_NOT_FOUND));
+	@Override
+	public CompanyLikeInfoResponse getCompanyLike(Long companyLikeId) {
+		CompanyLike companyLike = loadCompanyLikePort.findById(companyLikeId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_LIKE_NOT_FOUND));
 
-        return CompanyLikeInfoResponse.builder()
-            .id(companyLike.getId())
-            .companyId(companyLike.getCompany().getId())
-            .companyName(companyLike.getCompany().getName())
-            .createdAt(companyLike.getCreatedAt())
-            .build();
-    }
+		return CompanyLikeInfoResponse.builder()
+			.id(companyLike.getId())
+			.companyId(companyLike.getCompany().getId())
+			.companyName(companyLike.getCompany().getName())
+			.createdAt(companyLike.getCreatedAt())
+			.build();
+	}
+
 }
-

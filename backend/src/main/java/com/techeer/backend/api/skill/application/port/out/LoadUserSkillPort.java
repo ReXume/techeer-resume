@@ -6,6 +6,9 @@ import com.techeer.backend.api.user.domain.User;
 import java.util.Optional;
 
 public interface LoadUserSkillPort {
-    boolean existsByUserAndSkill(User user, Skill skill);
-    Optional<UserSkill> findById(Long id);
+
+	boolean existsByUserAndSkill(User user, Skill skill);
+
+	Optional<UserSkill> findById(Long id);
+
 }

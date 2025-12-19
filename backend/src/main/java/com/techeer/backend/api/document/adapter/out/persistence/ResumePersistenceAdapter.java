@@ -15,21 +15,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ResumePersistenceAdapter implements SaveResumePort, LoadResumePort {
 
-    private final ResumeJpaRepository resumeJpaRepository;
+	private final ResumeJpaRepository resumeJpaRepository;
 
-    @Override
-    public Resume saveResume(Resume resume) {
-        return resumeJpaRepository.save(resume);
-    }
+	@Override
+	public Resume saveResume(Resume resume) {
+		return resumeJpaRepository.save(resume);
+	}
 
-    @Override
-    public Optional<Resume> findById(Long id) {
-        // Soft Delete 적용: 삭제되지 않은 이력서만 조회
-        return resumeJpaRepository.findByIdAndNotDeleted(id);
-    }
+	@Override
+	public Optional<Resume> findById(Long id) {
+		// Soft Delete 적용: 삭제되지 않은 이력서만 조회
+		return resumeJpaRepository.findByIdAndNotDeleted(id);
+	}
 
-    @Override
-    public Slice<Resume> findAllByUser(User user, Pageable pageable) {
-        return resumeJpaRepository.findAllByUserAndNotDeleted(user, pageable);
-    }
+	@Override
+	public Slice<Resume> findAllByUser(User user, Pageable pageable) {
+		return resumeJpaRepository.findAllByUserAndNotDeleted(user, pageable);
+	}
+
 }

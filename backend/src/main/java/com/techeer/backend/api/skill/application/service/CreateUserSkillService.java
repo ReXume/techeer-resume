@@ -30,8 +30,7 @@ public class CreateUserSkillService implements CreateUserSkillUseCase {
 
 	@Override
 	public Long createUserSkill(UserSkillCreateRequest request, Long userId) {
-		User user = loadUserPort.findById(userId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		Skill skill = loadSkillPort.findById(request.skillId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.SKILL_NOT_FOUND));
@@ -41,12 +40,9 @@ public class CreateUserSkillService implements CreateUserSkillUseCase {
 			throw new BusinessException(ErrorCode.USER_SKILL_ALREADY_EXISTS);
 		}
 
-		UserSkill userSkill = UserSkill.builder()
-			.user(user)
-			.skill(skill)
-			.build();
+		UserSkill userSkill = UserSkill.builder().user(user).skill(skill).build();
 
 		return saveUserSkillPort.saveUserSkill(userSkill).getId();
 	}
-}
 
+}

@@ -15,21 +15,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetApplicationService implements GetApplicationUseCase {
 
-    private final LoadApplicationPort loadApplicationPort;
+	private final LoadApplicationPort loadApplicationPort;
 
-    @Override
-    public ApplicationInfoResponse getApplication(Long applicationId) {
-        Application application = loadApplicationPort.findById(applicationId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
+	@Override
+	public ApplicationInfoResponse getApplication(Long applicationId) {
+		Application application = loadApplicationPort.findById(applicationId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
 
-        return ApplicationInfoResponse.builder()
-            .id(application.getId())
-            .jobPostingId(application.getJobPosting().getId())
-            .jobPostingTitle(application.getJobPosting().getTitle())
-            .companyName(application.getJobPosting().getCompany().getName())
-            .status(application.getStatus().name())
-            .appliedAt(application.getCreatedAt())
-            .build();
-    }
+		return ApplicationInfoResponse.builder()
+			.id(application.getId())
+			.jobPostingId(application.getJobPosting().getId())
+			.jobPostingTitle(application.getJobPosting().getTitle())
+			.companyName(application.getJobPosting().getCompany().getName())
+			.status(application.getStatus().name())
+			.appliedAt(application.getCreatedAt())
+			.build();
+	}
+
 }
-

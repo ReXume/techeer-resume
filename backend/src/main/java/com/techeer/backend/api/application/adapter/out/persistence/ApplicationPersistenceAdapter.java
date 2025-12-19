@@ -14,21 +14,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ApplicationPersistenceAdapter implements SaveApplicationPort, LoadApplicationPort {
 
-    private final ApplicationJpaRepository applicationJpaRepository;
+	private final ApplicationJpaRepository applicationJpaRepository;
 
-    @Override
-    public Application saveApplication(Application application) {
-        return applicationJpaRepository.save(application);
-    }
+	@Override
+	public Application saveApplication(Application application) {
+		return applicationJpaRepository.save(application);
+	}
 
-    @Override
-    public boolean existsByUserAndJobPosting(User user, JobPosting jobPosting) {
-        return applicationJpaRepository.existsByUserAndJobPosting(user, jobPosting);
-    }
+	@Override
+	public boolean existsByUserAndJobPosting(User user, JobPosting jobPosting) {
+		return applicationJpaRepository.existsByUserAndJobPosting(user, jobPosting);
+	}
 
-    @Override
-    public Optional<Application> findById(Long id) {
-        // Soft Delete 적용: 삭제되지 않은 지원서만 조회
-        return applicationJpaRepository.findByIdAndNotDeleted(id);
-    }
+	@Override
+	public Optional<Application> findById(Long id) {
+		// Soft Delete 적용: 삭제되지 않은 지원서만 조회
+		return applicationJpaRepository.findByIdAndNotDeleted(id);
+	}
+
 }

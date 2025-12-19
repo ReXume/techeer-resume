@@ -15,19 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetEducationService implements GetEducationUseCase {
 
-    private final LoadEducationPort loadEducationPort;
+	private final LoadEducationPort loadEducationPort;
 
-    @Override
-    public EducationInfoResponse getEducation(Long educationId) {
-        Education education = loadEducationPort.findById(educationId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.EDUCATION_NOT_FOUND));
+	@Override
+	public EducationInfoResponse getEducation(Long educationId) {
+		Education education = loadEducationPort.findById(educationId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.EDUCATION_NOT_FOUND));
 
-        return EducationInfoResponse.builder()
-            .id(education.getId())
-            .title(education.getTitle())
-            .fileUrl(education.getFile().getFileUrl())
-            .isDefault(education.getIsDefault())
-            .build();
-    }
+		return EducationInfoResponse.builder()
+			.id(education.getId())
+			.title(education.getTitle())
+			.fileUrl(education.getFile().getFileUrl())
+			.isDefault(education.getIsDefault())
+			.build();
+	}
+
 }
-

@@ -32,46 +32,47 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CompanyController {
 
-    private final RegisterCompanyUseCase registerCompanyUseCase;
-    private final GetCompanyUseCase getCompanyUseCase;
-    private final UpdateCompanyUseCase updateCompanyUseCase;
-    private final DeleteCompanyUseCase deleteCompanyUseCase;
-    private final UserService userService;
+	private final RegisterCompanyUseCase registerCompanyUseCase;
 
-    @Operation(summary = "기업 등록", description = "새로운 기업 정보를 등록합니다. 등록한 사용자는 자동으로 관리자가 됩니다.")
-    @PostMapping
-    public ResponseEntity<ApiResponse<Long>> registerCompany(@Valid @RequestBody CompanyRegisterRequest request) {
-        Long userId = userService.getLoginUser().getId();
-        Long companyId = registerCompanyUseCase.registerCompany(request, userId);
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .body(ApiResponse.success(SuccessCode.COMPANY_REGISTER_SUCCESS, companyId));
-    }
+	private final GetCompanyUseCase getCompanyUseCase;
 
-    @Operation(summary = "기업 단건 조회", description = "기업 ID로 기업 정보를 조회합니다.")
-    @GetMapping("/{companyId}")
-    public ResponseEntity<ApiResponse<CompanyInfoResponse>> getCompany(@PathVariable Long companyId) {
-        CompanyInfoResponse response = getCompanyUseCase.getCompany(companyId);
-        return ResponseEntity.ok(ApiResponse.success(SuccessCode.OK, response));
-    }
+	private final UpdateCompanyUseCase updateCompanyUseCase;
 
-    @Operation(summary = "기업 정보 수정", description = "기업 정보를 수정합니다. 기업 관리자 권한이 필요합니다.")
-    @PutMapping("/{companyId}")
-    public ResponseEntity<ApiResponse<Void>> updateCompany(
-        @PathVariable Long companyId,
-        @Valid @RequestBody CompanyUpdateRequest request
-    ) {
-        Long userId = userService.getLoginUser().getId();
-        updateCompanyUseCase.updateCompany(companyId, request, userId);
-        return ResponseEntity.ok(ApiResponse.success(SuccessCode.COMPANY_UPDATE_SUCCESS));
-    }
+	private final DeleteCompanyUseCase deleteCompanyUseCase;
 
-    @Operation(summary = "기업 삭제", description = "기업을 삭제합니다. 기업 관리자 권한이 필요합니다.")
-    @DeleteMapping("/{companyId}")
-    public ResponseEntity<ApiResponse<Void>> deleteCompany(
-        @PathVariable Long companyId
-    ) {
-        Long userId = userService.getLoginUser().getId();
-        deleteCompanyUseCase.deleteCompany(companyId, userId);
-        return ResponseEntity.ok(ApiResponse.success(SuccessCode.COMPANY_DELETE_SUCCESS));
-    }
+	private final UserService userService;
+
+	@Operation(summary = "기업 등록", description = "새로운 기업 정보를 등록합니다. 등록한 사용자는 자동으로 관리자가 됩니다.")
+	@PostMapping
+	public ResponseEntity<ApiResponse<Long>> registerCompany(@Valid @RequestBody CompanyRegisterRequest request) {
+		Long userId = userService.getLoginUser().getId();
+		Long companyId = registerCompanyUseCase.registerCompany(request, userId);
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(ApiResponse.success(SuccessCode.COMPANY_REGISTER_SUCCESS, companyId));
+	}
+
+	@Operation(summary = "기업 단건 조회", description = "기업 ID로 기업 정보를 조회합니다.")
+	@GetMapping("/{companyId}")
+	public ResponseEntity<ApiResponse<CompanyInfoResponse>> getCompany(@PathVariable Long companyId) {
+		CompanyInfoResponse response = getCompanyUseCase.getCompany(companyId);
+		return ResponseEntity.ok(ApiResponse.success(SuccessCode.OK, response));
+	}
+
+	@Operation(summary = "기업 정보 수정", description = "기업 정보를 수정합니다. 기업 관리자 권한이 필요합니다.")
+	@PutMapping("/{companyId}")
+	public ResponseEntity<ApiResponse<Void>> updateCompany(@PathVariable Long companyId,
+			@Valid @RequestBody CompanyUpdateRequest request) {
+		Long userId = userService.getLoginUser().getId();
+		updateCompanyUseCase.updateCompany(companyId, request, userId);
+		return ResponseEntity.ok(ApiResponse.success(SuccessCode.COMPANY_UPDATE_SUCCESS));
+	}
+
+	@Operation(summary = "기업 삭제", description = "기업을 삭제합니다. 기업 관리자 권한이 필요합니다.")
+	@DeleteMapping("/{companyId}")
+	public ResponseEntity<ApiResponse<Void>> deleteCompany(@PathVariable Long companyId) {
+		Long userId = userService.getLoginUser().getId();
+		deleteCompanyUseCase.deleteCompany(companyId, userId);
+		return ResponseEntity.ok(ApiResponse.success(SuccessCode.COMPANY_DELETE_SUCCESS));
+	}
+
 }
