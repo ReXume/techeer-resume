@@ -21,6 +21,7 @@ public class ResumePersistenceAdapter implements SaveResumePort, LoadResumePort 
 
     @Override
     public Optional<Resume> findById(Long id) {
-        return resumeJpaRepository.findById(id);
+        // Soft Delete 적용: 삭제되지 않은 이력서만 조회
+        return resumeJpaRepository.findByIdAndNotDeleted(id);
     }
 }

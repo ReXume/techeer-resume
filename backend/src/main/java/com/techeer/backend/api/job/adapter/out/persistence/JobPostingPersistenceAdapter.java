@@ -20,6 +20,7 @@ public class JobPostingPersistenceAdapter implements SaveJobPostingPort, LoadJob
 
 	@Override
 	public Optional<JobPosting> findById(Long id) {
-		return jobPostingJpaRepository.findById(id);
+		// Soft Delete 적용: 삭제되지 않은 채용공고만 조회
+		return jobPostingJpaRepository.findByIdAndNotDeleted(id);
 	}
 }
