@@ -9,4 +9,3 @@ public record ResumeInfoResponse(
     String fileUrl,
     Boolean isDefault
 ) {}
-
