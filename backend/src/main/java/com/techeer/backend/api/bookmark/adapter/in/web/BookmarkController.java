@@ -2,6 +2,7 @@ package com.techeer.backend.api.bookmark.adapter.in.web;
 
 import com.techeer.backend.api.bookmark.application.port.in.BookmarkJobPostingUseCase;
 import com.techeer.backend.api.bookmark.application.port.in.CancelBookmarkUseCase;
+import com.techeer.backend.api.bookmark.application.port.in.GetAllBookmarksUseCase;
 import com.techeer.backend.api.bookmark.application.port.in.GetBookmarkUseCase;
 import com.techeer.backend.api.bookmark.dto.request.BookmarkCreateRequest;
 import com.techeer.backend.api.bookmark.dto.response.BookmarkInfoResponse;
@@ -12,6 +13,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +35,7 @@ public class BookmarkController {
 
     private final BookmarkJobPostingUseCase bookmarkJobPostingUseCase;
     private final GetBookmarkUseCase getBookmarkUseCase;
+    private final GetAllBookmarksUseCase getAllBookmarksUseCase;
     private final CancelBookmarkUseCase cancelBookmarkUseCase;
     private final UserService userService;
 
@@ -48,6 +53,16 @@ public class BookmarkController {
     public ResponseEntity<ApiResponse<BookmarkInfoResponse>> getBookmark(@PathVariable Long bookmarkId) {
         BookmarkInfoResponse response = getBookmarkUseCase.getBookmark(bookmarkId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.OK, response));
+    }
+
+    @Operation(summary = "북마크 전체 조회", description = "현재 로그인한 사용자의 북마크 목록을 조회합니다. (Slice 페이지네이션)")
+    @GetMapping
+    public ResponseEntity<ApiResponse<Slice<BookmarkInfoResponse>>> getAllBookmarks(
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        Long userId = userService.getLoginUser().getId();
+        Slice<BookmarkInfoResponse> response = getAllBookmarksUseCase.getAllBookmarks(userId, pageable);
+        return ResponseEntity.ok(ApiResponse.success(SuccessCode.GET_SUCCESS, response));
     }
 
     @Operation(summary = "북마크 취소", description = "북마크를 취소합니다. 본인만 가능합니다.")
