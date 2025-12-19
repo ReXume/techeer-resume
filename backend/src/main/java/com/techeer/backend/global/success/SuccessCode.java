@@ -34,16 +34,19 @@ public enum SuccessCode implements BaseStatus {
 
 	// Resume Success
 	RESUME_CREATE_SUCCESS(HttpStatus.CREATED, "RESUME_201", "이력서가 등록되었습니다."),
+	RESUME_GET_SUCCESS(HttpStatus.OK, "RESUME_200", "이력서 조회에 성공했습니다."),
 	RESUME_UPDATE_SUCCESS(HttpStatus.OK, "RESUME_200", "이력서가 수정되었습니다."),
 	RESUME_DELETE_SUCCESS(HttpStatus.OK, "RESUME_200", "이력서가 삭제되었습니다."),
 
 	// Portfolio Success
 	PORTFOLIO_CREATE_SUCCESS(HttpStatus.CREATED, "PORTFOLIO_201", "포트폴리오가 등록되었습니다."),
+	PORTFOLIO_GET_SUCCESS(HttpStatus.OK, "PORTFOLIO_200", "포트폴리오 조회에 성공했습니다."),
 	PORTFOLIO_UPDATE_SUCCESS(HttpStatus.OK, "PORTFOLIO_200", "포트폴리오가 수정되었습니다."),
 	PORTFOLIO_DELETE_SUCCESS(HttpStatus.OK, "PORTFOLIO_200", "포트폴리오가 삭제되었습니다."),
 
 	// Education Success
 	EDUCATION_CREATE_SUCCESS(HttpStatus.CREATED, "EDUCATION_201", "학력이 등록되었습니다."),
+	EDUCATION_GET_SUCCESS(HttpStatus.OK, "EDUCATION_200", "학력 조회에 성공했습니다."),
 	EDUCATION_UPDATE_SUCCESS(HttpStatus.OK, "EDUCATION_200", "학력이 수정되었습니다."),
 	EDUCATION_DELETE_SUCCESS(HttpStatus.OK, "EDUCATION_200", "학력이 삭제되었습니다."),
 
@@ -53,6 +56,7 @@ public enum SuccessCode implements BaseStatus {
 
 	// Bookmark Success
 	BOOKMARK_CREATE_SUCCESS(HttpStatus.CREATED, "BOOKMARK_201", "채용공고를 북마크했습니다."),
+	BOOKMARK_GET_SUCCESS(HttpStatus.OK, "BOOKMARK_200", "북마크 조회에 성공했습니다."),
 	BOOKMARK_CANCEL_SUCCESS(HttpStatus.OK, "BOOKMARK_200", "북마크가 취소되었습니다."),
 
 	// Company Like Success

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SkillJpaRepository extends JpaRepository<Skill, Long> {
-}
 
+}

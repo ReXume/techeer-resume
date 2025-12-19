@@ -4,6 +4,7 @@ import com.techeer.backend.api.career.domain.UserCareer;
 import java.util.Optional;
 
 public interface LoadUserCareerPort {
-    Optional<UserCareer> findById(Long id);
-}
 
+	Optional<UserCareer> findById(Long id);
+
+}

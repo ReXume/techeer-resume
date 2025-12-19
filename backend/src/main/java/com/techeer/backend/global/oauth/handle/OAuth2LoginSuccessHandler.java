@@ -30,29 +30,28 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 			CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
 			// 이메일로 사용자가 이미 있는지 확인
-			userRepository.findByNameAndSocialType(oAuth2User.getName(), oAuth2User.getSocialType())
-				.ifPresent(user -> {
-					// AccessToken 생성
-					String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
+			userRepository.findByNameAndSocialType(oAuth2User.getName(), oAuth2User.getSocialType()).ifPresent(user -> {
+				// AccessToken 생성
+				String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
 
-					// DB RefreshToken 업데이트
-					String refreshToken = jwtService.reIssueRefreshToken(user);
+				// DB RefreshToken 업데이트
+				String refreshToken = jwtService.reIssueRefreshToken(user);
 
-					response.setContentType("application/json");
-					response.setCharacterEncoding("UTF-8");
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
 
-					// 쿠키에 accessToken과 refreshToken 저장
-					jwtService.addTokenCookies(response, accessToken, refreshToken);
+				// 쿠키에 accessToken과 refreshToken 저장
+				jwtService.addTokenCookies(response, accessToken, refreshToken);
 
-					// 로그인 성공 처리
-					String redirectUrl = "http://localhost:5173";
-					try {
-						response.sendRedirect(redirectUrl);
-					}
-					catch (IOException e) {
-						throw new RuntimeException(e);
-					}
-				});
+				// 로그인 성공 처리
+				String redirectUrl = "http://localhost:5173";
+				try {
+					response.sendRedirect(redirectUrl);
+				}
+				catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			});
 
 		}
 		catch (Exception e) {

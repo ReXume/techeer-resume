@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 public interface LoadPortfolioPort {
-    Optional<Portfolio> findById(Long id);
-    Slice<Portfolio> findAllByUser(User user, Pageable pageable);
-}
 
+	Optional<Portfolio> findById(Long id);
+
+	Slice<Portfolio> findAllByUser(User user, Pageable pageable);
+
+}

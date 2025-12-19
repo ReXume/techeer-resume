@@ -94,8 +94,8 @@ public class JwtService {
 	}
 
 	/**
-	 * HttpServletRequest에서 Access Token을 추출합니다.
-	 * 우선순위: 1. Cookie (기본 인증 방식) 2. Authorization 헤더 (Swagger UI 테스트용)
+	 * HttpServletRequest에서 Access Token을 추출합니다. 우선순위: 1. Cookie (기본 인증 방식) 2.
+	 * Authorization 헤더 (Swagger UI 테스트용)
 	 */
 	public Optional<String> extractAccessToken(HttpServletRequest request) {
 		// 1. 쿠키에서 먼저 확인 (프로덕션 환경의 기본 인증 방식)
@@ -167,7 +167,8 @@ public class JwtService {
 		try {
 			Claims claims = decodeToken(accessToken);
 			return claims != null ? claims.get(EMAIL_CLAIM, String.class) : null;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			log.error("토큰에서 이메일 추출 실패: {}", e.getMessage());
 			return null;
 		}

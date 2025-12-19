@@ -14,18 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CancelApplicationService implements CancelApplicationUseCase {
 
-    private final LoadApplicationPort loadApplicationPort;
+	private final LoadApplicationPort loadApplicationPort;
 
-    @Override
-    public void cancelApplication(Long applicationId, Long userId) {
-        Application application = loadApplicationPort.findById(applicationId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
+	@Override
+	public void cancelApplication(Long applicationId, Long userId) {
+		Application application = loadApplicationPort.findById(applicationId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
 
-        if (!application.getUser().getId().equals(userId)) {
-            throw new BusinessException(ErrorCode.FORBIDDEN);
-        }
+		if (!application.getUser().getId().equals(userId)) {
+			throw new BusinessException(ErrorCode.FORBIDDEN);
+		}
 
-        application.softDelete();
-    }
+		application.softDelete();
+	}
+
 }
-

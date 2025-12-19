@@ -30,8 +30,7 @@ public class BookmarkJobPostingService implements BookmarkJobPostingUseCase {
 
 	@Override
 	public Long bookmarkJobPosting(BookmarkCreateRequest request, Long userId) {
-		User user = loadUserPort.findById(userId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		JobPosting jobPosting = loadJobPostingPort.findById(request.jobPostingId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.JOB_POSTING_NOT_FOUND));
@@ -41,12 +40,9 @@ public class BookmarkJobPostingService implements BookmarkJobPostingUseCase {
 			throw new BusinessException(ErrorCode.BOOKMARK_ALREADY_EXISTS);
 		}
 
-		Bookmark bookmark = Bookmark.builder()
-			.user(user)
-			.jobPosting(jobPosting)
-			.build();
+		Bookmark bookmark = Bookmark.builder().user(user).jobPosting(jobPosting).build();
 
 		return saveBookmarkPort.saveBookmark(bookmark).getId();
 	}
-}
 
+}

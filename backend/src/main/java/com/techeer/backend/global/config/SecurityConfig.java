@@ -62,9 +62,9 @@ public class SecurityConfig {
 			// 자체 로그인 API와 소셜 로그인 경로도 permitAll
 			.authorizeHttpRequests(authorize -> authorize
 				// Swagger UI 및 API 문서 (가장 먼저 체크하여 OAuth2 필터에 가로채이지 않도록)
-				.requestMatchers("/", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/index.html",
-						"/swagger/**", "/v3/api-docs/**", "/api-docs/**", "/index.html",
-						"/swagger-ui.html/**", "/swagger-resources/**", "/webjars/**")
+				.requestMatchers("/", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/index.html", "/swagger/**",
+						"/v3/api-docs/**", "/api-docs/**", "/index.html", "/swagger-ui.html/**",
+						"/swagger-resources/**", "/webjars/**")
 				.permitAll()
 				// 자체 로그인/회원가입 API
 				.requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/mock/signup")
@@ -82,8 +82,7 @@ public class SecurityConfig {
 			.oauth2Login(oauth2Login -> oauth2Login
 				.userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
 				.successHandler(oAuth2LoginSuccessHandler)
-				.failureHandler(oAuth2LoginFailureHandler)
-			)
+				.failureHandler(oAuth2LoginFailureHandler))
 			// JWT 인증 필터 추가 (자체 로그인 및 소셜 로그인 후 JWT 토큰 처리)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtService, userRepository),
 					UsernamePasswordAuthenticationFilter.class);

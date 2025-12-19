@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 public interface LoadResumePort {
-    Optional<Resume> findById(Long id);
-    Slice<Resume> findAllByUser(User user, Pageable pageable);
-}
 
+	Optional<Resume> findById(Long id);
+
+	Slice<Resume> findAllByUser(User user, Pageable pageable);
+
+}

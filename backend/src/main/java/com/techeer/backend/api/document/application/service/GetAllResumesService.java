@@ -18,21 +18,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetAllResumesService implements GetAllResumesUseCase {
 
-    private final LoadResumePort loadResumePort;
-    private final LoadUserPort loadUserPort;
+	private final LoadResumePort loadResumePort;
 
-    @Override
-    public Slice<ResumeInfoResponse> getAllResumes(Long userId, Pageable pageable) {
-        User user = loadUserPort.findById(userId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+	private final LoadUserPort loadUserPort;
 
-        return loadResumePort.findAllByUser(user, pageable)
-            .map(resume -> ResumeInfoResponse.builder()
-                .id(resume.getId())
-                .title(resume.getTitle())
-                .fileUrl(resume.getFile().getFileUrl())
-                .isDefault(resume.getIsDefault())
-                .build());
-    }
+	@Override
+	public Slice<ResumeInfoResponse> getAllResumes(Long userId, Pageable pageable) {
+		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+		return loadResumePort.findAllByUser(user, pageable)
+			.map(resume -> ResumeInfoResponse.builder()
+				.id(resume.getId())
+				.title(resume.getTitle())
+				.fileUrl(resume.getFile().getFileUrl())
+				.isDefault(resume.getIsDefault())
+				.build());
+	}
+
 }
-

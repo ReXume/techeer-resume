@@ -15,26 +15,27 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UpdateEducationService implements UpdateEducationUseCase {
 
-    private final LoadEducationPort loadEducationPort;
+	private final LoadEducationPort loadEducationPort;
 
-    @Override
-    public void updateEducation(Long educationId, EducationUpdateRequest request, Long userId) {
-        Education education = loadEducationPort.findById(educationId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.EDUCATION_NOT_FOUND));
+	@Override
+	public void updateEducation(Long educationId, EducationUpdateRequest request, Long userId) {
+		Education education = loadEducationPort.findById(educationId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.EDUCATION_NOT_FOUND));
 
-        if (!education.getFile().getUser().getId().equals(userId)) {
-            throw new BusinessException(ErrorCode.FORBIDDEN);
-        }
+		if (!education.getFile().getUser().getId().equals(userId)) {
+			throw new BusinessException(ErrorCode.FORBIDDEN);
+		}
 
-        education.updateTitle(request.title());
+		education.updateTitle(request.title());
 
-        if (request.isDefault() != null) {
-            if (request.isDefault()) {
-                education.setAsDefault();
-            } else {
-                education.unsetAsDefault();
-            }
-        }
-    }
+		if (request.isDefault() != null) {
+			if (request.isDefault()) {
+				education.setAsDefault();
+			}
+			else {
+				education.unsetAsDefault();
+			}
+		}
+	}
+
 }
-

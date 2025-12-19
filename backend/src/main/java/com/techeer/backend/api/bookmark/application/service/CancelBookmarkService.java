@@ -14,18 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CancelBookmarkService implements CancelBookmarkUseCase {
 
-    private final LoadBookmarkPort loadBookmarkPort;
+	private final LoadBookmarkPort loadBookmarkPort;
 
-    @Override
-    public void cancelBookmark(Long bookmarkId, Long userId) {
-        Bookmark bookmark = loadBookmarkPort.findById(bookmarkId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.BOOKMARK_NOT_FOUND));
+	@Override
+	public void cancelBookmark(Long bookmarkId, Long userId) {
+		Bookmark bookmark = loadBookmarkPort.findById(bookmarkId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.BOOKMARK_NOT_FOUND));
 
-        if (!bookmark.getUser().getId().equals(userId)) {
-            throw new BusinessException(ErrorCode.FORBIDDEN);
-        }
+		if (!bookmark.getUser().getId().equals(userId)) {
+			throw new BusinessException(ErrorCode.FORBIDDEN);
+		}
 
-        bookmark.softDelete();
-    }
+		bookmark.softDelete();
+	}
+
 }
-

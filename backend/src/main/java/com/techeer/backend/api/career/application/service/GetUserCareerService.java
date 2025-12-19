@@ -15,22 +15,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetUserCareerService implements GetUserCareerUseCase {
 
-    private final LoadUserCareerPort loadUserCareerPort;
+	private final LoadUserCareerPort loadUserCareerPort;
 
-    @Override
-    public UserCareerInfoResponse getUserCareer(Long careerId) {
-        UserCareer userCareer = loadUserCareerPort.findById(careerId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.USER_CAREER_NOT_FOUND));
+	@Override
+	public UserCareerInfoResponse getUserCareer(Long careerId) {
+		UserCareer userCareer = loadUserCareerPort.findById(careerId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.USER_CAREER_NOT_FOUND));
 
-        return UserCareerInfoResponse.builder()
-            .id(userCareer.getId())
-            .userId(userCareer.getUser().getId())
-            .companyName(userCareer.getCompanyName())
-            .jobTitle(userCareer.getJobTitle())
-            .isCurrent(userCareer.getIsCurrent())
-            .startDate(userCareer.getStartDate())
-            .endDate(userCareer.getEndDate())
-            .build();
-    }
+		return UserCareerInfoResponse.builder()
+			.id(userCareer.getId())
+			.userId(userCareer.getUser().getId())
+			.companyName(userCareer.getCompanyName())
+			.jobTitle(userCareer.getJobTitle())
+			.isCurrent(userCareer.getIsCurrent())
+			.startDate(userCareer.getStartDate())
+			.endDate(userCareer.getEndDate())
+			.build();
+	}
+
 }
-

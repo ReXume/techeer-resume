@@ -10,12 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface JobPostingJpaRepository extends JpaRepository<JobPosting, Long> {
-    
-    /**
-     * 삭제되지 않은 채용공고 조회
-     * Soft Delete 적용: deletedAt IS NULL인 경우만 조회
-     */
-    @Query("SELECT j FROM JobPosting j WHERE j.id = :id AND j.deletedAt IS NULL")
-    Optional<JobPosting> findByIdAndNotDeleted(@Param("id") Long id);
-}
 
+	/**
+	 * 삭제되지 않은 채용공고 조회 Soft Delete 적용: deletedAt IS NULL인 경우만 조회
+	 */
+	@Query("SELECT j FROM JobPosting j WHERE j.id = :id AND j.deletedAt IS NULL")
+	Optional<JobPosting> findByIdAndNotDeleted(@Param("id") Long id);
+
+}

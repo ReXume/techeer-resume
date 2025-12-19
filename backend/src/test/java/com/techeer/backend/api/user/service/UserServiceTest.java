@@ -131,10 +131,7 @@ class UserServiceTest {
 		void fail_password_mismatch() {
 			// Given
 			LoginRequest request = new LoginRequest("test@example.com", "wrongPassword");
-			User user = User.builder()
-				.email("test@example.com")
-				.password("encodedPassword")
-				.build();
+			User user = User.builder().email("test@example.com").password("encodedPassword").build();
 			HttpServletResponse response = mock(HttpServletResponse.class);
 
 			given(userRepository.findByEmail(request.email())).willReturn(Optional.of(user));
@@ -168,4 +165,3 @@ class UserServiceTest {
 	}
 
 }
-

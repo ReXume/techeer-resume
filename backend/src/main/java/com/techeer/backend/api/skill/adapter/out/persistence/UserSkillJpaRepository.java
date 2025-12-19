@@ -12,13 +12,13 @@ import java.util.Optional;
 
 @Repository
 public interface UserSkillJpaRepository extends JpaRepository<UserSkill, Long> {
+
 	boolean existsByUserAndSkill(User user, Skill skill);
-	
+
 	/**
-	 * 삭제되지 않은 사용자 스킬 조회
-	 * Soft Delete 적용: deletedAt IS NULL인 경우만 조회
+	 * 삭제되지 않은 사용자 스킬 조회 Soft Delete 적용: deletedAt IS NULL인 경우만 조회
 	 */
 	@Query("SELECT us FROM UserSkill us WHERE us.id = :id AND us.deletedAt IS NULL")
 	Optional<UserSkill> findByIdAndNotDeleted(@Param("id") Long id);
-}
 
+}

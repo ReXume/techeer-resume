@@ -29,34 +29,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserSkillController {
 
-    private final CreateUserSkillUseCase createUserSkillUseCase;
-    private final GetUserSkillUseCase getUserSkillUseCase;
-    private final DeleteUserSkillUseCase deleteUserSkillUseCase;
-    private final UserService userService;
+	private final CreateUserSkillUseCase createUserSkillUseCase;
 
-    @Operation(summary = "스킬 등록", description = "사용자의 스킬 정보를 등록합니다.")
-    @PostMapping
-    public ResponseEntity<ApiResponse<Long>> createUserSkill(@Valid @RequestBody UserSkillCreateRequest request) {
-        Long userId = userService.getLoginUser().getId();
-        Long userSkillId = createUserSkillUseCase.createUserSkill(request, userId);
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .body(ApiResponse.success(SuccessCode.USER_SKILL_CREATE_SUCCESS, userSkillId));
-    }
+	private final GetUserSkillUseCase getUserSkillUseCase;
 
-    @Operation(summary = "스킬 단건 조회", description = "스킬 ID로 스킬 정보를 조회합니다.")
-    @GetMapping("/{userSkillId}")
-    public ResponseEntity<ApiResponse<UserSkillInfoResponse>> getUserSkill(@PathVariable Long userSkillId) {
-        UserSkillInfoResponse response = getUserSkillUseCase.getUserSkill(userSkillId);
-        return ResponseEntity.ok(ApiResponse.success(SuccessCode.OK, response));
-    }
+	private final DeleteUserSkillUseCase deleteUserSkillUseCase;
 
-    @Operation(summary = "스킬 삭제", description = "스킬 정보를 삭제합니다. 본인만 가능합니다.")
-    @DeleteMapping("/{userSkillId}")
-    public ResponseEntity<ApiResponse<Void>> deleteUserSkill(
-        @PathVariable Long userSkillId
-    ) {
-        Long userId = userService.getLoginUser().getId();
-        deleteUserSkillUseCase.deleteUserSkill(userSkillId, userId);
-        return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_SKILL_DELETE_SUCCESS));
-    }
+	private final UserService userService;
+
+	@Operation(summary = "스킬 등록", description = "사용자의 스킬 정보를 등록합니다.")
+	@PostMapping
+	public ResponseEntity<ApiResponse<Long>> createUserSkill(@Valid @RequestBody UserSkillCreateRequest request) {
+		Long userId = userService.getLoginUser().getId();
+		Long userSkillId = createUserSkillUseCase.createUserSkill(request, userId);
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(ApiResponse.success(SuccessCode.USER_SKILL_CREATE_SUCCESS, userSkillId));
+	}
+
+	@Operation(summary = "스킬 단건 조회", description = "스킬 ID로 스킬 정보를 조회합니다.")
+	@GetMapping("/{userSkillId}")
+	public ResponseEntity<ApiResponse<UserSkillInfoResponse>> getUserSkill(@PathVariable Long userSkillId) {
+		UserSkillInfoResponse response = getUserSkillUseCase.getUserSkill(userSkillId);
+		return ResponseEntity.ok(ApiResponse.success(SuccessCode.OK, response));
+	}
+
+	@Operation(summary = "스킬 삭제", description = "스킬 정보를 삭제합니다. 본인만 가능합니다.")
+	@DeleteMapping("/{userSkillId}")
+	public ResponseEntity<ApiResponse<Void>> deleteUserSkill(@PathVariable Long userSkillId) {
+		Long userId = userService.getLoginUser().getId();
+		deleteUserSkillUseCase.deleteUserSkill(userSkillId, userId);
+		return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_SKILL_DELETE_SUCCESS));
+	}
+
 }

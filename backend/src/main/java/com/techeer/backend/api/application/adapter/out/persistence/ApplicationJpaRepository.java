@@ -12,12 +12,13 @@ import java.util.Optional;
 
 @Repository
 public interface ApplicationJpaRepository extends JpaRepository<Application, Long> {
+
 	boolean existsByUserAndJobPosting(User user, JobPosting jobPosting);
-	
+
 	/**
-	 * 삭제되지 않은 지원서 조회
-	 * Soft Delete 적용: deletedAt IS NULL인 경우만 조회
+	 * 삭제되지 않은 지원서 조회 Soft Delete 적용: deletedAt IS NULL인 경우만 조회
 	 */
 	@Query("SELECT a FROM Application a WHERE a.id = :id AND a.deletedAt IS NULL")
 	Optional<Application> findByIdAndNotDeleted(@Param("id") Long id);
+
 }

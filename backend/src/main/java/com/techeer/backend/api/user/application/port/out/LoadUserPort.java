@@ -4,6 +4,7 @@ import com.techeer.backend.api.user.domain.User;
 import java.util.Optional;
 
 public interface LoadUserPort {
-	Optional<User> findById(Long id);
-}
 
+	Optional<User> findById(Long id);
+
+}

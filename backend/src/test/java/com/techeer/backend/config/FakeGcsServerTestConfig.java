@@ -15,6 +15,7 @@ import org.testcontainers.utility.DockerImageName;
 public class FakeGcsServerTestConfig {
 
 	private static final int FAKE_GCS_PORT = 4443;
+
 	private static final String FAKE_GCS_IMAGE = "fsouza/fake-gcs-server:1.47.7";
 
 	@Bean(initMethod = "start", destroyMethod = "stop")
@@ -24,8 +25,7 @@ public class FakeGcsServerTestConfig {
 		GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse(FAKE_GCS_IMAGE))
 			.withExposedPorts(FAKE_GCS_PORT)
 			.withCommand("-scheme", "http", "-port", String.valueOf(FAKE_GCS_PORT))
-			.waitingFor(new HttpWaitStrategy()
-				.forPath("/storage/v1/b")
+			.waitingFor(new HttpWaitStrategy().forPath("/storage/v1/b")
 				.forPort(FAKE_GCS_PORT)
 				.withStartupTimeout(Duration.ofSeconds(60)));
 
@@ -58,4 +58,3 @@ public class FakeGcsServerTestConfig {
 	}
 
 }
-

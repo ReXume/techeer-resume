@@ -50,23 +50,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,
 			FilterChain filterChain) throws ServletException, IOException {
 		log.debug("JWT 인증 필터 실행: {}", request.getRequestURI());
-		
-		jwtService.extractAccessToken(request)
-			.filter(jwtService::isAccessTokenValid)
-			.flatMap(accessToken -> {
-				String email = jwtService.extractEmail(accessToken);
-				if (email != null) {
-					log.info("유효한 Access Token 발견. 사용자: {}", email);
-					return userRepository.findByEmail(email);
-				}
-				log.warn("토큰에서 이메일 추출 실패");
-				return Optional.empty();
-			})
-			.ifPresent(user -> {
-				saveAuthentication(user);
-				log.info("인증 정보 저장 완료: {}", user.getEmail());
-			});
-		
+
+		jwtService.extractAccessToken(request).filter(jwtService::isAccessTokenValid).flatMap(accessToken -> {
+			String email = jwtService.extractEmail(accessToken);
+			if (email != null) {
+				log.info("유효한 Access Token 발견. 사용자: {}", email);
+				return userRepository.findByEmail(email);
+			}
+			log.warn("토큰에서 이메일 추출 실패");
+			return Optional.empty();
+		}).ifPresent(user -> {
+			saveAuthentication(user);
+			log.info("인증 정보 저장 완료: {}", user.getEmail());
+		});
+
 		filterChain.doFilter(request, response);
 	}
 
@@ -80,11 +77,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			.roles(user.getRole().name())
 			.build();
 
-		Authentication authentication = new UsernamePasswordAuthenticationToken(
-			userDetails, 
-			null,
-			authoritiesMapper.mapAuthorities(userDetails.getAuthorities())
-		);
+		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
+				authoritiesMapper.mapAuthorities(userDetails.getAuthorities()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}

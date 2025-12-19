@@ -16,5 +16,5 @@ public class SkillPersistenceAdapter implements LoadSkillPort {
 	public Optional<Skill> findById(Long id) {
 		return skillJpaRepository.findById(id);
 	}
-}
 
+}

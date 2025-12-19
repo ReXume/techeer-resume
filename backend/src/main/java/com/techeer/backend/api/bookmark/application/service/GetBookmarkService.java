@@ -15,20 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetBookmarkService implements GetBookmarkUseCase {
 
-    private final LoadBookmarkPort loadBookmarkPort;
+	private final LoadBookmarkPort loadBookmarkPort;
 
-    @Override
-    public BookmarkInfoResponse getBookmark(Long bookmarkId) {
-        Bookmark bookmark = loadBookmarkPort.findById(bookmarkId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.BOOKMARK_NOT_FOUND));
+	@Override
+	public BookmarkInfoResponse getBookmark(Long bookmarkId) {
+		Bookmark bookmark = loadBookmarkPort.findById(bookmarkId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.BOOKMARK_NOT_FOUND));
 
-        return BookmarkInfoResponse.builder()
-            .id(bookmark.getId())
-            .jobPostingId(bookmark.getJobPosting().getId())
-            .jobPostingTitle(bookmark.getJobPosting().getTitle())
-            .companyName(bookmark.getJobPosting().getCompany().getName())
-            .createdAt(bookmark.getCreatedAt())
-            .build();
-    }
+		return BookmarkInfoResponse.builder()
+			.id(bookmark.getId())
+			.jobPostingId(bookmark.getJobPosting().getId())
+			.companyName(bookmark.getJobPosting().getCompany().getName())
+			.jobTitle(bookmark.getJobPosting().getTitle())
+			.build();
+	}
+
 }
-

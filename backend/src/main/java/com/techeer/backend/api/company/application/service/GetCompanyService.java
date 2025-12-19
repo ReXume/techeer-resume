@@ -15,20 +15,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetCompanyService implements GetCompanyUseCase {
 
-    private final LoadCompanyPort loadCompanyPort;
+	private final LoadCompanyPort loadCompanyPort;
 
-    @Override
-    public CompanyInfoResponse getCompany(Long companyId) {
-        Company company = loadCompanyPort.findById(companyId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
+	@Override
+	public CompanyInfoResponse getCompany(Long companyId) {
+		Company company = loadCompanyPort.findById(companyId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
 
-        return CompanyInfoResponse.builder()
-            .id(company.getId())
-            .name(company.getName())
-            .industryDomain(company.getIndustryDomain())
-            .websiteUrl(company.getWebsiteUrl())
-            .location(company.getLocation())
-            .build();
-    }
+		return CompanyInfoResponse.builder()
+			.id(company.getId())
+			.name(company.getName())
+			.industryDomain(company.getIndustryDomain())
+			.websiteUrl(company.getWebsiteUrl())
+			.location(company.getLocation())
+			.build();
+	}
+
 }
-

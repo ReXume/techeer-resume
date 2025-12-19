@@ -15,20 +15,15 @@ public class SwaggerConfig {
 	public OpenAPI openAPI() {
 		String jwt = "JWT";
 		SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
-		
-		Components components = new Components()
-			.addSecuritySchemes(jwt,
-				new SecurityScheme()
-					.name("Authorization")
+
+		Components components = new Components().addSecuritySchemes(jwt,
+				new SecurityScheme().name("Authorization")
 					.type(SecurityScheme.Type.HTTP)
 					.scheme("bearer")
 					.bearerFormat("JWT")
 					.description("JWT Access Token을 입력하세요 (Bearer 접두사는 자동으로 추가됩니다)"));
 
-		return new OpenAPI()
-			.components(components)
-			.info(apiInfo())
-			.addSecurityItem(securityRequirement);
+		return new OpenAPI().components(components).info(apiInfo()).addSecurityItem(securityRequirement);
 	}
 
 	private Info apiInfo() {

@@ -30,8 +30,7 @@ public class LikeCompanyService implements LikeCompanyUseCase {
 
 	@Override
 	public Long likeCompany(CompanyLikeCreateRequest request, Long userId) {
-		User user = loadUserPort.findById(userId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		Company company = loadCompanyPort.findById(request.companyId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
@@ -41,12 +40,9 @@ public class LikeCompanyService implements LikeCompanyUseCase {
 			throw new BusinessException(ErrorCode.COMPANY_LIKE_ALREADY_EXISTS);
 		}
 
-		CompanyLike companyLike = CompanyLike.builder()
-			.user(user)
-			.company(company)
-			.build();
+		CompanyLike companyLike = CompanyLike.builder().user(user).company(company).build();
 
 		return saveCompanyLikePort.saveCompanyLike(companyLike).getId();
 	}
-}
 
+}

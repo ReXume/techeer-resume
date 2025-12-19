@@ -14,21 +14,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserSkillPersistenceAdapter implements SaveUserSkillPort, LoadUserSkillPort {
 
-    private final UserSkillJpaRepository userSkillJpaRepository;
+	private final UserSkillJpaRepository userSkillJpaRepository;
 
-    @Override
-    public UserSkill saveUserSkill(UserSkill userSkill) {
-        return userSkillJpaRepository.save(userSkill);
-    }
+	@Override
+	public UserSkill saveUserSkill(UserSkill userSkill) {
+		return userSkillJpaRepository.save(userSkill);
+	}
 
-    @Override
-    public boolean existsByUserAndSkill(User user, Skill skill) {
-        return userSkillJpaRepository.existsByUserAndSkill(user, skill);
-    }
+	@Override
+	public boolean existsByUserAndSkill(User user, Skill skill) {
+		return userSkillJpaRepository.existsByUserAndSkill(user, skill);
+	}
 
-    @Override
-    public Optional<UserSkill> findById(Long id) {
-        // Soft Delete 적용: 삭제되지 않은 사용자 스킬만 조회
-        return userSkillJpaRepository.findByIdAndNotDeleted(id);
-    }
+	@Override
+	public Optional<UserSkill> findById(Long id) {
+		// Soft Delete 적용: 삭제되지 않은 사용자 스킬만 조회
+		return userSkillJpaRepository.findByIdAndNotDeleted(id);
+	}
+
 }

@@ -10,12 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface UserCareerJpaRepository extends JpaRepository<UserCareer, Long> {
-    
-    /**
-     * 삭제되지 않은 사용자 경력 조회
-     * Soft Delete 적용: deletedAt IS NULL인 경우만 조회
-     */
-    @Query("SELECT uc FROM UserCareer uc WHERE uc.id = :id AND uc.deletedAt IS NULL")
-    Optional<UserCareer> findByIdAndNotDeleted(@Param("id") Long id);
-}
 
+	/**
+	 * 삭제되지 않은 사용자 경력 조회 Soft Delete 적용: deletedAt IS NULL인 경우만 조회
+	 */
+	@Query("SELECT uc FROM UserCareer uc WHERE uc.id = :id AND uc.deletedAt IS NULL")
+	Optional<UserCareer> findByIdAndNotDeleted(@Param("id") Long id);
+
+}

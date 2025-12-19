@@ -14,18 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class DeleteEducationService implements DeleteEducationUseCase {
 
-    private final LoadEducationPort loadEducationPort;
+	private final LoadEducationPort loadEducationPort;
 
-    @Override
-    public void deleteEducation(Long educationId, Long userId) {
-        Education education = loadEducationPort.findById(educationId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.EDUCATION_NOT_FOUND));
+	@Override
+	public void deleteEducation(Long educationId, Long userId) {
+		Education education = loadEducationPort.findById(educationId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.EDUCATION_NOT_FOUND));
 
-        if (!education.getFile().getUser().getId().equals(userId)) {
-            throw new BusinessException(ErrorCode.FORBIDDEN);
-        }
+		if (!education.getFile().getUser().getId().equals(userId)) {
+			throw new BusinessException(ErrorCode.FORBIDDEN);
+		}
 
-        education.softDelete();
-    }
+		education.softDelete();
+	}
+
 }
-

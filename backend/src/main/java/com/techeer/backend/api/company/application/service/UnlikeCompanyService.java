@@ -14,18 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UnlikeCompanyService implements UnlikeCompanyUseCase {
 
-    private final LoadCompanyLikePort loadCompanyLikePort;
+	private final LoadCompanyLikePort loadCompanyLikePort;
 
-    @Override
-    public void unlikeCompany(Long companyLikeId, Long userId) {
-        CompanyLike companyLike = loadCompanyLikePort.findById(companyLikeId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_LIKE_NOT_FOUND));
+	@Override
+	public void unlikeCompany(Long companyLikeId, Long userId) {
+		CompanyLike companyLike = loadCompanyLikePort.findById(companyLikeId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_LIKE_NOT_FOUND));
 
-        if (!companyLike.getUser().getId().equals(userId)) {
-            throw new BusinessException(ErrorCode.FORBIDDEN);
-        }
+		if (!companyLike.getUser().getId().equals(userId)) {
+			throw new BusinessException(ErrorCode.FORBIDDEN);
+		}
 
-        companyLike.softDelete();
-    }
+		companyLike.softDelete();
+	}
+
 }
-

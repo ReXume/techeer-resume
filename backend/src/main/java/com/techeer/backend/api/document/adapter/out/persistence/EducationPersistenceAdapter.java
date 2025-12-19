@@ -15,23 +15,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EducationPersistenceAdapter implements SaveEducationPort, LoadEducationPort {
 
-    private final EducationJpaRepository educationJpaRepository;
+	private final EducationJpaRepository educationJpaRepository;
 
-    @Override
-    public Education saveEducation(Education education) {
-        return educationJpaRepository.save(education);
-    }
+	@Override
+	public Education saveEducation(Education education) {
+		return educationJpaRepository.save(education);
+	}
 
-    @Override
-    public Optional<Education> findById(Long id) {
-        // Soft Delete 적용: 삭제되지 않은 학력만 조회
-        return educationJpaRepository.findByIdAndNotDeleted(id);
-    }
+	@Override
+	public Optional<Education> findById(Long id) {
+		// Soft Delete 적용: 삭제되지 않은 학력만 조회
+		return educationJpaRepository.findByIdAndNotDeleted(id);
+	}
 
-    @Override
-    public Slice<Education> findAllByUser(User user, Pageable pageable) {
-        // Soft Delete 적용: 삭제되지 않은 학력만 조회
-        return educationJpaRepository.findAllByUserAndNotDeleted(user, pageable);
-    }
+	@Override
+	public Slice<Education> findAllByUser(User user, Pageable pageable) {
+		// Soft Delete 적용: 삭제되지 않은 학력만 조회
+		return educationJpaRepository.findAllByUserAndNotDeleted(user, pageable);
+	}
+
 }
-

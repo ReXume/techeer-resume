@@ -4,6 +4,7 @@ import com.techeer.backend.api.skill.domain.Skill;
 import java.util.Optional;
 
 public interface LoadSkillPort {
-	Optional<Skill> findById(Long id);
-}
 
+	Optional<Skill> findById(Long id);
+
+}
