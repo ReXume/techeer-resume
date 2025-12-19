@@ -28,6 +28,7 @@ public class UserSkillPersistenceAdapter implements SaveUserSkillPort, LoadUserS
 
     @Override
     public Optional<UserSkill> findById(Long id) {
-        return userSkillJpaRepository.findById(id);
+        // Soft Delete 적용: 삭제되지 않은 사용자 스킬만 조회
+        return userSkillJpaRepository.findByIdAndNotDeleted(id);
     }
 }

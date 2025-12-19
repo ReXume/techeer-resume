@@ -25,6 +25,7 @@ public class CompanyPersistenceAdapter implements SaveCompanyPort, LoadCompanyPo
 
 	@Override
 	public Optional<Company> findById(Long id) {
-		return companyJpaRepository.findById(id);
+		// Soft Delete 적용: 삭제되지 않은 회사만 조회
+		return companyJpaRepository.findByIdAndNotDeleted(id);
 	}
 }

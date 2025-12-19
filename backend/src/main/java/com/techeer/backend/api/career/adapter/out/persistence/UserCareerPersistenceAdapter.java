@@ -21,6 +21,7 @@ public class UserCareerPersistenceAdapter implements SaveUserCareerPort, LoadUse
 
     @Override
     public Optional<UserCareer> findById(Long id) {
-        return userCareerJpaRepository.findById(id);
+        // Soft Delete 적용: 삭제되지 않은 사용자 경력만 조회
+        return userCareerJpaRepository.findByIdAndNotDeleted(id);
     }
 }

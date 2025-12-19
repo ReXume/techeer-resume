@@ -28,6 +28,7 @@ public class ApplicationPersistenceAdapter implements SaveApplicationPort, LoadA
 
     @Override
     public Optional<Application> findById(Long id) {
-        return applicationJpaRepository.findById(id);
+        // Soft Delete 적용: 삭제되지 않은 지원서만 조회
+        return applicationJpaRepository.findByIdAndNotDeleted(id);
     }
 }
