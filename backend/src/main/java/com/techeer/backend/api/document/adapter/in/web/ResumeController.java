@@ -2,6 +2,7 @@ package com.techeer.backend.api.document.adapter.in.web;
 
 import com.techeer.backend.api.document.application.port.in.CreateResumeUseCase;
 import com.techeer.backend.api.document.application.port.in.DeleteResumeUseCase;
+import com.techeer.backend.api.document.application.port.in.GetAllResumesUseCase;
 import com.techeer.backend.api.document.application.port.in.GetResumeUseCase;
 import com.techeer.backend.api.document.application.port.in.UpdateResumeUseCase;
 import com.techeer.backend.api.document.dto.request.ResumeCreateRequest;
@@ -16,6 +17,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +43,7 @@ public class ResumeController {
 
     private final CreateResumeUseCase createResumeUseCase;
     private final GetResumeUseCase getResumeUseCase;
+    private final GetAllResumesUseCase getAllResumesUseCase;
     private final UpdateResumeUseCase updateResumeUseCase;
     private final DeleteResumeUseCase deleteResumeUseCase;
     private final UserService userService;
@@ -61,6 +66,16 @@ public class ResumeController {
     public ResponseEntity<ApiResponse<ResumeInfoResponse>> getResume(@PathVariable Long resumeId) {
         ResumeInfoResponse response = getResumeUseCase.getResume(resumeId);
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.OK, response));
+    }
+
+    @Operation(summary = "이력서 전체 조회", description = "현재 로그인한 사용자의 이력서 목록을 조회합니다. (Slice 페이지네이션)")
+    @GetMapping
+    public ResponseEntity<ApiResponse<Slice<ResumeInfoResponse>>> getAllResumes(
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        Long userId = userService.getLoginUser().getId();
+        Slice<ResumeInfoResponse> response = getAllResumesUseCase.getAllResumes(userId, pageable);
+        return ResponseEntity.ok(ApiResponse.success(SuccessCode.GET_SUCCESS, response));
     }
 
     @Operation(summary = "이력서 수정", description = "이력서를 수정합니다. 본인만 가능합니다.")

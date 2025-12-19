@@ -3,7 +3,10 @@ package com.techeer.backend.api.document.adapter.out.persistence;
 import com.techeer.backend.api.document.application.port.out.LoadResumePort;
 import com.techeer.backend.api.document.application.port.out.SaveResumePort;
 import com.techeer.backend.api.document.domain.Resume;
+import com.techeer.backend.api.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -23,5 +26,10 @@ public class ResumePersistenceAdapter implements SaveResumePort, LoadResumePort 
     public Optional<Resume> findById(Long id) {
         // Soft Delete 적용: 삭제되지 않은 이력서만 조회
         return resumeJpaRepository.findByIdAndNotDeleted(id);
+    }
+
+    @Override
+    public Slice<Resume> findAllByUser(User user, Pageable pageable) {
+        return resumeJpaRepository.findAllByUserAndNotDeleted(user, pageable);
     }
 }
