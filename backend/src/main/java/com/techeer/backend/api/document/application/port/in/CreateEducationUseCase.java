@@ -4,6 +4,6 @@ import com.techeer.backend.api.document.dto.request.EducationCreateRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface CreateEducationUseCase {
-    Long createEducation(EducationCreateRequest request, MultipartFile file);
+    Long createEducation(EducationCreateRequest request, MultipartFile file, Long userId);
 }
 
