@@ -41,6 +41,12 @@ public enum ErrorCode {
 	// Resume Error
 	RESUME_NOT_FOUND(HttpStatus.NOT_FOUND, "RESUME_404", "이력서를 찾을 수 없습니다."),
 
+	// Education Error
+	EDUCATION_NOT_FOUND(HttpStatus.NOT_FOUND, "EDUCATION_404", "학력을 찾을 수 없습니다."),
+
+	// Portfolio Error
+	PORTFOLIO_NOT_FOUND(HttpStatus.NOT_FOUND, "PORTFOLIO_404", "포트폴리오를 찾을 수 없습니다."),
+
 	// Application Error
 	APPLICATION_ALREADY_EXISTS(HttpStatus.CONFLICT, "APPLICATION_409", "이미 지원한 공고입니다."),
 	APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "APPLICATION_404", "지원 내역을 찾을 수 없습니다."),
