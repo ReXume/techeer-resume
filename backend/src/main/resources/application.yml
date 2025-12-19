@@ -1,7 +1,8 @@
 # Default Configuration
 # 기본 설정 (프로파일별로 오버라이드됨)
+# 로컬 IDE 실행: local, Docker Dev: dev, Docker Prod: docker
 spring:
   profiles:
-    active: dev
+    active: local
   config:
     import: "optional:file:backend-secret.env[.properties]"
