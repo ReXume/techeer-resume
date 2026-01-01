@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "JobPosting", description = "채용공고 API")
@@ -61,7 +60,7 @@ public class JobPostingController {
 	@Operation(summary = "채용공고 수정", description = "채용공고를 수정합니다. 기업 관리자 권한이 필요합니다.")
 	@PutMapping("/{jobPostingId}")
 	public ResponseEntity<ApiResponse<Void>> updateJobPosting(@PathVariable Long jobPostingId,
-			@Valid @RequestBody JobPostingUpdateRequest request) {
+															  @Valid @RequestBody JobPostingUpdateRequest request) {
 		Long userId = userService.getLoginUser().getId();
 		updateJobPostingUseCase.updateJobPosting(jobPostingId, request, userId);
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.JOB_POSTING_UPDATE_SUCCESS));

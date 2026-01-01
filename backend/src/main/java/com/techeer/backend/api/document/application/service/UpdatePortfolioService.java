@@ -31,8 +31,7 @@ public class UpdatePortfolioService implements UpdatePortfolioUseCase {
 		if (request.isDefault() != null) {
 			if (request.isDefault()) {
 				portfolio.setAsDefault();
-			}
-			else {
+			} else {
 				portfolio.unsetAsDefault();
 			}
 		}

@@ -59,16 +59,21 @@ public class CreateResumeService implements CreateResumeUseCase {
 	}
 
 	private FileType mapToFileType(String contentType) {
-		if (contentType == null)
+		if (contentType == null) {
 			return FileType.OTHER;
-		if (contentType.startsWith("image/"))
+		}
+		if (contentType.startsWith("image/")) {
 			return FileType.IMAGE;
-		if (contentType.equals("application/pdf"))
+		}
+		if (contentType.equals("application/pdf")) {
 			return FileType.PDF;
-		if (contentType.contains("msword") || contentType.contains("wordprocessingml"))
+		}
+		if (contentType.contains("msword") || contentType.contains("wordprocessingml")) {
 			return FileType.WORD;
-		if (contentType.contains("excel") || contentType.contains("spreadsheetml"))
+		}
+		if (contentType.contains("excel") || contentType.contains("spreadsheetml")) {
 			return FileType.EXCEL;
+		}
 		return FileType.OTHER;
 	}
 

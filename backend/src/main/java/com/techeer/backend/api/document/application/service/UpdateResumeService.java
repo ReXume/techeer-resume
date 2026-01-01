@@ -31,8 +31,7 @@ public class UpdateResumeService implements UpdateResumeUseCase {
 		if (request.isDefault() != null) {
 			if (request.isDefault()) {
 				resume.setAsDefault();
-			}
-			else {
+			} else {
 				resume.unsetAsDefault();
 			}
 		}

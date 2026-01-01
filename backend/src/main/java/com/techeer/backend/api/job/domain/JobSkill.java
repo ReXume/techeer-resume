@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "job_skills",
-		uniqueConstraints = { @UniqueConstraint(name = "uk_job_skill", columnNames = { "jobposting_id", "skill_id" }) })
+	uniqueConstraints = {@UniqueConstraint(name = "uk_job_skill", columnNames = {"jobposting_id", "skill_id"})})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class JobSkill {
 

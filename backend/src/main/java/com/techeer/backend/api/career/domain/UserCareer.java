@@ -64,7 +64,7 @@ public class UserCareer extends BaseEntity {
 
 	@Builder
 	public UserCareer(User user, UserFile file, Company company, String companyName, String jobTitle, Boolean isCurrent,
-			LocalDate startDate, LocalDate endDate) {
+					  LocalDate startDate, LocalDate endDate) {
 		this.user = user;
 		this.file = file;
 		this.company = company;
@@ -76,7 +76,7 @@ public class UserCareer extends BaseEntity {
 	}
 
 	public void updateCareer(String companyName, String jobTitle, Boolean isCurrent, LocalDate startDate,
-			LocalDate endDate) {
+							 LocalDate endDate) {
 		if (companyName != null) {
 			this.companyName = companyName;
 		}

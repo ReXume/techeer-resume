@@ -62,7 +62,7 @@ public class RegisterCompanyService implements RegisterCompanyUseCase {
 		saveCompanyMemberPort.saveCompanyMember(adminMember);
 
 		log.info("Company registered successfully. companyId={}, companyName={}, adminUserId={}", savedCompany.getId(),
-				savedCompany.getName(), userId);
+			savedCompany.getName(), userId);
 
 		return savedCompany.getId();
 	}

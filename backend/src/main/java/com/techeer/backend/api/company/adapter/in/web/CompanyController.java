@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Company", description = "기업 API")
@@ -61,7 +60,7 @@ public class CompanyController {
 	@Operation(summary = "기업 정보 수정", description = "기업 정보를 수정합니다. 기업 관리자 권한이 필요합니다.")
 	@PutMapping("/{companyId}")
 	public ResponseEntity<ApiResponse<Void>> updateCompany(@PathVariable Long companyId,
-			@Valid @RequestBody CompanyUpdateRequest request) {
+														   @Valid @RequestBody CompanyUpdateRequest request) {
 		Long userId = userService.getLoginUser().getId();
 		updateCompanyUseCase.updateCompany(companyId, request, userId);
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.COMPANY_UPDATE_SUCCESS));

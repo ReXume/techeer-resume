@@ -53,10 +53,10 @@ public class EducationController {
 	private final UserService userService;
 
 	@Operation(summary = "학력 등록", description = "새로운 학력을 등록합니다. 증명 파일과 함께 업로드하세요.")
-	@PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<ApiResponse<Long>> createEducation(@Parameter(content = @Content(
-			mediaType = MediaType.APPLICATION_JSON_VALUE)) @Valid @RequestPart("request") EducationCreateRequest request,
-			@RequestPart("file") MultipartFile file) {
+																 mediaType = MediaType.APPLICATION_JSON_VALUE)) @Valid @RequestPart("request") EducationCreateRequest request,
+															 @RequestPart("file") MultipartFile file) {
 		Long userId = userService.getLoginUser().getId();
 		Long educationId = createEducationUseCase.createEducation(request, file, userId);
 		return ResponseEntity.status(HttpStatus.CREATED)
@@ -73,7 +73,7 @@ public class EducationController {
 	@Operation(summary = "학력 전체 조회", description = "현재 로그인한 사용자의 학력 목록을 조회합니다. (Slice 페이지네이션)")
 	@GetMapping
 	public ResponseEntity<ApiResponse<Slice<EducationInfoResponse>>> getAllEducations(
-			@PageableDefault(size = 10) Pageable pageable) {
+		@PageableDefault(size = 10) Pageable pageable) {
 		Long userId = userService.getLoginUser().getId();
 		Slice<EducationInfoResponse> response = getAllEducationsUseCase.getAllEducations(userId, pageable);
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.EDUCATION_GET_SUCCESS, response));
@@ -82,7 +82,7 @@ public class EducationController {
 	@Operation(summary = "학력 수정", description = "학력 정보를 수정합니다.")
 	@PutMapping("/{educationId}")
 	public ResponseEntity<ApiResponse<Void>> updateEducation(@PathVariable Long educationId,
-			@Valid @RequestBody EducationUpdateRequest request) {
+															 @Valid @RequestBody EducationUpdateRequest request) {
 		Long userId = userService.getLoginUser().getId();
 		updateEducationUseCase.updateEducation(educationId, request, userId);
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.EDUCATION_UPDATE_SUCCESS));

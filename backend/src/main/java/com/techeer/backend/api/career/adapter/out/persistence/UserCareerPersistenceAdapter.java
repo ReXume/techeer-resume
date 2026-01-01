@@ -3,10 +3,9 @@ package com.techeer.backend.api.career.adapter.out.persistence;
 import com.techeer.backend.api.career.application.port.out.LoadUserCareerPort;
 import com.techeer.backend.api.career.application.port.out.SaveUserCareerPort;
 import com.techeer.backend.api.career.domain.UserCareer;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor

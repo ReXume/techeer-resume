@@ -5,12 +5,11 @@ import com.techeer.backend.api.bookmark.application.port.out.SaveBookmarkPort;
 import com.techeer.backend.api.bookmark.domain.Bookmark;
 import com.techeer.backend.api.job.domain.JobPosting;
 import com.techeer.backend.api.user.domain.User;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor

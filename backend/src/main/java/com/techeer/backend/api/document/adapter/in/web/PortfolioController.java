@@ -53,10 +53,10 @@ public class PortfolioController {
 	private final UserService userService;
 
 	@Operation(summary = "포트폴리오 등록", description = "새로운 포트폴리오를 등록합니다. 파일과 함께 업로드하세요.")
-	@PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<ApiResponse<Long>> createPortfolio(@Parameter(content = @Content(
-			mediaType = MediaType.APPLICATION_JSON_VALUE)) @Valid @RequestPart("request") PortfolioCreateRequest request,
-			@RequestPart("file") MultipartFile file) {
+																 mediaType = MediaType.APPLICATION_JSON_VALUE)) @Valid @RequestPart("request") PortfolioCreateRequest request,
+															 @RequestPart("file") MultipartFile file) {
 		Long userId = userService.getLoginUser().getId();
 		Long portfolioId = createPortfolioUseCase.createPortfolio(request, file, userId);
 		return ResponseEntity.status(HttpStatus.CREATED)
@@ -73,7 +73,7 @@ public class PortfolioController {
 	@Operation(summary = "포트폴리오 전체 조회", description = "현재 로그인한 사용자의 포트폴리오 목록을 조회합니다. (Slice 페이지네이션)")
 	@GetMapping
 	public ResponseEntity<ApiResponse<Slice<PortfolioInfoResponse>>> getAllPortfolios(
-			@PageableDefault(size = 10) Pageable pageable) {
+		@PageableDefault(size = 10) Pageable pageable) {
 		Long userId = userService.getLoginUser().getId();
 		Slice<PortfolioInfoResponse> response = getAllPortfoliosUseCase.getAllPortfolios(userId, pageable);
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.PORTFOLIO_GET_SUCCESS, response));
@@ -82,7 +82,7 @@ public class PortfolioController {
 	@Operation(summary = "포트폴리오 수정", description = "포트폴리오 정보를 수정합니다.")
 	@PutMapping("/{portfolioId}")
 	public ResponseEntity<ApiResponse<Void>> updatePortfolio(@PathVariable Long portfolioId,
-			@Valid @RequestBody PortfolioUpdateRequest request) {
+															 @Valid @RequestBody PortfolioUpdateRequest request) {
 		Long userId = userService.getLoginUser().getId();
 		updatePortfolioUseCase.updatePortfolio(portfolioId, request, userId);
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.PORTFOLIO_UPDATE_SUCCESS));
