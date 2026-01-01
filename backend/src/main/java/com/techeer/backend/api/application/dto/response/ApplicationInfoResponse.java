@@ -6,22 +6,17 @@ import lombok.Builder;
 @Builder
 public record ApplicationInfoResponse(
 
-		Long id,
+	Long id,
 
+	Long jobPostingId,
 
-		Long jobPostingId,
+	String jobPostingTitle,
 
+	String companyName,
 
-		String jobPostingTitle,
+	String status,
 
-
-		String companyName,
-
-
-		String status,
-
-
-		LocalDateTime appliedAt
+	LocalDateTime appliedAt
 
 ) {
 

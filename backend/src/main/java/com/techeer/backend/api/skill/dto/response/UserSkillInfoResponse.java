@@ -5,16 +5,13 @@ import lombok.Builder;
 @Builder
 public record UserSkillInfoResponse(
 
-		Long id,
+	Long id,
 
+	Long userId,
 
-		Long userId,
+	Long skillId,
 
-
-		Long skillId,
-
-
-		String skillName
+	String skillName
 
 ) {
 

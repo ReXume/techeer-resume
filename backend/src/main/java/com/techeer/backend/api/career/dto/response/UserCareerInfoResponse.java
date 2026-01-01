@@ -6,25 +6,19 @@ import lombok.Builder;
 @Builder
 public record UserCareerInfoResponse(
 
-		Long id,
+	Long id,
 
+	Long userId,
 
-		Long userId,
+	String companyName,
 
+	String jobTitle,
 
-		String companyName,
+	Boolean isCurrent,
 
+	LocalDate startDate,
 
-		String jobTitle,
-
-
-		Boolean isCurrent,
-
-
-		LocalDate startDate,
-
-
-		LocalDate endDate
+	LocalDate endDate
 
 ) {
 

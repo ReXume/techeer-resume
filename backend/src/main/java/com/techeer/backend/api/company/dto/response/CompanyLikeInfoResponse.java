@@ -6,16 +6,13 @@ import lombok.Builder;
 @Builder
 public record CompanyLikeInfoResponse(
 
-		Long id,
+	Long id,
 
+	Long companyId,
 
-		Long companyId,
+	String companyName,
 
-
-		String companyName,
-
-
-		LocalDateTime createdAt
+	LocalDateTime createdAt
 
 ) {
 

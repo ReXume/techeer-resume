@@ -5,16 +5,13 @@ import lombok.Builder;
 @Builder
 public record EducationInfoResponse(
 
-		Long id,
+	Long id,
 
+	String title,
 
-		String title,
+	String fileUrl,
 
-
-		String fileUrl,
-
-
-		Boolean isDefault
+	Boolean isDefault
 
 ) {
 

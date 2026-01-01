@@ -5,16 +5,13 @@ import lombok.Builder;
 @Builder
 public record BookmarkInfoResponse(
 
-		Long id,
+	Long id,
 
+	Long jobPostingId,
 
-		Long jobPostingId,
+	String companyName,
 
-
-		String companyName,
-
-
-		String jobTitle
+	String jobTitle
 
 ) {
 

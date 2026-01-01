@@ -5,25 +5,19 @@ import lombok.Builder;
 @Builder
 public record JobPostingInfoResponse(
 
-		Long id,
+	Long id,
 
+	Long companyId,
 
-		Long companyId,
+	String companyName,
 
+	String title,
 
-		String companyName,
+	String contents,
 
+	Integer expYears,
 
-		String title,
-
-
-		String contents,
-
-
-		Integer expYears,
-
-
-		String status
+	String status
 
 ) {
 

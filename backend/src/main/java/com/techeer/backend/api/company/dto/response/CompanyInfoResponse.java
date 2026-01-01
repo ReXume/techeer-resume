@@ -5,19 +5,15 @@ import lombok.Builder;
 @Builder
 public record CompanyInfoResponse(
 
-		Long id,
+	Long id,
 
+	String name,
 
-		String name,
+	String industryDomain,
 
+	String websiteUrl,
 
-		String industryDomain,
-
-
-		String websiteUrl,
-
-
-		String location
+	String location
 
 ) {
 
