@@ -5,10 +5,9 @@ import com.techeer.backend.api.company.application.port.out.SaveCompanyLikePort;
 import com.techeer.backend.api.company.domain.Company;
 import com.techeer.backend.api.company.domain.CompanyLike;
 import com.techeer.backend.api.user.domain.User;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor

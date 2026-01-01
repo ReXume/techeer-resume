@@ -27,7 +27,7 @@ public class UpdateUserCareerService implements UpdateUserCareerUseCase {
 		}
 
 		userCareer.updateCareer(request.companyName(), request.jobTitle(), request.isCurrent(), request.startDate(),
-				request.endDate());
+			request.endDate());
 	}
 
 }

@@ -54,8 +54,7 @@ public class UserService {
 	}
 
 	/**
-	 * 자체 회원가입 (이메일/비밀번호) 비즈니스 로직: 이메일 중복 확인, 비밀번호 암호화, 사용자 생성 보안: 자체 회원가입 시 항상 REGULAR
-	 * 역할로 고정하여 권한 상승 방지
+	 * 자체 회원가입 (이메일/비밀번호) 비즈니스 로직: 이메일 중복 확인, 비밀번호 암호화, 사용자 생성 보안: 자체 회원가입 시 항상 REGULAR 역할로 고정하여 권한 상승 방지
 	 */
 	@Transactional
 	public void register(RegisterRequest request) {
@@ -152,7 +151,7 @@ public class UserService {
 
 		// 인증 정보가 없거나 인증되지 않은 경우
 		if (authentication == null || !authentication.isAuthenticated()
-				|| "anonymousUser".equals(authentication.getPrincipal())) {
+			|| "anonymousUser".equals(authentication.getPrincipal())) {
 			throw new BusinessException(ErrorCode.UNAUTHORIZED);
 		}
 
@@ -171,8 +170,7 @@ public class UserService {
 	/**
 	 * 액세스 토큰 재발급 비즈니스 로직: RefreshToken 검증, AccessToken 재발급, RefreshToken 갱신, 쿠키 설정
 	 * <p>
-	 * 주의: AccessToken이 만료된 상태에서 호출되므로 SecurityContext에서 사용자를 조회할 수 없습니다. 따라서
-	 * RefreshToken으로 DB에서 사용자를 조회합니다.
+	 * 주의: AccessToken이 만료된 상태에서 호출되므로 SecurityContext에서 사용자를 조회할 수 없습니다. 따라서 RefreshToken으로 DB에서 사용자를 조회합니다.
 	 */
 	@Transactional
 	public void reissueAccessToken(String refreshToken, HttpServletResponse response) {
@@ -261,8 +259,7 @@ public class UserService {
 	}
 
 	/**
-	 * 프로필 이미지 업데이트 비즈니스 로직: 현재 로그인한 사용자의 프로필 이미지를 GCS에 업로드하고 File 객체로 저장 기존 프로필 이미지가 있으면
-	 * GCS에서 삭제
+	 * 프로필 이미지 업데이트 비즈니스 로직: 현재 로그인한 사용자의 프로필 이미지를 GCS에 업로드하고 File 객체로 저장 기존 프로필 이미지가 있으면 GCS에서 삭제
 	 */
 	@Transactional
 	public String updateProfileImage(MultipartFile file) {
@@ -284,7 +281,7 @@ public class UserService {
 
 		// 기존 프로필 이미지가 있으면 GCS에서 삭제
 		if (user.getProfileImage() != null && user.getProfileImage().getFileUrl() != null
-				&& !user.getProfileImage().getFileUrl().isEmpty()) {
+			&& !user.getProfileImage().getFileUrl().isEmpty()) {
 			String oldImageUrl = user.getProfileImage().getFileUrl();
 			String oldGcsPath = extractGcsPathFromUrl(oldImageUrl);
 			if (oldGcsPath != null) {
@@ -310,15 +307,15 @@ public class UserService {
 		// @Transactional 내에서 엔티티 수정 시 변경 감지로 자동 저장
 
 		log.info("프로필 이미지 업데이트 완료: userId={}, profileImageUrl={}, fileType={}", user.getId(), fileMetadata.getFileUrl(),
-				fileType);
+			fileType);
 
 		return fileMetadata.getFileUrl();
 	}
 
 	/**
 	 * GCS URL에서 경로 추출 예:
-	 * https://storage.googleapis.com/download/storage/v1/b/bucket/o/profile%2Ffilename.png?generation=...
-	 * -> profile/filename.png
+	 * https://storage.googleapis.com/download/storage/v1/b/bucket/o/profile%2Ffilename.png?generation=... ->
+	 * profile/filename.png
 	 */
 	private String extractGcsPathFromUrl(String url) {
 		if (url == null || url.isEmpty()) {

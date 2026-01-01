@@ -47,7 +47,7 @@ public class UserController {
 	@Operation(summary = "자체 로그인", description = "이메일/비밀번호로 로그인합니다.")
 	@PostMapping("/auth/login")
 	public ResponseEntity<ApiResponse<Void>> login(@RequestBody @Valid LoginRequest request,
-			HttpServletResponse response) {
+												   HttpServletResponse response) {
 		userService.login(request, response);
 
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_LOGIN_SUCCESS));
@@ -80,7 +80,7 @@ public class UserController {
 	@Operation(summary = "액세스 토큰 재발급")
 	@PostMapping("/reissue")
 	public ResponseEntity<ApiResponse<Void>> reGenerateAccessToken(
-			@CookieValue(value = "refreshToken", required = false) String refreshToken, HttpServletResponse response) {
+		@CookieValue(value = "refreshToken", required = false) String refreshToken, HttpServletResponse response) {
 
 		userService.reissueAccessToken(refreshToken, response);
 

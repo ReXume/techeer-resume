@@ -15,7 +15,7 @@ public interface UserConverter {
 	@Mapping(source = "id", target = "userId")
 	@Mapping(source = "name", target = "username")
 	@Mapping(source = "profileImage.fileUrl", target = "profileImage",
-			nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+		nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
 	UserInfoResponse toUserInfoResponse(User user);
 
 }

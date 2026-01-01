@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "company_likes",
-		uniqueConstraints = { @UniqueConstraint(name = "uk_user_company", columnNames = { "user_id", "company_id" }) })
+	uniqueConstraints = {@UniqueConstraint(name = "uk_user_company", columnNames = {"user_id", "company_id"})})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CompanyLike extends BaseEntity {
 

@@ -31,8 +31,7 @@ public class UpdateEducationService implements UpdateEducationUseCase {
 		if (request.isDefault() != null) {
 			if (request.isDefault()) {
 				education.setAsDefault();
-			}
-			else {
+			} else {
 				education.unsetAsDefault();
 			}
 		}

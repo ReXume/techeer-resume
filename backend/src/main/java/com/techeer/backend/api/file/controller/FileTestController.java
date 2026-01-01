@@ -46,12 +46,12 @@ public class FileTestController {
 	@Operation(summary = "문서 파일 업로드 테스트", description = "현재 로그인한 사용자의 문서 파일(이력서, 포트폴리오 등)을 업로드합니다.")
 	@PostMapping("/document")
 	public ResponseEntity<ApiResponse<String>> uploadDocument(@RequestParam("file") MultipartFile file,
-			@RequestParam(value = "type", defaultValue = "resume") String documentType) {
+															  @RequestParam(value = "type", defaultValue = "resume") String documentType) {
 		User user = userService.getLoginUser();
 		FileMetadata fileMetadata = gcsUploader.uploadDocument(file, user.getId(), documentType);
 
 		log.info("문서 파일 업로드 성공: userId={}, documentType={}, fileUrl={}", user.getId(), documentType,
-				fileMetadata.getFileUrl());
+			fileMetadata.getFileUrl());
 
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.FILE_UPLOAD_SUCCESS, fileMetadata.getFileUrl()));
 	}
@@ -59,12 +59,12 @@ public class FileTestController {
 	@Operation(summary = "증명 파일 업로드 테스트", description = "현재 로그인한 사용자의 증명 파일(학력, 자격증 등)을 업로드합니다.")
 	@PostMapping("/verification")
 	public ResponseEntity<ApiResponse<String>> uploadVerification(@RequestParam("file") MultipartFile file,
-			@RequestParam(value = "type", defaultValue = "education") String verificationType) {
+																  @RequestParam(value = "type", defaultValue = "education") String verificationType) {
 		User user = userService.getLoginUser();
 		FileMetadata fileMetadata = gcsUploader.uploadVerification(file, user.getId(), verificationType);
 
 		log.info("증명 파일 업로드 성공: userId={}, verificationType={}, fileUrl={}", user.getId(), verificationType,
-				fileMetadata.getFileUrl());
+			fileMetadata.getFileUrl());
 
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.FILE_UPLOAD_SUCCESS, fileMetadata.getFileUrl()));
 	}

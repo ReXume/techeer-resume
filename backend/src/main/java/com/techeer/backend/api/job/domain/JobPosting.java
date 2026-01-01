@@ -62,7 +62,7 @@ public class JobPosting extends BaseEntity {
 
 	@Builder
 	public JobPosting(Company company, String title, String contents, Integer expYears, SourceType sourceType,
-			String originUrl, JobPostingStatus status) {
+					  String originUrl, JobPostingStatus status) {
 		this.company = company;
 		this.title = title;
 		this.contents = contents;

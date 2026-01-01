@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "UserCareer", description = "경력 API")
@@ -61,7 +60,7 @@ public class UserCareerController {
 	@Operation(summary = "경력 수정", description = "경력 정보를 수정합니다. 본인만 가능합니다.")
 	@PutMapping("/{careerId}")
 	public ResponseEntity<ApiResponse<Void>> updateUserCareer(@PathVariable Long careerId,
-			@Valid @RequestBody UserCareerUpdateRequest request) {
+															  @Valid @RequestBody UserCareerUpdateRequest request) {
 		Long userId = userService.getLoginUser().getId();
 		updateUserCareerUseCase.updateUserCareer(careerId, request, userId);
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_CAREER_UPDATE_SUCCESS));

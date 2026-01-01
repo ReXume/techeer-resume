@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Bookmark", description = "북마크 API")
@@ -62,7 +61,7 @@ public class BookmarkController {
 	@Operation(summary = "북마크 전체 조회", description = "현재 로그인한 사용자의 북마크 목록을 조회합니다. (Slice 페이지네이션)")
 	@GetMapping
 	public ResponseEntity<ApiResponse<Slice<BookmarkInfoResponse>>> getAllBookmarks(
-			@PageableDefault(size = 10) Pageable pageable) {
+		@PageableDefault(size = 10) Pageable pageable) {
 		Long userId = userService.getLoginUser().getId();
 		Slice<BookmarkInfoResponse> response = getAllBookmarksUseCase.getAllBookmarks(userId, pageable);
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.BOOKMARK_GET_SUCCESS, response));

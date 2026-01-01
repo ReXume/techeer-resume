@@ -52,11 +52,11 @@ public class User extends BaseEntity {
 
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "fileUrl",
-					column = @Column(name = "profile_image_url", columnDefinition = "TEXT")),
-			@AttributeOverride(name = "fileType", column = @Column(name = "profile_image_type")),
-			@AttributeOverride(name = "fileName", column = @Column(name = "profile_image_name")),
-			@AttributeOverride(name = "fileUUID", column = @Column(name = "profile_image_uuid")) })
+		@AttributeOverride(name = "fileUrl",
+			column = @Column(name = "profile_image_url", columnDefinition = "TEXT")),
+		@AttributeOverride(name = "fileType", column = @Column(name = "profile_image_type")),
+		@AttributeOverride(name = "fileName", column = @Column(name = "profile_image_name")),
+		@AttributeOverride(name = "fileUUID", column = @Column(name = "profile_image_uuid"))})
 	private File profileImage;
 
 	@Enumerated(EnumType.STRING)
@@ -69,7 +69,7 @@ public class User extends BaseEntity {
 
 	@Builder
 	public User(String email, String name, String password, String refreshToken, File profileImage, Role role,
-			SocialType socialType) {
+				SocialType socialType) {
 		this.email = email;
 		this.name = name;
 		this.password = password;
