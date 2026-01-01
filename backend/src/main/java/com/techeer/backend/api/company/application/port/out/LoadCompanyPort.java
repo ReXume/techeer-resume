@@ -5,8 +5,8 @@ import java.util.Optional;
 
 public interface LoadCompanyPort {
 
-	Optional<Company> findByName(String name);
+    Optional<Company> findByName(String name);
 
-	Optional<Company> findById(Long id);
+    Optional<Company> findById(Long id);
 
 }

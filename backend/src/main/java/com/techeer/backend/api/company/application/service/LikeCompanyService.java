@@ -33,7 +33,7 @@ public class LikeCompanyService implements LikeCompanyUseCase {
 		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		Company company = loadCompanyPort.findById(request.companyId())
-			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
+				.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
 
 		// 중복 좋아요 체크
 		if (loadCompanyLikePort.existsByUserAndCompany(user, company)) {

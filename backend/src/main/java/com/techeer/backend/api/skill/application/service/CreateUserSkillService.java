@@ -20,29 +20,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CreateUserSkillService implements CreateUserSkillUseCase {
 
-	private final SaveUserSkillPort saveUserSkillPort;
+    private final SaveUserSkillPort saveUserSkillPort;
 
-	private final LoadUserSkillPort loadUserSkillPort;
+    private final LoadUserSkillPort loadUserSkillPort;
 
-	private final LoadSkillPort loadSkillPort;
+    private final LoadSkillPort loadSkillPort;
 
-	private final LoadUserPort loadUserPort;
+    private final LoadUserPort loadUserPort;
 
-	@Override
-	public Long createUserSkill(UserSkillCreateRequest request, Long userId) {
-		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    @Override
+    public Long createUserSkill(UserSkillCreateRequest request, Long userId) {
+        User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-		Skill skill = loadSkillPort.findById(request.skillId())
-			.orElseThrow(() -> new BusinessException(ErrorCode.SKILL_NOT_FOUND));
+        Skill skill = loadSkillPort.findById(request.skillId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.SKILL_NOT_FOUND));
 
-		// 중복 체크
-		if (loadUserSkillPort.existsByUserAndSkill(user, skill)) {
-			throw new BusinessException(ErrorCode.USER_SKILL_ALREADY_EXISTS);
-		}
+        // 중복 체크
+        if (loadUserSkillPort.existsByUserAndSkill(user, skill)) {
+            throw new BusinessException(ErrorCode.USER_SKILL_ALREADY_EXISTS);
+        }
 
-		UserSkill userSkill = UserSkill.builder().user(user).skill(skill).build();
+        UserSkill userSkill = UserSkill.builder().user(user).skill(skill).build();
 
-		return saveUserSkillPort.saveUserSkill(userSkill).getId();
-	}
+        return saveUserSkillPort.saveUserSkill(userSkill).getId();
+    }
 
 }

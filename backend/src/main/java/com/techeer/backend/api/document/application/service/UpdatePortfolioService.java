@@ -15,27 +15,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UpdatePortfolioService implements UpdatePortfolioUseCase {
 
-	private final LoadPortfolioPort loadPortfolioPort;
+    private final LoadPortfolioPort loadPortfolioPort;
 
-	@Override
-	public void updatePortfolio(Long portfolioId, PortfolioUpdateRequest request, Long userId) {
-		Portfolio portfolio = loadPortfolioPort.findById(portfolioId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.PORTFOLIO_NOT_FOUND));
+    @Override
+    public void updatePortfolio(Long portfolioId, PortfolioUpdateRequest request, Long userId) {
+        Portfolio portfolio = loadPortfolioPort.findById(portfolioId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PORTFOLIO_NOT_FOUND));
 
-		if (!portfolio.getFile().getUser().getId().equals(userId)) {
-			throw new BusinessException(ErrorCode.FORBIDDEN);
-		}
+        if (!portfolio.getFile().getUser().getId().equals(userId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
 
-		portfolio.updateTitle(request.title());
+        portfolio.updateTitle(request.title());
 
-		if (request.isDefault() != null) {
-			if (request.isDefault()) {
-				portfolio.setAsDefault();
-			}
-			else {
-				portfolio.unsetAsDefault();
-			}
-		}
-	}
+        if (request.isDefault() != null) {
+            if (request.isDefault()) {
+                portfolio.setAsDefault();
+            } else {
+                portfolio.unsetAsDefault();
+            }
+        }
+    }
 
 }

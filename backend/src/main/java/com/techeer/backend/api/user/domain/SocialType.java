@@ -5,7 +5,7 @@ import lombok.ToString;
 @ToString
 public enum SocialType {
 
-	LOCAL, // 자체 회원가입
-	GITHUB, GOOGLE, KAKAO, LINKEDIN
+    LOCAL, // 자체 회원가입
+    GITHUB, GOOGLE, KAKAO, LINKEDIN
 
 }

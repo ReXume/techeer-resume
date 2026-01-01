@@ -13,16 +13,16 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class CompanyMemberPersistenceAdapter implements SaveCompanyMemberPort, LoadCompanyMemberPort {
 
-	private final CompanyMemberJpaRepository companyMemberJpaRepository;
+    private final CompanyMemberJpaRepository companyMemberJpaRepository;
 
-	@Override
-	public CompanyMember saveCompanyMember(CompanyMember companyMember) {
-		return companyMemberJpaRepository.save(companyMember);
-	}
+    @Override
+    public CompanyMember saveCompanyMember(CompanyMember companyMember) {
+        return companyMemberJpaRepository.save(companyMember);
+    }
 
-	@Override
-	public Optional<CompanyMember> findByUserAndCompany(User user, Company company) {
-		return companyMemberJpaRepository.findByUserAndCompany(user, company);
-	}
+    @Override
+    public Optional<CompanyMember> findByUserAndCompany(User user, Company company) {
+        return companyMemberJpaRepository.findByUserAndCompany(user, company);
+    }
 
 }

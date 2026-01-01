@@ -22,37 +22,37 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CreateJobPostingService implements CreateJobPostingUseCase {
 
-	private final SaveJobPostingPort saveJobPostingPort;
+    private final SaveJobPostingPort saveJobPostingPort;
 
-	private final LoadCompanyPort loadCompanyPort;
+    private final LoadCompanyPort loadCompanyPort;
 
-	private final LoadUserPort loadUserPort;
+    private final LoadUserPort loadUserPort;
 
-	private final LoadCompanyMemberPort loadCompanyMemberPort;
+    private final LoadCompanyMemberPort loadCompanyMemberPort;
 
-	@Override
-	public Long createJobPosting(JobPostingCreateRequest request, Long userId) {
-		Company company = loadCompanyPort.findById(request.companyId())
-			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
+    @Override
+    public Long createJobPosting(JobPostingCreateRequest request, Long userId) {
+        Company company = loadCompanyPort.findById(request.companyId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
 
-		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-		CompanyMember member = loadCompanyMemberPort.findByUserAndCompany(user, company)
-			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_MEMBER_NOT_FOUND));
+        CompanyMember member = loadCompanyMemberPort.findByUserAndCompany(user, company)
+                .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_MEMBER_NOT_FOUND));
 
-		// 기업 관리자만 채용공고 생성 가능
-		if (member.getRole() != CompanyRole.ADMIN) {
-			throw new BusinessException(ErrorCode.COMPANY_FORBIDDEN);
-		}
+        // 기업 관리자만 채용공고 생성 가능
+        if (member.getRole() != CompanyRole.ADMIN) {
+            throw new BusinessException(ErrorCode.COMPANY_FORBIDDEN);
+        }
 
-		JobPosting jobPosting = JobPosting.builder()
-			.company(company)
-			.title(request.title())
-			.contents(request.contents())
-			.expYears(request.expYears())
-			.build();
+        JobPosting jobPosting = JobPosting.builder()
+                .company(company)
+                .title(request.title())
+                .contents(request.contents())
+                .expYears(request.expYears())
+                .build();
 
-		return saveJobPostingPort.saveJobPosting(jobPosting).getId();
-	}
+        return saveJobPostingPort.saveJobPosting(jobPosting).getId();
+    }
 
 }

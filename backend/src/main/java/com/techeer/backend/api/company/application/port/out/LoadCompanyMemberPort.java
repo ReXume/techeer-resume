@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface LoadCompanyMemberPort {
 
-	Optional<CompanyMember> findByUserAndCompany(User user, Company company);
+    Optional<CompanyMember> findByUserAndCompany(User user, Company company);
 
 }

@@ -4,6 +4,6 @@ import com.techeer.backend.api.job.dto.request.JobPostingCreateRequest;
 
 public interface CreateJobPostingUseCase {
 
-	Long createJobPosting(JobPostingCreateRequest request, Long userId);
+    Long createJobPosting(JobPostingCreateRequest request, Long userId);
 
 }

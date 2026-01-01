@@ -4,6 +4,6 @@ import com.techeer.backend.api.company.dto.request.CompanyRegisterRequest;
 
 public interface RegisterCompanyUseCase {
 
-	Long registerCompany(CompanyRegisterRequest request, Long userId);
+    Long registerCompany(CompanyRegisterRequest request, Long userId);
 
 }

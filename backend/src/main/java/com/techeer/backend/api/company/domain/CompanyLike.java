@@ -20,27 +20,27 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "company_likes",
-		uniqueConstraints = { @UniqueConstraint(name = "uk_user_company", columnNames = { "user_id", "company_id" }) })
+        uniqueConstraints = {@UniqueConstraint(name = "uk_user_company", columnNames = {"user_id", "company_id"})})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CompanyLike extends BaseEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "like_id")
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "like_id")
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "company_id", nullable = false)
-	private Company company;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
 
-	@Builder
-	public CompanyLike(User user, Company company) {
-		this.user = user;
-		this.company = company;
-	}
+    @Builder
+    public CompanyLike(User user, Company company) {
+        this.user = user;
+        this.company = company;
+    }
 
 }

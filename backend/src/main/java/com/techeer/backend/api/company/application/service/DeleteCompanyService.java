@@ -28,12 +28,12 @@ public class DeleteCompanyService implements DeleteCompanyUseCase {
 	@Override
 	public void deleteCompany(Long companyId, Long userId) {
 		Company company = loadCompanyPort.findById(companyId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
+				.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
 
 		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		CompanyMember member = loadCompanyMemberPort.findByUserAndCompany(user, company)
-			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_MEMBER_NOT_FOUND));
+				.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_MEMBER_NOT_FOUND));
 
 		if (member.getRole() != CompanyRole.ADMIN) {
 			throw new BusinessException(ErrorCode.COMPANY_FORBIDDEN);

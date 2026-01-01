@@ -4,6 +4,6 @@ import com.techeer.backend.api.company.dto.request.CompanyUpdateRequest;
 
 public interface UpdateCompanyUseCase {
 
-	void updateCompany(Long companyId, CompanyUpdateRequest request, Long userId);
+    void updateCompany(Long companyId, CompanyUpdateRequest request, Long userId);
 
 }

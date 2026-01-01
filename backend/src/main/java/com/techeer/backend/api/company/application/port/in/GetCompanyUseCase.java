@@ -4,6 +4,6 @@ import com.techeer.backend.api.company.dto.response.CompanyInfoResponse;
 
 public interface GetCompanyUseCase {
 
-	CompanyInfoResponse getCompany(Long companyId);
+    CompanyInfoResponse getCompany(Long companyId);
 
 }

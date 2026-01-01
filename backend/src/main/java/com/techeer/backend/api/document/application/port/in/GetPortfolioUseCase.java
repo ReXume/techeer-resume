@@ -4,6 +4,6 @@ import com.techeer.backend.api.document.dto.response.PortfolioInfoResponse;
 
 public interface GetPortfolioUseCase {
 
-	PortfolioInfoResponse getPortfolio(Long portfolioId);
+    PortfolioInfoResponse getPortfolio(Long portfolioId);
 
 }

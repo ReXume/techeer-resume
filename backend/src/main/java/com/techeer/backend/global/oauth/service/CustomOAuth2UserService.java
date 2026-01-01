@@ -33,31 +33,31 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 		// OAuth2 로그인 시 키(PK)가 되는 값
 		String userNameAttributeName = userRequest.getClientRegistration()
-			.getProviderDetails()
-			.getUserInfoEndpoint()
-			.getUserNameAttributeName();
+				.getProviderDetails()
+				.getUserInfoEndpoint()
+				.getUserNameAttributeName();
 
 		// 소셜 로그인에서 API가 제공하는 userInfo의 Json 값(유저 정보들)
 		Map<String, Object> attributes = oAuth2User.getAttributes();
 
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		extractAttributes = OAuthAttributes.of(registrationId, userNameAttributeName, attributes);
-		String username = extractAttributes.getSocialType().equals(SocialType.GITHUB) ? (String) attributes.get("login")
+		String username = extractAttributes.socialType().equals(SocialType.GITHUB) ? (String) attributes.get("login")
 				: (String) attributes.get("name");
 
-		if (userRepository.findByNameAndSocialType(username, extractAttributes.getSocialType()).isEmpty()) {
-			userService.createRegularUser(attributes, username, extractAttributes.getSocialType());
+		if (userRepository.findByNameAndSocialType(username, extractAttributes.socialType()).isEmpty()) {
+			userService.createRegularUser(attributes, username, extractAttributes.socialType());
 		}
 
 		// DefaultOAuth2User를 구현한 CustomOAuth2User 객체를 생성해서 반환
 		return CustomOAuth2User.builder()
-			.authorities(Collections.emptyList())
-			.attributes(attributes)
-			.nameAttributeKey(userNameAttributeName)
-			.name(extractAttributes.getOauth2UserInfo().getName())
-			.email(extractAttributes.getOauth2UserInfo().getEmail())
-			.socialType(extractAttributes.getSocialType())
-			.build();
+				.authorities(Collections.emptyList())
+				.attributes(attributes)
+				.nameAttributeKey(userNameAttributeName)
+				.name(extractAttributes.oauth2UserInfo().getName())
+				.email(extractAttributes.oauth2UserInfo().getEmail())
+				.socialType(extractAttributes.socialType())
+				.build();
 	}
 
 }

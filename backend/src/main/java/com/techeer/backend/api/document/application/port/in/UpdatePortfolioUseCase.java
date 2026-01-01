@@ -4,6 +4,6 @@ import com.techeer.backend.api.document.dto.request.PortfolioUpdateRequest;
 
 public interface UpdatePortfolioUseCase {
 
-	void updatePortfolio(Long portfolioId, PortfolioUpdateRequest request, Long userId);
+    void updatePortfolio(Long portfolioId, PortfolioUpdateRequest request, Long userId);
 
 }

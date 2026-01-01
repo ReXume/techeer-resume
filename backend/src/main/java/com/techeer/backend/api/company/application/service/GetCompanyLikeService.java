@@ -20,14 +20,14 @@ public class GetCompanyLikeService implements GetCompanyLikeUseCase {
 	@Override
 	public CompanyLikeInfoResponse getCompanyLike(Long companyLikeId) {
 		CompanyLike companyLike = loadCompanyLikePort.findById(companyLikeId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_LIKE_NOT_FOUND));
+				.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_LIKE_NOT_FOUND));
 
 		return CompanyLikeInfoResponse.builder()
-			.id(companyLike.getId())
-			.companyId(companyLike.getCompany().getId())
-			.companyName(companyLike.getCompany().getName())
-			.createdAt(companyLike.getCreatedAt())
-			.build();
+				.id(companyLike.getId())
+				.companyId(companyLike.getCompany().getId())
+				.companyName(companyLike.getCompany().getName())
+				.createdAt(companyLike.getCreatedAt())
+				.build();
 	}
 
 }

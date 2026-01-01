@@ -35,7 +35,7 @@ public class ApplyJobService implements ApplyJobUseCase {
 		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		JobPosting jobPosting = loadJobPostingPort.findById(request.jobPostingId())
-			.orElseThrow(() -> new BusinessException(ErrorCode.JOB_POSTING_NOT_FOUND));
+				.orElseThrow(() -> new BusinessException(ErrorCode.JOB_POSTING_NOT_FOUND));
 
 		// 중복 지원 체크
 		if (loadApplicationPort.existsByUserAndJobPosting(user, jobPosting)) {

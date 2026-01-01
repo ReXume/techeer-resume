@@ -11,22 +11,22 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class CompanyPersistenceAdapter implements SaveCompanyPort, LoadCompanyPort {
 
-	private final CompanyJpaRepository companyJpaRepository;
+    private final CompanyJpaRepository companyJpaRepository;
 
-	@Override
-	public Company saveCompany(Company company) {
-		return companyJpaRepository.save(company);
-	}
+    @Override
+    public Company saveCompany(Company company) {
+        return companyJpaRepository.save(company);
+    }
 
-	@Override
-	public Optional<Company> findByName(String name) {
-		return companyJpaRepository.findByName(name);
-	}
+    @Override
+    public Optional<Company> findByName(String name) {
+        return companyJpaRepository.findByName(name);
+    }
 
-	@Override
-	public Optional<Company> findById(Long id) {
-		// Soft Delete 적용: 삭제되지 않은 회사만 조회
-		return companyJpaRepository.findByIdAndNotDeleted(id);
-	}
+    @Override
+    public Optional<Company> findById(Long id) {
+        // Soft Delete 적용: 삭제되지 않은 회사만 조회
+        return companyJpaRepository.findByIdAndNotDeleted(id);
+    }
 
 }

@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserTokenRequest {
 
-	@NotBlank(message = "accessToken 을 입력해주세요.")
-	private String accessToken;
+    @NotBlank(message = "accessToken 을 입력해주세요.")
+    private String accessToken;
 
-	@NotBlank(message = "refreshToken 을 입력해주세요.")
-	private String refreshToken;
+    @NotBlank(message = "refreshToken 을 입력해주세요.")
+    private String refreshToken;
 
 }

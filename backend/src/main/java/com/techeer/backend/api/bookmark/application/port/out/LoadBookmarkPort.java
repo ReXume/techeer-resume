@@ -9,10 +9,10 @@ import org.springframework.data.domain.Slice;
 
 public interface LoadBookmarkPort {
 
-	boolean existsByUserAndJobPosting(User user, JobPosting jobPosting);
+    boolean existsByUserAndJobPosting(User user, JobPosting jobPosting);
 
-	Optional<Bookmark> findById(Long id);
+    Optional<Bookmark> findById(Long id);
 
-	Slice<Bookmark> findAllByUser(User user, Pageable pageable);
+    Slice<Bookmark> findAllByUser(User user, Pageable pageable);
 
 }

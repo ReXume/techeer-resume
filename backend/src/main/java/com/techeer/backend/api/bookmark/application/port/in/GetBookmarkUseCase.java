@@ -4,6 +4,6 @@ import com.techeer.backend.api.bookmark.dto.response.BookmarkInfoResponse;
 
 public interface GetBookmarkUseCase {
 
-	BookmarkInfoResponse getBookmark(Long bookmarkId);
+    BookmarkInfoResponse getBookmark(Long bookmarkId);
 
 }

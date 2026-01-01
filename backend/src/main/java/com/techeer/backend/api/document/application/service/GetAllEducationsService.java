@@ -18,21 +18,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetAllEducationsService implements GetAllEducationsUseCase {
 
-	private final LoadEducationPort loadEducationPort;
+    private final LoadEducationPort loadEducationPort;
 
-	private final LoadUserPort loadUserPort;
+    private final LoadUserPort loadUserPort;
 
-	@Override
-	public Slice<EducationInfoResponse> getAllEducations(Long userId, Pageable pageable) {
-		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    @Override
+    public Slice<EducationInfoResponse> getAllEducations(Long userId, Pageable pageable) {
+        User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-		return loadEducationPort.findAllByUser(user, pageable)
-			.map(education -> EducationInfoResponse.builder()
-				.id(education.getId())
-				.title(education.getTitle())
-				.fileUrl(education.getFile().getFileUrl())
-				.isDefault(education.getIsDefault())
-				.build());
-	}
+        return loadEducationPort.findAllByUser(user, pageable)
+                .map(education -> EducationInfoResponse.builder()
+                        .id(education.getId())
+                        .title(education.getTitle())
+                        .fileUrl(education.getFile().getFileUrl())
+                        .isDefault(education.getIsDefault())
+                        .build());
+    }
 
 }

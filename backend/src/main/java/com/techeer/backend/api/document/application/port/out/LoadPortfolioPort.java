@@ -8,8 +8,8 @@ import org.springframework.data.domain.Slice;
 
 public interface LoadPortfolioPort {
 
-	Optional<Portfolio> findById(Long id);
+    Optional<Portfolio> findById(Long id);
 
-	Slice<Portfolio> findAllByUser(User user, Pageable pageable);
+    Slice<Portfolio> findAllByUser(User user, Pageable pageable);
 
 }

@@ -4,6 +4,6 @@ import com.techeer.backend.api.document.dto.response.EducationInfoResponse;
 
 public interface GetEducationUseCase {
 
-	EducationInfoResponse getEducation(Long educationId);
+    EducationInfoResponse getEducation(Long educationId);
 
 }

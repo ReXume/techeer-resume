@@ -4,6 +4,6 @@ import com.techeer.backend.api.company.domain.Company;
 
 public interface SaveCompanyPort {
 
-	Company saveCompany(Company company);
+    Company saveCompany(Company company);
 
 }

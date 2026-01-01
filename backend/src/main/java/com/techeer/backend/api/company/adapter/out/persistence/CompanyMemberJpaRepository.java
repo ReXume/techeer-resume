@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CompanyMemberJpaRepository extends JpaRepository<CompanyMember, Long> {
 
-	Optional<CompanyMember> findByUserAndCompany(User user, Company company);
+    Optional<CompanyMember> findByUserAndCompany(User user, Company company);
 
 }

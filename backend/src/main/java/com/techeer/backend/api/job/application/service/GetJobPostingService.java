@@ -15,22 +15,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetJobPostingService implements GetJobPostingUseCase {
 
-	private final LoadJobPostingPort loadJobPostingPort;
+    private final LoadJobPostingPort loadJobPostingPort;
 
-	@Override
-	public JobPostingInfoResponse getJobPosting(Long jobPostingId) {
-		JobPosting jobPosting = loadJobPostingPort.findById(jobPostingId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.JOB_POSTING_NOT_FOUND));
+    @Override
+    public JobPostingInfoResponse getJobPosting(Long jobPostingId) {
+        JobPosting jobPosting = loadJobPostingPort.findById(jobPostingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.JOB_POSTING_NOT_FOUND));
 
-		return JobPostingInfoResponse.builder()
-			.id(jobPosting.getId())
-			.companyId(jobPosting.getCompany().getId())
-			.companyName(jobPosting.getCompany().getName())
-			.title(jobPosting.getTitle())
-			.contents(jobPosting.getContents())
-			.expYears(jobPosting.getExpYears())
-			.status(jobPosting.getStatus().name())
-			.build();
-	}
+        return JobPostingInfoResponse.builder()
+                .id(jobPosting.getId())
+                .companyId(jobPosting.getCompany().getId())
+                .companyName(jobPosting.getCompany().getName())
+                .title(jobPosting.getTitle())
+                .contents(jobPosting.getContents())
+                .expYears(jobPosting.getExpYears())
+                .status(jobPosting.getStatus().name())
+                .build();
+    }
 
 }

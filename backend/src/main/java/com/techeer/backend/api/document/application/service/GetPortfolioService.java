@@ -15,19 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetPortfolioService implements GetPortfolioUseCase {
 
-	private final LoadPortfolioPort loadPortfolioPort;
+    private final LoadPortfolioPort loadPortfolioPort;
 
-	@Override
-	public PortfolioInfoResponse getPortfolio(Long portfolioId) {
-		Portfolio portfolio = loadPortfolioPort.findById(portfolioId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.PORTFOLIO_NOT_FOUND));
+    @Override
+    public PortfolioInfoResponse getPortfolio(Long portfolioId) {
+        Portfolio portfolio = loadPortfolioPort.findById(portfolioId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PORTFOLIO_NOT_FOUND));
 
-		return PortfolioInfoResponse.builder()
-			.id(portfolio.getId())
-			.title(portfolio.getTitle())
-			.fileUrl(portfolio.getFile().getFileUrl())
-			.isDefault(portfolio.getIsDefault())
-			.build();
-	}
+        return PortfolioInfoResponse.builder()
+                .id(portfolio.getId())
+                .title(portfolio.getTitle())
+                .fileUrl(portfolio.getFile().getFileUrl())
+                .isDefault(portfolio.getIsDefault())
+                .build();
+    }
 
 }

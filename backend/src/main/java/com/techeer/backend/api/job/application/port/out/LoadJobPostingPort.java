@@ -5,6 +5,6 @@ import java.util.Optional;
 
 public interface LoadJobPostingPort {
 
-	Optional<JobPosting> findById(Long id);
+    Optional<JobPosting> findById(Long id);
 
 }

@@ -20,17 +20,17 @@ public class GetUserCareerService implements GetUserCareerUseCase {
 	@Override
 	public UserCareerInfoResponse getUserCareer(Long careerId) {
 		UserCareer userCareer = loadUserCareerPort.findById(careerId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.USER_CAREER_NOT_FOUND));
+				.orElseThrow(() -> new BusinessException(ErrorCode.USER_CAREER_NOT_FOUND));
 
 		return UserCareerInfoResponse.builder()
-			.id(userCareer.getId())
-			.userId(userCareer.getUser().getId())
-			.companyName(userCareer.getCompanyName())
-			.jobTitle(userCareer.getJobTitle())
-			.isCurrent(userCareer.getIsCurrent())
-			.startDate(userCareer.getStartDate())
-			.endDate(userCareer.getEndDate())
-			.build();
+				.id(userCareer.getId())
+				.userId(userCareer.getUser().getId())
+				.companyName(userCareer.getCompanyName())
+				.jobTitle(userCareer.getJobTitle())
+				.isCurrent(userCareer.getIsCurrent())
+				.startDate(userCareer.getStartDate())
+				.endDate(userCareer.getEndDate())
+				.build();
 	}
 
 }

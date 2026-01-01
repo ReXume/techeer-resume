@@ -18,21 +18,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetAllPortfoliosService implements GetAllPortfoliosUseCase {
 
-	private final LoadPortfolioPort loadPortfolioPort;
+    private final LoadPortfolioPort loadPortfolioPort;
 
-	private final LoadUserPort loadUserPort;
+    private final LoadUserPort loadUserPort;
 
-	@Override
-	public Slice<PortfolioInfoResponse> getAllPortfolios(Long userId, Pageable pageable) {
-		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    @Override
+    public Slice<PortfolioInfoResponse> getAllPortfolios(Long userId, Pageable pageable) {
+        User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-		return loadPortfolioPort.findAllByUser(user, pageable)
-			.map(portfolio -> PortfolioInfoResponse.builder()
-				.id(portfolio.getId())
-				.title(portfolio.getTitle())
-				.fileUrl(portfolio.getFile().getFileUrl())
-				.isDefault(portfolio.getIsDefault())
-				.build());
-	}
+        return loadPortfolioPort.findAllByUser(user, pageable)
+                .map(portfolio -> PortfolioInfoResponse.builder()
+                        .id(portfolio.getId())
+                        .title(portfolio.getTitle())
+                        .fileUrl(portfolio.getFile().getFileUrl())
+                        .isDefault(portfolio.getIsDefault())
+                        .build());
+    }
 
 }

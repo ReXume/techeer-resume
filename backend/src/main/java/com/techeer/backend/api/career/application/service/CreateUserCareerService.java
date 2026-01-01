@@ -26,13 +26,13 @@ public class CreateUserCareerService implements CreateUserCareerUseCase {
 		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		UserCareer userCareer = UserCareer.builder()
-			.user(user)
-			.companyName(request.companyName())
-			.jobTitle(request.jobTitle())
-			.isCurrent(request.isCurrent())
-			.startDate(request.startDate())
-			.endDate(request.endDate())
-			.build();
+				.user(user)
+				.companyName(request.companyName())
+				.jobTitle(request.jobTitle())
+				.isCurrent(request.isCurrent())
+				.startDate(request.startDate())
+				.endDate(request.endDate())
+				.build();
 
 		return saveUserCareerPort.saveUserCareer(userCareer).getId();
 	}

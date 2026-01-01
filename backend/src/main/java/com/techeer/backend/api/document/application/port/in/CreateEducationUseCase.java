@@ -5,6 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface CreateEducationUseCase {
 
-	Long createEducation(EducationCreateRequest request, MultipartFile file, Long userId);
+    Long createEducation(EducationCreateRequest request, MultipartFile file, Long userId);
 
 }

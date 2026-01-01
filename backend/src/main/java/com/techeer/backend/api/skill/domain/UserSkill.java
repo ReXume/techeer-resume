@@ -20,27 +20,27 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "user_skills",
-		uniqueConstraints = { @UniqueConstraint(name = "uk_user_skill", columnNames = { "user_id", "skill_id" }) })
+        uniqueConstraints = {@UniqueConstraint(name = "uk_user_skill", columnNames = {"user_id", "skill_id"})})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserSkill extends BaseEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "user_skill_id")
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_skill_id")
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "skill_id", nullable = false)
-	private Skill skill;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "skill_id", nullable = false)
+    private Skill skill;
 
-	@Builder
-	public UserSkill(User user, Skill skill) {
-		this.user = user;
-		this.skill = skill;
-	}
+    @Builder
+    public UserSkill(User user, Skill skill) {
+        this.user = user;
+        this.skill = skill;
+    }
 
 }

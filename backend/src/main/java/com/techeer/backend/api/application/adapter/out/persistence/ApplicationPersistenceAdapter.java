@@ -5,10 +5,9 @@ import com.techeer.backend.api.application.application.port.out.SaveApplicationP
 import com.techeer.backend.api.application.domain.Application;
 import com.techeer.backend.api.job.domain.JobPosting;
 import com.techeer.backend.api.user.domain.User;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor

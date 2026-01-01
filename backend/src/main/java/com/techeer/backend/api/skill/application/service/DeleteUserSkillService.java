@@ -14,18 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class DeleteUserSkillService implements DeleteUserSkillUseCase {
 
-	private final LoadUserSkillPort loadUserSkillPort;
+    private final LoadUserSkillPort loadUserSkillPort;
 
-	@Override
-	public void deleteUserSkill(Long userSkillId, Long userId) {
-		UserSkill userSkill = loadUserSkillPort.findById(userSkillId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.USER_SKILL_NOT_FOUND));
+    @Override
+    public void deleteUserSkill(Long userSkillId, Long userId) {
+        UserSkill userSkill = loadUserSkillPort.findById(userSkillId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_SKILL_NOT_FOUND));
 
-		if (!userSkill.getUser().getId().equals(userId)) {
-			throw new BusinessException(ErrorCode.FORBIDDEN);
-		}
+        if (!userSkill.getUser().getId().equals(userId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
 
-		userSkill.softDelete();
-	}
+        userSkill.softDelete();
+    }
 
 }

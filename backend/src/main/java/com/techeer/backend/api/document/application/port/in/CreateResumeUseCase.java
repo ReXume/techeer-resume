@@ -5,6 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface CreateResumeUseCase {
 
-	Long createResume(ResumeCreateRequest request, MultipartFile file, Long userId);
+    Long createResume(ResumeCreateRequest request, MultipartFile file, Long userId);
 
 }

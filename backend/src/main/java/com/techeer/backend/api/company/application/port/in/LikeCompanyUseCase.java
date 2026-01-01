@@ -4,6 +4,6 @@ import com.techeer.backend.api.company.dto.request.CompanyLikeCreateRequest;
 
 public interface LikeCompanyUseCase {
 
-	Long likeCompany(CompanyLikeCreateRequest request, Long userId);
+    Long likeCompany(CompanyLikeCreateRequest request, Long userId);
 
 }

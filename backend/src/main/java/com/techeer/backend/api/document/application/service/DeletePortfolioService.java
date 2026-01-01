@@ -14,18 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class DeletePortfolioService implements DeletePortfolioUseCase {
 
-	private final LoadPortfolioPort loadPortfolioPort;
+    private final LoadPortfolioPort loadPortfolioPort;
 
-	@Override
-	public void deletePortfolio(Long portfolioId, Long userId) {
-		Portfolio portfolio = loadPortfolioPort.findById(portfolioId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.PORTFOLIO_NOT_FOUND));
+    @Override
+    public void deletePortfolio(Long portfolioId, Long userId) {
+        Portfolio portfolio = loadPortfolioPort.findById(portfolioId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PORTFOLIO_NOT_FOUND));
 
-		if (!portfolio.getFile().getUser().getId().equals(userId)) {
-			throw new BusinessException(ErrorCode.FORBIDDEN);
-		}
+        if (!portfolio.getFile().getUser().getId().equals(userId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
 
-		portfolio.softDelete();
-	}
+        portfolio.softDelete();
+    }
 
 }

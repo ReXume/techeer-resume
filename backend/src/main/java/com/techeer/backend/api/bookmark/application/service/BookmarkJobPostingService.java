@@ -20,29 +20,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class BookmarkJobPostingService implements BookmarkJobPostingUseCase {
 
-	private final SaveBookmarkPort saveBookmarkPort;
+    private final SaveBookmarkPort saveBookmarkPort;
 
-	private final LoadBookmarkPort loadBookmarkPort;
+    private final LoadBookmarkPort loadBookmarkPort;
 
-	private final LoadJobPostingPort loadJobPostingPort;
+    private final LoadJobPostingPort loadJobPostingPort;
 
-	private final LoadUserPort loadUserPort;
+    private final LoadUserPort loadUserPort;
 
-	@Override
-	public Long bookmarkJobPosting(BookmarkCreateRequest request, Long userId) {
-		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    @Override
+    public Long bookmarkJobPosting(BookmarkCreateRequest request, Long userId) {
+        User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-		JobPosting jobPosting = loadJobPostingPort.findById(request.jobPostingId())
-			.orElseThrow(() -> new BusinessException(ErrorCode.JOB_POSTING_NOT_FOUND));
+        JobPosting jobPosting = loadJobPostingPort.findById(request.jobPostingId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.JOB_POSTING_NOT_FOUND));
 
-		// 중복 북마크 체크
-		if (loadBookmarkPort.existsByUserAndJobPosting(user, jobPosting)) {
-			throw new BusinessException(ErrorCode.BOOKMARK_ALREADY_EXISTS);
-		}
+        // 중복 북마크 체크
+        if (loadBookmarkPort.existsByUserAndJobPosting(user, jobPosting)) {
+            throw new BusinessException(ErrorCode.BOOKMARK_ALREADY_EXISTS);
+        }
 
-		Bookmark bookmark = Bookmark.builder().user(user).jobPosting(jobPosting).build();
+        Bookmark bookmark = Bookmark.builder().user(user).jobPosting(jobPosting).build();
 
-		return saveBookmarkPort.saveBookmark(bookmark).getId();
-	}
+        return saveBookmarkPort.saveBookmark(bookmark).getId();
+    }
 
 }

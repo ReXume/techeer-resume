@@ -19,7 +19,7 @@ public class CancelApplicationService implements CancelApplicationUseCase {
 	@Override
 	public void cancelApplication(Long applicationId, Long userId) {
 		Application application = loadApplicationPort.findById(applicationId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
+				.orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
 
 		if (!application.getUser().getId().equals(userId)) {
 			throw new BusinessException(ErrorCode.FORBIDDEN);

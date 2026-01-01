@@ -6,6 +6,6 @@ import org.springframework.data.domain.Slice;
 
 public interface GetAllResumesUseCase {
 
-	Slice<ResumeInfoResponse> getAllResumes(Long userId, Pageable pageable);
+    Slice<ResumeInfoResponse> getAllResumes(Long userId, Pageable pageable);
 
 }

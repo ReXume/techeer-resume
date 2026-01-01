@@ -19,7 +19,7 @@ public class UnlikeCompanyService implements UnlikeCompanyUseCase {
 	@Override
 	public void unlikeCompany(Long companyLikeId, Long userId) {
 		CompanyLike companyLike = loadCompanyLikePort.findById(companyLikeId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_LIKE_NOT_FOUND));
+				.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_LIKE_NOT_FOUND));
 
 		if (!companyLike.getUser().getId().equals(userId)) {
 			throw new BusinessException(ErrorCode.FORBIDDEN);

@@ -20,16 +20,16 @@ public class GetApplicationService implements GetApplicationUseCase {
 	@Override
 	public ApplicationInfoResponse getApplication(Long applicationId) {
 		Application application = loadApplicationPort.findById(applicationId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
+				.orElseThrow(() -> new BusinessException(ErrorCode.APPLICATION_NOT_FOUND));
 
 		return ApplicationInfoResponse.builder()
-			.id(application.getId())
-			.jobPostingId(application.getJobPosting().getId())
-			.jobPostingTitle(application.getJobPosting().getTitle())
-			.companyName(application.getJobPosting().getCompany().getName())
-			.status(application.getStatus().name())
-			.appliedAt(application.getCreatedAt())
-			.build();
+				.id(application.getId())
+				.jobPostingId(application.getJobPosting().getId())
+				.jobPostingTitle(application.getJobPosting().getTitle())
+				.companyName(application.getJobPosting().getCompany().getName())
+				.status(application.getStatus().name())
+				.appliedAt(application.getCreatedAt())
+				.build();
 	}
 
 }

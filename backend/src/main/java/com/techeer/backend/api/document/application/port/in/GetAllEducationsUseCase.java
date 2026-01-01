@@ -6,6 +6,6 @@ import org.springframework.data.domain.Slice;
 
 public interface GetAllEducationsUseCase {
 
-	Slice<EducationInfoResponse> getAllEducations(Long userId, Pageable pageable);
+    Slice<EducationInfoResponse> getAllEducations(Long userId, Pageable pageable);
 
 }

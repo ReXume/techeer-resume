@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "UserCareer", description = "경력 API")
@@ -32,47 +31,47 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserCareerController {
 
-	private final CreateUserCareerUseCase createUserCareerUseCase;
+    private final CreateUserCareerUseCase createUserCareerUseCase;
 
-	private final GetUserCareerUseCase getUserCareerUseCase;
+    private final GetUserCareerUseCase getUserCareerUseCase;
 
-	private final UpdateUserCareerUseCase updateUserCareerUseCase;
+    private final UpdateUserCareerUseCase updateUserCareerUseCase;
 
-	private final DeleteUserCareerUseCase deleteUserCareerUseCase;
+    private final DeleteUserCareerUseCase deleteUserCareerUseCase;
 
-	private final UserService userService;
+    private final UserService userService;
 
-	@Operation(summary = "경력 등록", description = "사용자의 경력 정보를 등록합니다.")
-	@PostMapping
-	public ResponseEntity<ApiResponse<Long>> createUserCareer(@Valid @RequestBody UserCareerCreateRequest request) {
-		Long userId = userService.getLoginUser().getId();
-		Long careerId = createUserCareerUseCase.createUserCareer(request, userId);
-		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(ApiResponse.success(SuccessCode.USER_CAREER_CREATE_SUCCESS, careerId));
-	}
+    @Operation(summary = "경력 등록", description = "사용자의 경력 정보를 등록합니다.")
+    @PostMapping
+    public ResponseEntity<ApiResponse<Long>> createUserCareer(@Valid @RequestBody UserCareerCreateRequest request) {
+        Long userId = userService.getLoginUser().getId();
+        Long careerId = createUserCareerUseCase.createUserCareer(request, userId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(SuccessCode.USER_CAREER_CREATE_SUCCESS, careerId));
+    }
 
-	@Operation(summary = "경력 단건 조회", description = "경력 ID로 경력 정보를 조회합니다.")
-	@GetMapping("/{careerId}")
-	public ResponseEntity<ApiResponse<UserCareerInfoResponse>> getUserCareer(@PathVariable Long careerId) {
-		UserCareerInfoResponse response = getUserCareerUseCase.getUserCareer(careerId);
-		return ResponseEntity.ok(ApiResponse.success(SuccessCode.OK, response));
-	}
+    @Operation(summary = "경력 단건 조회", description = "경력 ID로 경력 정보를 조회합니다.")
+    @GetMapping("/{careerId}")
+    public ResponseEntity<ApiResponse<UserCareerInfoResponse>> getUserCareer(@PathVariable Long careerId) {
+        UserCareerInfoResponse response = getUserCareerUseCase.getUserCareer(careerId);
+        return ResponseEntity.ok(ApiResponse.success(SuccessCode.OK, response));
+    }
 
-	@Operation(summary = "경력 수정", description = "경력 정보를 수정합니다. 본인만 가능합니다.")
-	@PutMapping("/{careerId}")
-	public ResponseEntity<ApiResponse<Void>> updateUserCareer(@PathVariable Long careerId,
-			@Valid @RequestBody UserCareerUpdateRequest request) {
-		Long userId = userService.getLoginUser().getId();
-		updateUserCareerUseCase.updateUserCareer(careerId, request, userId);
-		return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_CAREER_UPDATE_SUCCESS));
-	}
+    @Operation(summary = "경력 수정", description = "경력 정보를 수정합니다. 본인만 가능합니다.")
+    @PutMapping("/{careerId}")
+    public ResponseEntity<ApiResponse<Void>> updateUserCareer(@PathVariable Long careerId,
+                                                              @Valid @RequestBody UserCareerUpdateRequest request) {
+        Long userId = userService.getLoginUser().getId();
+        updateUserCareerUseCase.updateUserCareer(careerId, request, userId);
+        return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_CAREER_UPDATE_SUCCESS));
+    }
 
-	@Operation(summary = "경력 삭제", description = "경력 정보를 삭제합니다. 본인만 가능합니다.")
-	@DeleteMapping("/{careerId}")
-	public ResponseEntity<ApiResponse<Void>> deleteUserCareer(@PathVariable Long careerId) {
-		Long userId = userService.getLoginUser().getId();
-		deleteUserCareerUseCase.deleteUserCareer(careerId, userId);
-		return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_CAREER_DELETE_SUCCESS));
-	}
+    @Operation(summary = "경력 삭제", description = "경력 정보를 삭제합니다. 본인만 가능합니다.")
+    @DeleteMapping("/{careerId}")
+    public ResponseEntity<ApiResponse<Void>> deleteUserCareer(@PathVariable Long careerId) {
+        Long userId = userService.getLoginUser().getId();
+        deleteUserCareerUseCase.deleteUserCareer(careerId, userId);
+        return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_CAREER_DELETE_SUCCESS));
+    }
 
 }

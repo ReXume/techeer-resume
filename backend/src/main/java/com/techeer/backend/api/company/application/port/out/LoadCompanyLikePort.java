@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface LoadCompanyLikePort {
 
-	boolean existsByUserAndCompany(User user, Company company);
+    boolean existsByUserAndCompany(User user, Company company);
 
-	Optional<CompanyLike> findById(Long id);
+    Optional<CompanyLike> findById(Long id);
 
 }

@@ -4,6 +4,6 @@ import com.techeer.backend.api.document.dto.response.ResumeInfoResponse;
 
 public interface GetResumeUseCase {
 
-	ResumeInfoResponse getResume(Long resumeId);
+    ResumeInfoResponse getResume(Long resumeId);
 
 }

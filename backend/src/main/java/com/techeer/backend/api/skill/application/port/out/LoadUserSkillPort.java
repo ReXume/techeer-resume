@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface LoadUserSkillPort {
 
-	boolean existsByUserAndSkill(User user, Skill skill);
+    boolean existsByUserAndSkill(User user, Skill skill);
 
-	Optional<UserSkill> findById(Long id);
+    Optional<UserSkill> findById(Long id);
 
 }

@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class SkillPersistenceAdapter implements LoadSkillPort {
 
-	private final SkillJpaRepository skillJpaRepository;
+    private final SkillJpaRepository skillJpaRepository;
 
-	@Override
-	public Optional<Skill> findById(Long id) {
-		return skillJpaRepository.findById(id);
-	}
+    @Override
+    public Optional<Skill> findById(Long id) {
+        return skillJpaRepository.findById(id);
+    }
 
 }

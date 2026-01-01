@@ -23,41 +23,41 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Education extends BaseEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "education_id")
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "education_id")
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "file_id")
-	private UserFile file;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "file_id")
+    private UserFile file;
 
-	@Size(max = 255)
-	@Column(name = "title", length = 255)
-	private String title;
+    @Size(max = 255)
+    @Column(name = "title", length = 255)
+    private String title;
 
-	@Column(name = "is_default")
-	private Boolean isDefault = false;
+    @Column(name = "is_default")
+    private Boolean isDefault = false;
 
-	@Builder
-	public Education(UserFile file, String title, Boolean isDefault) {
-		this.file = file;
-		this.title = title;
-		this.isDefault = isDefault != null ? isDefault : false;
-	}
+    @Builder
+    public Education(UserFile file, String title, Boolean isDefault) {
+        this.file = file;
+        this.title = title;
+        this.isDefault = isDefault != null ? isDefault : false;
+    }
 
-	public void updateTitle(String title) {
-		if (title != null) {
-			this.title = title;
-		}
-	}
+    public void updateTitle(String title) {
+        if (title != null) {
+            this.title = title;
+        }
+    }
 
-	public void setAsDefault() {
-		this.isDefault = true;
-	}
+    public void setAsDefault() {
+        this.isDefault = true;
+    }
 
-	public void unsetAsDefault() {
-		this.isDefault = false;
-	}
+    public void unsetAsDefault() {
+        this.isDefault = false;
+    }
 
 }

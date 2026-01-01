@@ -4,6 +4,6 @@ import com.techeer.backend.api.job.domain.JobPosting;
 
 public interface SaveJobPostingPort {
 
-	JobPosting saveJobPosting(JobPosting jobPosting);
+    JobPosting saveJobPosting(JobPosting jobPosting);
 
 }

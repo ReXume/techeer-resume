@@ -11,11 +11,11 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class UserPersistenceAdapter implements LoadUserPort {
 
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-	@Override
-	public Optional<User> findById(Long id) {
-		return userRepository.findById(id);
-	}
+    @Override
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
 
 }

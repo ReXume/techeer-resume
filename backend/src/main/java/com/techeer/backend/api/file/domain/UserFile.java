@@ -27,44 +27,37 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserFile {
 
+	@Column(name = "created_at", nullable = false, updatable = false)
+	private final LocalDateTime createdAt = LocalDateTime.now();
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "file_id")
 	private Long id;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
-
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "category", nullable = false, length = 50)
 	private FileCategory category;
-
 	@NotNull
 	@Size(max = 36)
 	@Column(name = "uuid", nullable = false, length = 36, unique = true)
 	private String uuid;
-
 	@NotNull
 	@Size(max = 2083)
 	@Column(name = "file_url", nullable = false, length = 2083)
 	private String fileUrl;
-
 	@Enumerated(EnumType.STRING)
 	@Column(name = "file_type", length = 50)
 	private FileType fileType;
-
 	@Size(max = 255)
 	@Column(name = "original_name", length = 255)
 	private String originalName;
 
-	@Column(name = "created_at", nullable = false, updatable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
-
 	@Builder
 	public UserFile(User user, FileCategory category, String uuid, String fileUrl, FileType fileType,
-			String originalName) {
+					String originalName) {
 		this.user = user;
 		this.category = category;
 		this.uuid = uuid;

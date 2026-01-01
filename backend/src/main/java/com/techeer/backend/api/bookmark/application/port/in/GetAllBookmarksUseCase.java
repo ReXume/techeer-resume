@@ -6,6 +6,6 @@ import org.springframework.data.domain.Slice;
 
 public interface GetAllBookmarksUseCase {
 
-	Slice<BookmarkInfoResponse> getAllBookmarks(Long userId, Pageable pageable);
+    Slice<BookmarkInfoResponse> getAllBookmarks(Long userId, Pageable pageable);
 
 }

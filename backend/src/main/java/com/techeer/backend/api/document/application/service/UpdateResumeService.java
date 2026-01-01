@@ -15,27 +15,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UpdateResumeService implements UpdateResumeUseCase {
 
-	private final LoadResumePort loadResumePort;
+    private final LoadResumePort loadResumePort;
 
-	@Override
-	public void updateResume(Long resumeId, ResumeUpdateRequest request, Long userId) {
-		Resume resume = loadResumePort.findById(resumeId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.RESUME_NOT_FOUND));
+    @Override
+    public void updateResume(Long resumeId, ResumeUpdateRequest request, Long userId) {
+        Resume resume = loadResumePort.findById(resumeId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESUME_NOT_FOUND));
 
-		if (!resume.getFile().getUser().getId().equals(userId)) {
-			throw new BusinessException(ErrorCode.FORBIDDEN);
-		}
+        if (!resume.getFile().getUser().getId().equals(userId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
 
-		resume.updateTitle(request.title());
+        resume.updateTitle(request.title());
 
-		if (request.isDefault() != null) {
-			if (request.isDefault()) {
-				resume.setAsDefault();
-			}
-			else {
-				resume.unsetAsDefault();
-			}
-		}
-	}
+        if (request.isDefault() != null) {
+            if (request.isDefault()) {
+                resume.setAsDefault();
+            } else {
+                resume.unsetAsDefault();
+            }
+        }
+    }
 
 }

@@ -8,8 +8,8 @@ import org.springframework.data.domain.Slice;
 
 public interface LoadResumePort {
 
-	Optional<Resume> findById(Long id);
+    Optional<Resume> findById(Long id);
 
-	Slice<Resume> findAllByUser(User user, Pageable pageable);
+    Slice<Resume> findAllByUser(User user, Pageable pageable);
 
 }

@@ -18,21 +18,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GetAllBookmarksService implements GetAllBookmarksUseCase {
 
-	private final LoadBookmarkPort loadBookmarkPort;
+    private final LoadBookmarkPort loadBookmarkPort;
 
-	private final LoadUserPort loadUserPort;
+    private final LoadUserPort loadUserPort;
 
-	@Override
-	public Slice<BookmarkInfoResponse> getAllBookmarks(Long userId, Pageable pageable) {
-		User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    @Override
+    public Slice<BookmarkInfoResponse> getAllBookmarks(Long userId, Pageable pageable) {
+        User user = loadUserPort.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-		return loadBookmarkPort.findAllByUser(user, pageable)
-			.map(bookmark -> BookmarkInfoResponse.builder()
-				.id(bookmark.getId())
-				.jobPostingId(bookmark.getJobPosting().getId())
-				.companyName(bookmark.getJobPosting().getCompany().getName())
-				.jobTitle(bookmark.getJobPosting().getTitle())
-				.build());
-	}
+        return loadBookmarkPort.findAllByUser(user, pageable)
+                .map(bookmark -> BookmarkInfoResponse.builder()
+                        .id(bookmark.getId())
+                        .jobPostingId(bookmark.getJobPosting().getId())
+                        .companyName(bookmark.getJobPosting().getCompany().getName())
+                        .jobTitle(bookmark.getJobPosting().getTitle())
+                        .build());
+    }
 
 }

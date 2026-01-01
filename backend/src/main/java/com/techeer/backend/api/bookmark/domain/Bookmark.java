@@ -21,28 +21,28 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "bookmarks",
-		uniqueConstraints = {
-				@UniqueConstraint(name = "uk_user_jobposting", columnNames = { "user_id", "jobposting_id" }) })
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_user_jobposting", columnNames = {"user_id", "jobposting_id"})})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Bookmark extends BaseEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "bookmark_id")
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "bookmark_id")
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "jobposting_id", nullable = false)
-	private JobPosting jobPosting;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "jobposting_id", nullable = false)
+    private JobPosting jobPosting;
 
-	@Builder
-	public Bookmark(User user, JobPosting jobPosting) {
-		this.user = user;
-		this.jobPosting = jobPosting;
-	}
+    @Builder
+    public Bookmark(User user, JobPosting jobPosting) {
+        this.user = user;
+        this.jobPosting = jobPosting;
+    }
 
 }

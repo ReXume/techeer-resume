@@ -13,10 +13,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PortfolioJpaRepository extends JpaRepository<Portfolio, Long> {
 
-	@Query("SELECT p FROM Portfolio p WHERE p.id = :id AND p.deletedAt IS NULL")
-	Optional<Portfolio> findByIdAndNotDeleted(@Param("id") Long id);
+    @Query("SELECT p FROM Portfolio p WHERE p.id = :id AND p.deletedAt IS NULL")
+    Optional<Portfolio> findByIdAndNotDeleted(@Param("id") Long id);
 
-	@Query("SELECT p FROM Portfolio p WHERE p.file.user = :user AND p.deletedAt IS NULL ORDER BY p.createdAt DESC")
-	Slice<Portfolio> findAllByUserAndNotDeleted(@Param("user") User user, Pageable pageable);
+    @Query("SELECT p FROM Portfolio p WHERE p.file.user = :user AND p.deletedAt IS NULL ORDER BY p.createdAt DESC")
+    Slice<Portfolio> findAllByUserAndNotDeleted(@Param("user") User user, Pageable pageable);
 
 }

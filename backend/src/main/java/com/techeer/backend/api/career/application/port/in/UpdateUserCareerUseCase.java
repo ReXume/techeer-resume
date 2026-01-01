@@ -4,6 +4,6 @@ import com.techeer.backend.api.career.dto.request.UserCareerUpdateRequest;
 
 public interface UpdateUserCareerUseCase {
 
-	void updateUserCareer(Long careerId, UserCareerUpdateRequest request, Long userId);
+    void updateUserCareer(Long careerId, UserCareerUpdateRequest request, Long userId);
 
 }

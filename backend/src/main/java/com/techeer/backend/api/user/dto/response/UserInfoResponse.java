@@ -8,14 +8,14 @@ import lombok.Getter;
 @Getter
 public class UserInfoResponse {
 
-	private Long userId;
+    private Long userId;
 
-	private String username;
+    private String username;
 
-	private String email;
+    private String email;
 
-	private String profileImage;
+    private String profileImage;
 
-	private Role role;
+    private Role role;
 
 }

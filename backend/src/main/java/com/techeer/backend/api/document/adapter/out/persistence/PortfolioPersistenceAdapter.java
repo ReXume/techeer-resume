@@ -14,21 +14,21 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class PortfolioPersistenceAdapter implements SavePortfolioPort, LoadPortfolioPort {
 
-	private final PortfolioJpaRepository portfolioJpaRepository;
+    private final PortfolioJpaRepository portfolioJpaRepository;
 
-	@Override
-	public Portfolio savePortfolio(Portfolio portfolio) {
-		return portfolioJpaRepository.save(portfolio);
-	}
+    @Override
+    public Portfolio savePortfolio(Portfolio portfolio) {
+        return portfolioJpaRepository.save(portfolio);
+    }
 
-	@Override
-	public Optional<Portfolio> findById(Long id) {
-		return portfolioJpaRepository.findByIdAndNotDeleted(id);
-	}
+    @Override
+    public Optional<Portfolio> findById(Long id) {
+        return portfolioJpaRepository.findByIdAndNotDeleted(id);
+    }
 
-	@Override
-	public Slice<Portfolio> findAllByUser(User user, Pageable pageable) {
-		return portfolioJpaRepository.findAllByUserAndNotDeleted(user, pageable);
-	}
+    @Override
+    public Slice<Portfolio> findAllByUser(User user, Pageable pageable) {
+        return portfolioJpaRepository.findAllByUserAndNotDeleted(user, pageable);
+    }
 
 }

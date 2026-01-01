@@ -5,6 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface CreatePortfolioUseCase {
 
-	Long createPortfolio(PortfolioCreateRequest request, MultipartFile file, Long userId);
+    Long createPortfolio(PortfolioCreateRequest request, MultipartFile file, Long userId);
 
 }

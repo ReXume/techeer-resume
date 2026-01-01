@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Application", description = "지원 API")
@@ -43,7 +42,7 @@ public class ApplicationController {
 		Long userId = userService.getLoginUser().getId();
 		Long applicationId = applyJobUseCase.applyJob(request, userId);
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(ApiResponse.success(SuccessCode.APPLICATION_APPLY_SUCCESS, applicationId));
+				.body(ApiResponse.success(SuccessCode.APPLICATION_APPLY_SUCCESS, applicationId));
 	}
 
 	@Operation(summary = "지원 내역 단건 조회", description = "지원 ID로 지원 내역을 조회합니다.")

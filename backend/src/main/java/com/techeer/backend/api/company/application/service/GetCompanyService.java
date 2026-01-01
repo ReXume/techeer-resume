@@ -20,15 +20,15 @@ public class GetCompanyService implements GetCompanyUseCase {
 	@Override
 	public CompanyInfoResponse getCompany(Long companyId) {
 		Company company = loadCompanyPort.findById(companyId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
+				.orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
 
 		return CompanyInfoResponse.builder()
-			.id(company.getId())
-			.name(company.getName())
-			.industryDomain(company.getIndustryDomain())
-			.websiteUrl(company.getWebsiteUrl())
-			.location(company.getLocation())
-			.build();
+				.id(company.getId())
+				.name(company.getName())
+				.industryDomain(company.getIndustryDomain())
+				.websiteUrl(company.getWebsiteUrl())
+				.location(company.getLocation())
+				.build();
 	}
 
 }

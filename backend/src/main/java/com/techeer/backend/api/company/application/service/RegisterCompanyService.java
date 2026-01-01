@@ -44,20 +44,20 @@ public class RegisterCompanyService implements RegisterCompanyUseCase {
 		// 3. 기업 생성
 		// NOTE: 회사 이메일 검증은 별도 인증 서버(멀티모듈)에서 처리 예정
 		Company company = Company.builder()
-			.name(request.name())
-			.industryDomain(request.industryDomain())
-			.websiteUrl(request.websiteUrl())
-			.location(request.location())
-			.build();
+				.name(request.name())
+				.industryDomain(request.industryDomain())
+				.websiteUrl(request.websiteUrl())
+				.location(request.location())
+				.build();
 
 		Company savedCompany = saveCompanyPort.saveCompany(company);
 
 		// 4. 기업 생성자를 관리자로 등록
 		CompanyMember adminMember = CompanyMember.builder()
-			.user(user)
-			.company(savedCompany)
-			.role(CompanyRole.ADMIN)
-			.build();
+				.user(user)
+				.company(savedCompany)
+				.role(CompanyRole.ADMIN)
+				.build();
 
 		saveCompanyMemberPort.saveCompanyMember(adminMember);
 
