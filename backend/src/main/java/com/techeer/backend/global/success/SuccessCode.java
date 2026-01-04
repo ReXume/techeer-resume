@@ -68,6 +68,12 @@ public enum SuccessCode implements BaseStatus {
 	USER_CAREER_UPDATE_SUCCESS(HttpStatus.OK, "CAREER_200", "경력이 수정되었습니다."),
 	USER_CAREER_DELETE_SUCCESS(HttpStatus.OK, "CAREER_200", "경력이 삭제되었습니다."),
 
+	// Skill Success
+	SKILL_CREATE_SUCCESS(HttpStatus.CREATED, "SKILL_201", "기술 스택이 등록되었습니다."),
+	SKILL_GET_SUCCESS(HttpStatus.OK, "SKILL_200", "기술 스택 조회에 성공했습니다."),
+	SKILL_UPDATE_SUCCESS(HttpStatus.OK, "SKILL_200", "기술 스택이 수정되었습니다."),
+	SKILL_DELETE_SUCCESS(HttpStatus.OK, "SKILL_200", "기술 스택이 삭제되었습니다."),
+
 	// UserSkill Success
 	USER_SKILL_CREATE_SUCCESS(HttpStatus.CREATED, "SKILL_201", "스킬이 등록되었습니다."),
 	USER_SKILL_DELETE_SUCCESS(HttpStatus.OK, "SKILL_200", "스킬이 삭제되었습니다."),
