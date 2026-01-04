@@ -64,6 +64,7 @@ public enum ErrorCode {
 
 	// Skill Error
 	SKILL_NOT_FOUND(HttpStatus.NOT_FOUND, "SKILL_404", "스킬을 찾을 수 없습니다."),
+	SKILL_ALREADY_EXISTS(HttpStatus.CONFLICT, "SKILL_409", "이미 존재하는 스킬입니다."),
 	USER_SKILL_NOT_FOUND(HttpStatus.NOT_FOUND, "SKILL_404", "등록된 스킬을 찾을 수 없습니다."),
 	USER_SKILL_ALREADY_EXISTS(HttpStatus.CONFLICT, "SKILL_409", "이미 등록된 스킬입니다."),
 

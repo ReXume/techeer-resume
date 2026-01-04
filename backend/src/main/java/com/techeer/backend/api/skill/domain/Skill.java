@@ -27,7 +27,7 @@ public class Skill extends BaseEntity {
 
 	@NotNull
 	@Size(max = 100)
-	@Column(name = "name", nullable = false, length = 100, unique = true)
+	@Column(name = "name", nullable = false, length = 100)
 	private String name;
 
 	@Builder

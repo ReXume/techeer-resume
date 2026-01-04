@@ -7,4 +7,12 @@ public interface LoadSkillPort {
 
 	Optional<Skill> findById(Long id);
 
+	Optional<Skill> findByName(String name);
+
+	Optional<Skill> findByNameIgnoreCase(String name);
+
+	Optional<Skill> findByIdAndNotDeleted(Long id);
+
+	Optional<Skill> findByNameIgnoreCaseAndNotDeleted(String name);
+
 }
