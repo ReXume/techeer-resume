@@ -66,6 +66,9 @@ public class SecurityConfig {
 						"/v3/api-docs/**", "/api-docs/**", "/index.html", "/swagger-ui.html/**",
 						"/swagger-resources/**", "/webjars/**")
 				.permitAll()
+				// Actuator 엔드포인트 (모니터링용)
+				.requestMatchers("/actuator/**")
+				.permitAll()
 				// 자체 로그인/회원가입 API
 				.requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/mock/signup")
 				.permitAll()

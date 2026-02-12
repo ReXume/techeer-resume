@@ -1,0 +1,117 @@
+// ==========================================
+// Grafana Cloud Authentication
+// ==========================================
+
+// Prometheus Remote Write (Metrics)
+prometheus.remote_write "grafana_cloud" {
+  endpoint {
+    url = env("GRAFANA_CLOUD_PROMETHEUS_URL")
+    basic_auth {
+      username = env("GRAFANA_CLOUD_PROMETHEUS_USERNAME")
+      password = env("GRAFANA_CLOUD_API_KEY")
+    }
+  }
+}
+
+// Loki (Logs)
+loki.write "grafana_cloud" {
+  endpoint {
+    url = env("GRAFANA_CLOUD_LOKI_URL")
+    basic_auth {
+      username = env("GRAFANA_CLOUD_LOKI_USERNAME")
+      password = env("GRAFANA_CLOUD_API_KEY")
+    }
+  }
+}
+
+// Tempo (Traces) - OTLP Exporter
+otelcol.auth.basic "grafana_cloud" {
+  username = env("GRAFANA_CLOUD_TEMPO_USERNAME")
+  password = env("GRAFANA_CLOUD_API_KEY")
+}
+
+otelcol.exporter.otlp "grafana_cloud" {
+  client {
+    endpoint = env("GRAFANA_CLOUD_TEMPO_URL")
+    auth     = otelcol.auth.basic.grafana_cloud.handler
+  }
+}
+
+// ==========================================
+// Docker Container Discovery
+// ==========================================
+
+discovery.docker "containers" {
+  host             = "unix:///var/run/docker.sock"
+  refresh_interval = "30s"
+}
+
+// ==========================================
+// Spring Boot Actuator Metrics Scraping
+// ==========================================
+
+discovery.relabel "spring_boot" {
+  targets = [{
+    __address__ = "backend:8080",
+  }]
+
+  rule {
+    target_label = "job"
+    replacement  = "spring-boot"
+  }
+
+  rule {
+    target_label = "instance"
+    replacement  = "techeer-backend"
+  }
+}
+
+prometheus.scrape "spring_boot" {
+  targets         = discovery.relabel.spring_boot.output
+  forward_to      = [prometheus.remote_write.grafana_cloud.receiver]
+  metrics_path    = "/actuator/prometheus"
+  scrape_interval = "15s"
+}
+
+// ==========================================
+// Docker Container Logs Collection
+// ==========================================
+
+loki.source.docker "containers" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.docker.containers.targets
+  forward_to = [loki.write.grafana_cloud.receiver]
+
+  relabel_rules = loki.relabel.docker_labels.rules
+}
+
+loki.relabel "docker_labels" {
+  forward_to = []
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    target_label  = "container"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_id"]
+    target_label  = "container_id"
+  }
+}
+
+// ==========================================
+// OpenTelemetry Traces Receiver
+// ==========================================
+
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces = [otelcol.exporter.otlp.grafana_cloud.input]
+  }
+}

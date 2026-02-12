@@ -5,8 +5,8 @@ WORKDIR /app
 # 소스코드 전체 복사 (gradle/wrapper 포함)
 COPY . .
 
-# JAR 빌드 (bootJar, 테스트 제외)
-RUN gradle bootJar -x test --no-daemon
+# JAR 빌드 (bootJar, 테스트 및 asciidoctor 제외)
+RUN gradle bootJar -x test -x asciidoctor --no-daemon
 
 # 2단계: 실행용 이미지
 FROM eclipse-temurin:21-jdk

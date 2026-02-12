@@ -5,7 +5,7 @@ type ResumePageGroupProps = {
   feedbackPoints: FeedbackPoint[];
   addFeedbackPoint: (point: Omit<AddFeedbackPoint, "id" | "type">) => void;
   deleteFeedbackPoint: (id: number) => void;
-  editFeedbackPoint: (item: AddFeedbackPoint) => void;
+  editFeedbackPoint: (item: FeedbackPoint) => void;
   hoveredCommentId: number | null;
   setHoveredCommentId: (id: number | null) => void;
   setClickedCommentId: (id: number | null) => void;

@@ -12,10 +12,12 @@ describe("CommentSection 테스트", () => {
 
   const mockFeedbackPoints = [
     {
-      id: 1,
+      feedbackId: 1,
       content: "Test feedback",
-      xCoordinate: 100,
-      yCoordinate: 200,
+      x1: 100,
+      x2: 200,
+      y1: 100,
+      y2: 200,
       pageNumber: 1,
       createdAt: "2024-12-10T10:00:00Z",
       updatedAt: "2024-12-10T12:00:00Z",
@@ -37,6 +39,7 @@ describe("CommentSection 테스트", () => {
         handleAiFeedback={mockHandleAiFeedback}
         loading={true}
         error=""
+        onClickedCommentId={null}
       />
     );
 
@@ -59,6 +62,7 @@ describe("CommentSection 테스트", () => {
         handleAiFeedback={mockHandleAiFeedback}
         loading={false}
         error="Error occurred"
+        onClickedCommentId={null}
       />
     );
     //Then : 에러 메시지가 렌더링된다

@@ -1,9 +1,11 @@
 export type FeedbackPoint = {
-  id: number;
+  feedbackId: number;
   content: string;
-  xCoordinate: number;
-  yCoordinate: number;
-  pageNumber: number | 1;
+  x1: number;
+  x2: number;
+  y1: number;
+  y2: number;
+  pageNumber: number;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;

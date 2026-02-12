@@ -1,178 +1,85 @@
-# Spring Java Format 사용 가이드
+# Spring Boot & Java 코드 스타일 가이드
 
-## 개요
+## 1. 개요
 
-Spring Java Format은 Spring Framework의 공식 코드 포맷터로, Spring 프로젝트에서 일관된 코드 스타일을 유지하기 위해 사용됩니다.
+본 프로젝트는 코드의 일관성과 가독성을 유지하기 위해 **우아한형제들 기술 캠프의 Java 코드 컨벤션**을 따릅니다. IntelliJ IDEA에서는 `Woowahan Style` 플러그인을 사용하여 이 컨벤션을 손쉽게 적용할 수 있습니다.
 
-## 적용 방법
+이 문서는 플러그인 설치 및 설정 방법과 함께, 프로젝트에서 따르는 주요 코딩 스타일 및 모범 사례를 안내합니다.
 
-### 1. Gradle을 통한 포맷팅
+## 2. IntelliJ 플러그인 설치 및 설정
 
-#### 모든 Java 파일 포맷팅 적용
+### 2.1. Woowahan Style 플러그인 설치
 
-```bash
-./gradlew format
-```
+1.  **IntelliJ 설정 열기**:
+    *   macOS: `IntelliJ IDEA` -> `Settings` (단축키: `Cmd + ,`)
+    *   Windows/Linux: `File` -> `Settings`
+2.  **플러그인 마켓플레이스 이동**:
+    *   좌측 메뉴에서 `Plugins` 선택 후, 상단의 `Marketplace` 탭으로 이동합니다.
+3.  **플러그인 검색 및 설치**:
+    *   검색창에 `Woowahan Style`을 입력하고 검색합니다.
+    *   `Checkstyle-IDEA`와 `Woowahan-Style` 두 가지가 나올 수 있으나, 코드 포맷팅을 위해서는 **`Woowahan-Style`**을 설치합니다.
+    *   `Install` 버튼을 클릭하여 설치하고, 설치가 완료되면 IntelliJ를 재시작합니다.
 
-#### 포맷팅 검사만 수행 (적용하지 않음)
+### 2.2. 코드 스타일 적용
 
-```bash
-./gradlew checkFormat
-```
+1.  **코드 스타일 설정 이동**:
+    *   `Settings` -> `Editor` -> `Code Style`로 이동합니다.
+2.  **Scheme 변경**:
+    *   `Scheme` 드롭다운 메뉴를 클릭하여 **`Woowahan-Style`**을 선택합니다.
+    *   `Apply` 또는 `OK` 버튼을 눌러 프로젝트의 기본 코드 스타일로 저장합니다.
 
-#### main 소스만 포맷팅
+### 2.3. 코드 자동 포맷팅 설정
 
-```bash
-./gradlew formatMain
-```
+코드 작성 후 수동으로 포맷팅을 적용할 수도 있지만, 저장 시 자동으로 포맷팅되도록 설정하면 편리합니다.
 
-#### test 소스만 포맷팅
+1.  **Actions on Save 설정 이동**:
+    *   `Settings` -> `Tools` -> `Actions on Save`로 이동합니다.
+2.  **자동 포맷팅 활성화**:
+    *   `Reformat code` 옵션을 체크합니다.
+    *   (선택) `Optimize imports` 옵션을 체크하면 사용하지 않는 import 문을 자동으로 제거하고 순서를 정리해줍니다.
 
-```bash
-./gradlew formatTest
-```
+## 3. 주요 코드 스타일 및 모범 사례
 
-### 2. IntelliJ IDEA 플러그인 설치
+### 3.1. 네이밍 컨벤션 (Naming Convention)
 
-#### 플러그인 다운로드 및 설치
+-   **클래스, 인터페이스, Enum**: `PascalCase` (e.g., `ImageController`, `UserService`, `OrderStatus`)
+-   **메서드, 변수**: `camelCase` (e.g., `findUserById`, `userName`)
+-   **상수**: `UPPER_SNAKE_CASE` (e.g., `MAX_LOGIN_ATTEMPTS`)
+-   **테스트 메서드**: `[given]_[when]_[then]` 형식을 권장합니다. (e.g., `givenUserExists_whenRequestingUserInfo_thenReturnsUserInfo`)
 
-1. **플러그인 다운로드**
+### 3.2. 패키지 구조 (Package Structure)
 
-   - Maven Central에서 `spring-javaformat-intellij-idea-plugin` jar 파일 다운로드
-   - 최신 버전: https://repo1.maven.org/maven2/io/spring/javaformat/spring-javaformat-intellij-idea/
+-   본 프로젝트는 **Hexagonal Architecture**를 따르며, 패키지 구조는 다음과 같이 구성됩니다.
+    -   `com.techeer.backend.domain`: 핵심 도메인 엔티티
+    -   `com.techeer.backend.application`: UseCase 및 Port 인터페이스
+    -   `com.techeer.backend.adapter`: Controller, Persistence 등 외부 기술 구현체
 
-2. **플러그인 설치**
+### 3.3. DTO (Data Transfer Object)
 
-   - IntelliJ IDEA 실행
-   - `Preferences` (또는 `Settings`) → `Plugins` 이동
-   - 우측 상단의 톱니바퀴 아이콘 클릭
-   - `Install Plugin from Disk...` 선택
-   - 다운로드한 jar 파일 선택
-   - IntelliJ IDEA 재시작
+-   **Request/Response 분리**: Controller 계층에서는 반드시 Request DTO와 Response DTO를 사용하여 데이터를 주고받습니다. **절대로 Domain Entity를 직접 반환하지 않습니다.**
+-   **레코드(Record) 활용**: 데이터 불변성을 보장하고 보일러플레이트 코드를 줄이기 위해, 단순 데이터 전달 목적의 DTO는 Java 16 이상에서 제공하는 `record` 사용을 적극 권장합니다.
 
-3. **플러그인 활성화 확인**
-   - 프로젝트에 `.springjavaformatconfig` 파일이 있거나
-   - `build.gradle`에 `io.spring.javaformat` 플러그인이 적용되어 있으면
-   - 상태 바에 Spring Java Format 아이콘(🌱)이 표시됩니다
+    ```java
+    // Good
+    public record UserInfoResponse(Long id, String email, String username) {
+    }
+    ```
 
-### 3. IntelliJ IDEA에서 포맷팅 사용
+### 3.4. 컨트롤러 (Controller)
 
-#### 수동 포맷팅
+-   **책임 최소화**: 컨트롤러는 HTTP 요청을 받아 적절한 UseCase(Service)를 호출하고, 그 결과를 DTO로 변환하여 반환하는 역할만 수행합니다. **비즈니스 로직을 포함해서는 안 됩니다.**
+-   **명시적인 Annotation 사용**: `@RequestMapping` 대신 `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping` 등 명시적인 어노테이션을 사용합니다.
+-   **일관된 응답 형식**: 모든 API 응답은 `ApiResponse` 클래스로 감싸서 일관된 형식(성공 여부, 메시지, 데이터)을 유지합니다.
 
-- **Mac**: `Cmd + Option + L`
-- **Windows/Linux**: `Ctrl + Alt + L`
-- 또는 `Code` → `Reformat Code` 메뉴 선택
+### 3.5. 주석 (Comments)
 
-#### 저장 시 자동 포맷팅 설정
+-   **'무엇'이 아닌 '왜'**: 코드가 *무엇을* 하는지에 대한 주석보다는, *왜* 그렇게 작성되었는지, 특정 비즈니스 결정이나 기술적 트레이드오프가 있었는지를 설명하는 주석을 작성합니다.
+-   **Javadoc**: 외부에 노출되는 공개 API(Controller 메서드 등)나 복잡한 로직을 가진 핵심 public 메서드에는 Javadoc을 작성하여 API 명세를 명확히 합니다.
 
-1. `Preferences` → `Tools` → `Actions on Save` 이동
-2. `Reformat code` 옵션 체크
-3. `Run cleanup code` 옵션도 함께 체크 가능
+## 4. 포맷팅 실행
 
-#### 특정 코드 블록 포맷팅 제외
-
-```java
-// @formatter:off
-// 이 블록은 포맷팅되지 않습니다
-public void complexMethod() {
-    // 복잡한 설정 코드
-}
-// @formatter:on
-```
-
-## 적용되는 포맷팅 규칙
-
-### 1. 들여쓰기 (Indentation)
-
-- **기본값**: 탭(Tab) 사용
-- **스페이스 사용 설정**: 프로젝트 루트에 `.springjavaformatconfig` 파일 생성
-  ```
-  indentation-style=spaces
-  ```
-
-### 2. 줄 길이 (Line Length)
-
-- **최대 줄 길이**: 120자
-- 긴 줄은 자동으로 줄바꿈 처리
-
-### 3. 중괄호 스타일 (Brace Style)
-
-- K&R 스타일 사용
-- 여는 중괄호는 같은 줄에, 닫는 중괄호는 별도 줄
-
-```java
-// 올바른 예
-public void method() {
-    // 코드
-}
-
-// 잘못된 예
-public void method()
-{
-    // 코드
-}
-```
-
-### 4. 공백 (Whitespace)
-
-- 메서드 본문 내 공백 줄 제거 권장
-- 메서드 간에는 공백 줄 유지
-- 연산자 주변 공백 자동 조정
-
-### 5. 임포트 (Imports)
-
-- 와일드카드 임포트(`import java.util.*;`) 금지
-- 정렬 및 정리 자동 수행
-
-### 6. 주석 (Comments)
-
-- Javadoc 형식 준수
-- 공개 클래스와 메서드에 Javadoc 작성 권장
-
-### 7. 최종 키워드 (Final)
-
-- private 필드는 가능한 경우 `final` 사용
-- 로컬 변수와 파라미터는 일반적으로 `final` 생략
-
-### 8. 메서드 및 필드 순서
-
-- 읽기 쉬운 순서로 배치 (위에서 아래로 읽기)
-- private 메서드는 호출하는 메서드 근처에 배치
-
-## 포맷팅 적용 시점
-
-### 자동 적용
-
-- `./gradlew format` 실행 시
-- IntelliJ IDEA에서 `Reformat Code` 실행 시
-- 저장 시 자동 포맷팅 설정 시
-
-### 수동 적용
-
-- Gradle 태스크 실행
-- IntelliJ IDEA 단축키 사용
-
-## 주의사항
-
-1. **생성된 코드 제외**
-
-   - `src/main/generated` 디렉토리는 자동으로 제외됩니다
-   - QueryDSL 등 생성된 코드는 포맷팅 대상이 아닙니다
-
-2. **Java 버전**
-
-   - 기본적으로 Java 17 이상 필요
-   - Java 8 사용 시 프로젝트 루트에 `.springjavaformatconfig` 파일 생성
-
-   ```
-   java-baseline=8
-   ```
-
-3. **CI/CD 통합**
-   - `./gradlew checkFormat`을 CI 파이프라인에 추가하여
-   - 포맷팅 규칙 준수 여부를 자동으로 검사할 수 있습니다
-
-## 참고 자료
-
-- [Spring Java Format 공식 저장소](https://github.com/spring-io/spring-javaformat)
-- [Spring Java Format Maven Central](https://repo1.maven.org/maven2/io/spring/javaformat/)
+-   **단축키 (수동 실행)**:
+    *   macOS: `Cmd + Option + L`
+    *   Windows/Linux: `Ctrl + Alt + L`
+-   **파일 저장 시 (자동 실행)**:
+    *   위 `2.3` 설정이 완료된 경우, 파일을 저장(`Cmd + S` 또는 `Ctrl + S`)할 때마다 자동으로 포맷팅이 적용됩니다.

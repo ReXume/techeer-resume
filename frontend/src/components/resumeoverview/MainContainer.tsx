@@ -6,7 +6,7 @@ type MainContainerProps = {
   feedbackPoints: FeedbackPoint[];
   addFeedbackPoint: (point: Omit<AddFeedbackPoint, "id">) => void;
   deleteFeedbackPoint: (id: number) => void;
-  editFeedbackPoint: (item: AddFeedbackPoint) => void;
+  editFeedbackPoint: (item: FeedbackPoint) => void;
   hoveredCommentId: number | null;
   setHoveredCommentId: (id: number | null) => void;
   laterResumeId: number | null;

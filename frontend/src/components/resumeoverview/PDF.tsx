@@ -29,10 +29,8 @@ interface PDFProps {
 const PDF: React.FC<PDFProps> = ({
   pdf,
   pageNumber,
-  feedback,
   addFeedbackPoint,
   feedbackPoints,
-  editFeedbackPoint,
   hoveredCommentId,
   setHoveredCommentId,
   setClickedCommentId,
@@ -55,10 +53,6 @@ const PDF: React.FC<PDFProps> = ({
     y2: number;
     pageNumber: number;
   } | null>(null);
-  const [editingFeedback, setEditingFeedback] = useState<FeedbackPoint | null>(
-    null
-  );
-
   useEffect(() => {
     let cancelled = false;
 
@@ -222,15 +216,6 @@ const PDF: React.FC<PDFProps> = ({
         <CommentForm
           position={{ x1: addingFeedback.x1, y1: addingFeedback.y1 }}
           onSubmit={handleAddSubmit}
-        />
-      )}
-      {editingFeedback && (
-        <CommentForm
-          position={{
-            x1: editingFeedback.xCoordinate,
-            y1: editingFeedback.yCoordinate,
-          }}
-          initialComment={editingFeedback.content}
         />
       )}
     </div>
