@@ -14,7 +14,7 @@ const PDFViewer = ({
   setHoveredCommentId,
   setClickedCommentId,
 }: any) => {
-  const [pdf, setPdf] = useState(null);
+  const [pdf, setPdf] = useState<any>(null);
   const [numPages, setNumPages] = useState(0);
 
   useEffect(() => {

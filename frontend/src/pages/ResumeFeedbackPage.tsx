@@ -139,7 +139,7 @@ function ResumeFeedbackPage() {
       setLoading(true);
       await deleteFeedbackApi(resumeId, feedbackId);
       setFeedbackPoints((prev) =>
-        prev.filter((item) => item.id !== feedbackId)
+        prev.filter((item) => item.feedbackId !== feedbackId)
       );
     } catch {
       setError("Failed to delete feedback point. Please try again later.");
@@ -148,7 +148,7 @@ function ResumeFeedbackPage() {
     }
   };
 
-  const editFeedbackPoint = (updatedItem: AddFeedbackPoint) => {
+  const editFeedbackPoint = (updatedItem: FeedbackPoint) => {
     console.log("Edit feedback point: ", updatedItem);
   };
 
