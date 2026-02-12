@@ -6,19 +6,23 @@ import { FeedbackPoint } from "../../types";
 describe("CommentList 테스트 ", () => {
   const mockFeedbackPoints: FeedbackPoint[] = [
     {
-      id: 1,
+      feedbackId: 1,
       content: "첫번째 댓글",
-      xCoordinate: 10,
-      yCoordinate: 20,
+      x1: 10,
+      x2: 20,
+      y1: 10,
+      y2: 20,
       pageNumber: 1,
       createdAt: "2024-12-10T10:00:00Z",
       updatedAt: "2024-12-10T12:00:00Z",
     },
     {
-      id: 2,
+      feedbackId: 2,
       content: "두번쨰 댓글",
-      xCoordinate: 15,
-      yCoordinate: 25,
+      x1: 15,
+      x2: 25,
+      y1: 15,
+      y2: 25,
       pageNumber: 1,
       createdAt: "2024-12-11T10:00:00Z",
       updatedAt: "2024-12-11T12:00:00Z",
@@ -39,6 +43,7 @@ describe("CommentList 테스트 ", () => {
         editFeedbackPoint={vi.fn()}
         hoveredCommentId={null}
         setHoveredCommentId={vi.fn()}
+        onClickedCommentId={null}
       />
     );
 
@@ -57,6 +62,7 @@ describe("CommentList 테스트 ", () => {
         editFeedbackPoint={vi.fn()}
         hoveredCommentId={null}
         setHoveredCommentId={vi.fn()}
+        onClickedCommentId={null}
       />
     );
 
@@ -68,7 +74,7 @@ describe("CommentList 테스트 ", () => {
     fireEvent.click(deleteButtons[0]);
 
     //Then: deleteFeedbackPoint 함수가 호출
-    expect(deleteFeedbackPoint).toHaveBeenCalledWith(mockFeedbackPoints[0].id);
+    expect(deleteFeedbackPoint).toHaveBeenCalledWith(mockFeedbackPoints[0].feedbackId);
   });
 
   it("edit 버튼 작동", () => {
@@ -80,6 +86,7 @@ describe("CommentList 테스트 ", () => {
         editFeedbackPoint={editFeedbackPoint}
         hoveredCommentId={null}
         setHoveredCommentId={vi.fn()}
+        onClickedCommentId={null}
       />
     );
 
@@ -100,6 +107,7 @@ describe("CommentList 테스트 ", () => {
         editFeedbackPoint={vi.fn()}
         hoveredCommentId={1}
         setHoveredCommentId={setHoveredCommentId}
+        onClickedCommentId={null}
       />
     );
 

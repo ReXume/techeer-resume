@@ -1,5 +1,5 @@
 # Backend Development Environment
-# Spring Boot + MySQL + Redis for local development
+# Spring Boot + MySQL + Redis + Monitoring for local development
 
 networks:
   backend-network:
@@ -65,6 +65,30 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+
+  # Grafana Alloy (Monitoring Agent)
+  alloy:
+    image: grafana/alloy:latest
+    container_name: techeer-alloy
+    restart: unless-stopped
+    env_file:
+      - backend-secret.env
+    ports:
+      - "12345:12345"  # Alloy UI
+      - "4317:4317"    # OTLP gRPC
+      - "4318:4318"    # OTLP HTTP
+    volumes:
+      - ./monitoring/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --storage.path=/var/lib/alloy/data
+      - --server.http.listen-addr=0.0.0.0:12345
+    networks:
+      - backend-network
+    depends_on:
+      - backend
 
 volumes:
   mysql_data:
