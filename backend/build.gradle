@@ -56,6 +56,15 @@ dependencies {
     testImplementation 'org.testcontainers:testcontainers:1.20.4'
     testImplementation 'org.testcontainers:junit-jupiter:1.20.4'
     testImplementation 'org.testcontainers:gcloud:1.20.4'
+    testImplementation 'org.testcontainers:elasticsearch:1.20.4'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+
+    // OpenSearch
+    implementation 'org.opensearch.client:opensearch-java:2.10.0'
+    implementation 'org.opensearch.client:opensearch-rest-client:2.10.0'
+
+    // Spring Batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
 
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
