@@ -58,8 +58,8 @@ class CompanyApiIntegrationTest {
 			.build();
 		userRepository.save(user);
 
-		CompanyRegisterRequest request = new CompanyRegisterRequest("Techeer", "IT", "https://techeer.com", "Seoul",
-				user.getId());
+		CompanyRegisterRequest request = new CompanyRegisterRequest("Techeer", null, "IT", "https://techeer.com",
+				"Seoul");
 
 		// when & then
 		mockMvc

@@ -2,6 +2,7 @@ package com.techeer.backend.api.user.adapter.in.web;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
+import com.techeer.backend.api.user.application.service.ProfileImageService;
 import com.techeer.backend.api.user.converter.UserConverter;
 import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.dto.request.LoginRequest;
@@ -36,6 +37,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
 	private final UserService userService;
+
+	private final ProfileImageService profileImageService;
 
 	@Operation(summary = "자체 회원가입", description = "이메일/비밀번호로 회원가입합니다.")
 	@PostMapping("/auth/register")
@@ -97,7 +100,7 @@ public class UserController {
 	@Operation(summary = "프로필 이미지 수정", description = "현재 로그인한 사용자의 프로필 이미지를 업로드하고 업데이트합니다.")
 	@PatchMapping(value = "/user/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ApiResponse<String>> updateProfileImage(@RequestPart("file") MultipartFile file) {
-		String profileImageUrl = userService.updateProfileImage(file);
+		String profileImageUrl = profileImageService.updateProfileImage(file);
 
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_PROFILE_IMAGE_UPDATE_OK, profileImageUrl));
 	}

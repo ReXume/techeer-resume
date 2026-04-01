@@ -64,7 +64,7 @@ class DocumentApiIntegrationTest {
 	@DisplayName("이력서 등록 성공 테스트")
 	void createResume_Success() throws Exception {
 		// given
-		ResumeCreateRequest request = new ResumeCreateRequest(user.getId(), "My Resume", true);
+		ResumeCreateRequest request = new ResumeCreateRequest("My Resume", true);
 		MockMultipartFile file = new MockMultipartFile("file", "resume.pdf", "application/pdf",
 				"dummy content".getBytes());
 		MockMultipartFile requestPart = new MockMultipartFile("request", "request.json", "application/json",
@@ -82,7 +82,7 @@ class DocumentApiIntegrationTest {
 	@DisplayName("포트폴리오 등록 성공 테스트")
 	void createPortfolio_Success() throws Exception {
 		// given
-		PortfolioCreateRequest request = new PortfolioCreateRequest(user.getId(), "My Portfolio", false);
+		PortfolioCreateRequest request = new PortfolioCreateRequest("My Portfolio", false);
 		MockMultipartFile file = new MockMultipartFile("file", "portfolio.pdf", "application/pdf",
 				"dummy content".getBytes());
 		MockMultipartFile requestPart = new MockMultipartFile("request", "request.json", "application/json",
@@ -100,7 +100,7 @@ class DocumentApiIntegrationTest {
 	@DisplayName("학력 등록 성공 테스트")
 	void createEducation_Success() throws Exception {
 		// given
-		EducationCreateRequest request = new EducationCreateRequest(user.getId(), "My Education", false);
+		EducationCreateRequest request = new EducationCreateRequest("My Education", false);
 		MockMultipartFile file = new MockMultipartFile("file", "degree.pdf", "application/pdf",
 				"dummy content".getBytes());
 		MockMultipartFile requestPart = new MockMultipartFile("request", "request.json", "application/json",

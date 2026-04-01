@@ -7,4 +7,8 @@ public interface LoadUserPort {
 
 	Optional<User> findById(Long id);
 
+	Optional<User> findByEmail(String email);
+
+	Optional<User> findByRefreshToken(String refreshToken);
+
 }
