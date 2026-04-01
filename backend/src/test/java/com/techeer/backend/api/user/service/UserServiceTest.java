@@ -7,16 +7,15 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import com.techeer.backend.api.user.application.port.out.LoadUserPort;
+import com.techeer.backend.api.user.application.port.out.SaveUserPort;
 import com.techeer.backend.api.user.domain.Role;
 import com.techeer.backend.api.user.domain.SocialType;
 import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.dto.request.LoginRequest;
 import com.techeer.backend.api.user.dto.request.RegisterRequest;
-import com.techeer.backend.api.user.repository.UserRepository;
 import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.jwt.service.JwtService;
-import com.techeer.backend.infra.gcp.FileTypeMapper;
-import com.techeer.backend.infra.gcp.GcsUploader;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Optional;
@@ -36,19 +35,16 @@ class UserServiceTest {
 	private UserService userService;
 
 	@Mock
-	private UserRepository userRepository;
+	private LoadUserPort loadUserPort;
+
+	@Mock
+	private SaveUserPort saveUserPort;
 
 	@Mock
 	private JwtService jwtService;
 
 	@Mock
 	private PasswordEncoder passwordEncoder;
-
-	@Mock
-	private GcsUploader gcsUploader;
-
-	@Mock
-	private FileTypeMapper fileTypeMapper;
 
 	@Nested
 	@DisplayName("자체 회원가입 (Register)")
@@ -59,14 +55,15 @@ class UserServiceTest {
 		void success() {
 			// Given
 			RegisterRequest request = new RegisterRequest("test@example.com", "Test User", "password1234");
-			given(userRepository.findByEmail(request.email())).willReturn(Optional.empty());
+			given(loadUserPort.findByEmail(request.email())).willReturn(Optional.empty());
 			given(passwordEncoder.encode(request.password())).willReturn("encodedPassword");
+			given(saveUserPort.saveUser(any(User.class))).willReturn(mock(User.class));
 
 			// When
 			userService.register(request);
 
 			// Then
-			verify(userRepository).save(any(User.class));
+			verify(saveUserPort).saveUser(any(User.class));
 		}
 
 		@Test
@@ -74,7 +71,7 @@ class UserServiceTest {
 		void fail_duplicate_email() {
 			// Given
 			RegisterRequest request = new RegisterRequest("test@example.com", "Test User", "password1234");
-			given(userRepository.findByEmail(request.email())).willReturn(Optional.of(mock(User.class)));
+			given(loadUserPort.findByEmail(request.email())).willReturn(Optional.of(mock(User.class)));
 
 			// When & Then
 			assertThatThrownBy(() -> userService.register(request)).isInstanceOf(BusinessException.class)
@@ -100,7 +97,7 @@ class UserServiceTest {
 				.build();
 			HttpServletResponse response = mock(HttpServletResponse.class);
 
-			given(userRepository.findByEmail(request.email())).willReturn(Optional.of(user));
+			given(loadUserPort.findByEmail(request.email())).willReturn(Optional.of(user));
 			given(passwordEncoder.matches(request.password(), user.getPassword())).willReturn(true);
 			given(jwtService.createAccessToken(any())).willReturn("accessToken");
 			given(jwtService.createRefreshToken()).willReturn("refreshToken");
@@ -120,7 +117,7 @@ class UserServiceTest {
 			LoginRequest request = new LoginRequest("unknown@example.com", "password");
 			HttpServletResponse response = mock(HttpServletResponse.class);
 
-			given(userRepository.findByEmail(request.email())).willReturn(Optional.empty());
+			given(loadUserPort.findByEmail(request.email())).willReturn(Optional.empty());
 
 			// When & Then
 			assertThatThrownBy(() -> userService.login(request, response)).isInstanceOf(BusinessException.class);
@@ -134,7 +131,7 @@ class UserServiceTest {
 			User user = User.builder().email("test@example.com").password("encodedPassword").build();
 			HttpServletResponse response = mock(HttpServletResponse.class);
 
-			given(userRepository.findByEmail(request.email())).willReturn(Optional.of(user));
+			given(loadUserPort.findByEmail(request.email())).willReturn(Optional.of(user));
 			given(passwordEncoder.matches(request.password(), user.getPassword())).willReturn(false);
 
 			// When & Then
@@ -154,12 +151,13 @@ class UserServiceTest {
 			Map<String, Object> attributes = Map.of("email", "social@example.com");
 			String name = "Social User";
 			SocialType socialType = SocialType.GOOGLE;
+			given(saveUserPort.saveUser(any(User.class))).willReturn(mock(User.class));
 
 			// When
 			userService.createRegularUser(attributes, name, socialType);
 
 			// Then
-			verify(userRepository).save(any(User.class));
+			verify(saveUserPort).saveUser(any(User.class));
 		}
 
 	}
