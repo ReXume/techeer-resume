@@ -58,6 +58,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      opensearch:
+        condition: service_healthy
     networks:
       - backend-network
     healthcheck:
@@ -65,6 +67,51 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+
+  # OpenSearch (Full-text Search Engine with Nori Korean Morphology Plugin)
+  opensearch:
+    image: opensearchproject/opensearch:2.13.0
+    container_name: techeer-opensearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - DISABLE_SECURITY_PLUGIN=true
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        /usr/share/opensearch/bin/opensearch-plugin install --batch analysis-nori || true
+        /usr/share/opensearch/opensearch-docker-entrypoint.sh
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    networks:
+      - backend-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  # OpenSearch Dashboards (Dev UI for OpenSearch)
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.13.0
+    container_name: techeer-opensearch-dashboards
+    restart: unless-stopped
+    environment:
+      - OPENSEARCH_HOSTS=http://opensearch:9200
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    ports:
+      - "5601:5601"
+    networks:
+      - backend-network
+    depends_on:
+      opensearch:
+        condition: service_healthy
 
   # Grafana Alloy (Monitoring Agent)
   alloy:
@@ -94,4 +141,6 @@ volumes:
   mysql_data:
     driver: local
   redis_data:
+    driver: local
+  opensearch_data:
     driver: local
