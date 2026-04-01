@@ -9,6 +9,7 @@
 build/
 target/
 out/
+*.tsbuildinfo
 
 # Environment
 *.env
@@ -56,7 +57,9 @@ Thumbs.db
 .dockerignore
 
 # Cursor
+.cursor/
 .cursorignore
+.cursorindexingignore
 backend/tail_log.txt
 
 # Claude Code / OMC
