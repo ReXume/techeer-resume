@@ -77,6 +77,13 @@ jwt:
     header: Authorization-refresh
 
 
+opensearch:
+  host: ${OPENSEARCH_HOST:opensearch}
+  port: ${OPENSEARCH_PORT:9200}
+
+search:
+  engine: ${SEARCH_ENGINE:opensearch}
+
 # Google Cloud Storage 설정
 gcp:
   project-id: ${GCP_PROJECT_ID}

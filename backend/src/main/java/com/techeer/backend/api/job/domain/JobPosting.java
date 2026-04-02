@@ -1,8 +1,11 @@
 package com.techeer.backend.api.job.domain;
 
 import com.techeer.backend.api.company.domain.Company;
+import com.techeer.backend.api.job.domain.vo.SalaryRange;
+import com.techeer.backend.api.job.domain.vo.SourceInfo;
 import com.techeer.backend.global.common.BaseEntity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,6 +18,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,9 +64,35 @@ public class JobPosting extends BaseEntity {
 	@Column(name = "status", nullable = false)
 	private JobPostingStatus status = JobPostingStatus.OPEN;
 
+	// Crawling fields
+	@Column(name = "external_id_standalone", length = 255)
+	private String externalId;
+
+	@Column(name = "crawled_at")
+	private LocalDateTime crawledAt;
+
+	@Column(name = "view_count", nullable = false)
+	private Long viewCount = 0L;
+
+	@Column(name = "apply_click_count", nullable = false)
+	private Long applyClickCount = 0L;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "deadline_type", length = 20)
+	private DeadlineType deadlineType;
+
+	// Value Objects
+	@Embedded
+	private SalaryRange salaryRange;
+
+	@Embedded
+	private SourceInfo sourceInfo;
+
 	@Builder
 	public JobPosting(Company company, String title, String contents, Integer expYears, SourceType sourceType,
-					  String originUrl, JobPostingStatus status) {
+					  String originUrl, JobPostingStatus status,
+					  String externalId, LocalDateTime crawledAt, DeadlineType deadlineType,
+					  SalaryRange salaryRange, SourceInfo sourceInfo) {
 		this.company = company;
 		this.title = title;
 		this.contents = contents;
@@ -70,6 +100,13 @@ public class JobPosting extends BaseEntity {
 		this.sourceType = sourceType != null ? sourceType : SourceType.DIRECT;
 		this.originUrl = originUrl;
 		this.status = status != null ? status : JobPostingStatus.OPEN;
+		this.externalId = externalId;
+		this.crawledAt = crawledAt;
+		this.viewCount = 0L;
+		this.applyClickCount = 0L;
+		this.deadlineType = deadlineType;
+		this.salaryRange = salaryRange;
+		this.sourceInfo = sourceInfo;
 	}
 
 	public void updateJobPosting(String title, String contents, Integer expYears, JobPostingStatus status) {
@@ -93,6 +130,29 @@ public class JobPosting extends BaseEntity {
 
 	public void open() {
 		this.status = JobPostingStatus.OPEN;
+	}
+
+	public void expire() {
+		this.status = JobPostingStatus.EXPIRED;
+	}
+
+	public void incrementViewCount() {
+		this.viewCount++;
+	}
+
+	public void incrementApplyClickCount() {
+		this.applyClickCount++;
+	}
+
+	public boolean isFromExternalSource() {
+		return this.sourceInfo != null;
+	}
+
+	public String getRedirectUrl() {
+		if (isFromExternalSource()) {
+			return this.sourceInfo.getSourceUrl();
+		}
+		return this.originUrl;
 	}
 
 }

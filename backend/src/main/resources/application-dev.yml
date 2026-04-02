@@ -77,6 +77,13 @@ jwt:
     expiration: ${JWT_REFRESH_EXPIRATION:604800000}
     header: ${JWT_REFRESH_HEADER:Authorization-refresh}
 
+opensearch:
+  host: ${OPENSEARCH_HOST:opensearch}
+  port: ${OPENSEARCH_PORT:9200}
+
+search:
+  engine: ${SEARCH_ENGINE:opensearch}
+
 # Google Cloud Storage 설정
 gcp:
   project-id: ${GCP_PROJECT_ID}

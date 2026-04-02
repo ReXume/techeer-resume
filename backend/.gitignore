@@ -49,4 +49,5 @@ src/main/resources/*-key.json
 src/main/resources/*service-account*.json
 src/main/resources/*secret*.json
 src/main/resources/*.key
-src/main/resources/*.pem
+src/main/resources/*.pem# Worktrees
+.claude/worktrees/
