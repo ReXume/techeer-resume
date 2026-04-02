@@ -8,6 +8,8 @@ import com.techeer.backend.api.company.domain.CompanyRole;
 import com.techeer.backend.api.job.application.port.in.CreateJobPostingUseCase;
 import com.techeer.backend.api.job.application.port.out.SaveJobPostingPort;
 import com.techeer.backend.api.job.domain.JobPosting;
+import com.techeer.backend.api.job.domain.vo.SalaryRange;
+import com.techeer.backend.api.job.domain.vo.SourceInfo;
 import com.techeer.backend.api.job.dto.request.JobPostingCreateRequest;
 import com.techeer.backend.api.user.application.port.out.LoadUserPort;
 import com.techeer.backend.api.user.domain.User;
@@ -45,11 +47,28 @@ public class CreateJobPostingService implements CreateJobPostingUseCase {
 			throw new BusinessException(ErrorCode.COMPANY_FORBIDDEN);
 		}
 
+		SalaryRange salaryRange = null;
+		if (request.salaryMin() != null || request.salaryMax() != null) {
+			salaryRange = SalaryRange.of(request.salaryMin(), request.salaryMax(), request.salaryCurrency());
+		}
+
+		SourceInfo sourceInfo = null;
+		if (request.externalId() != null || request.originUrl() != null) {
+			sourceInfo = SourceInfo.of(request.sourceType(), request.originUrl(), request.externalId());
+		}
+
 		JobPosting jobPosting = JobPosting.builder()
 			.company(company)
 			.title(request.title())
 			.contents(request.contents())
 			.expYears(request.expYears())
+			.sourceType(request.sourceType())
+			.originUrl(request.originUrl())
+			.externalId(request.externalId())
+			.crawledAt(request.crawledAt())
+			.deadlineType(request.deadlineType())
+			.salaryRange(salaryRange)
+			.sourceInfo(sourceInfo)
 			.build();
 
 		return saveJobPostingPort.saveJobPosting(jobPosting).getId();
