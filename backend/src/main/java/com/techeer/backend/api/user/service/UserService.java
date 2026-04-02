@@ -8,6 +8,7 @@ import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.dto.request.LoginRequest;
 import com.techeer.backend.api.user.dto.request.RegisterRequest;
 import com.techeer.backend.api.user.dto.request.SignUpRequest;
+import com.techeer.backend.api.user.dto.request.UserProfileUpdateRequest;
 import com.techeer.backend.global.error.ErrorCode;
 import com.techeer.backend.global.error.exception.BusinessException;
 import com.techeer.backend.global.jwt.service.JwtService;
@@ -208,6 +209,15 @@ public class UserService {
 		log.info("모의 사용자 생성 완료: email={}", id);
 
 		return accessToken;
+	}
+
+	/**
+	 * Update user profile fields (Sprint 3: BE-3.3)
+	 */
+	@Transactional
+	public void updateProfile(UserProfileUpdateRequest request) {
+		User user = this.getLoginUser();
+		user.updateProfile(request);
 	}
 
 	// ========== Private Helper Methods ==========

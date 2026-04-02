@@ -1,6 +1,7 @@
 package com.techeer.backend.api.user.domain;
 
 import com.techeer.backend.api.user.dto.request.SignUpRequest;
+import com.techeer.backend.api.user.dto.request.UserProfileUpdateRequest;
 import com.techeer.backend.global.common.BaseEntity;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -67,6 +68,30 @@ public class User extends BaseEntity {
 	@Column(name = "social_type", nullable = false, length = 20)
 	private SocialType socialType;
 
+	// === Sprint 3: UserProfile extension fields ===
+
+	@Size(max = 100)
+	@Column(name = "desired_position", length = 100)
+	private String desiredPosition;
+
+	@Size(max = 50)
+	@Column(name = "experience_level", length = 50)
+	private String experienceLevel;
+
+	@Size(max = 500)
+	@Column(name = "preferred_locations", length = 500)
+	private String preferredLocations;
+
+	@Size(max = 100)
+	@Column(name = "preferred_company_size", length = 100)
+	private String preferredCompanySize;
+
+	@Column(name = "open_to_remote", nullable = false)
+	private Boolean openToRemote = false;
+
+	@Column(name = "profile_completeness")
+	private Double profileCompleteness;
+
 	@Builder
 	public User(String email, String name, String password, String refreshToken, File profileImage, Role role,
 				SocialType socialType) {
@@ -77,6 +102,7 @@ public class User extends BaseEntity {
 		this.profileImage = profileImage;
 		this.role = role != null ? role : Role.USER;
 		this.socialType = socialType;
+		this.openToRemote = false;
 	}
 
 	public void updateUser(SignUpRequest req) {
@@ -108,6 +134,47 @@ public class User extends BaseEntity {
 
 	public void updateProfileImage(File profileImage) {
 		this.profileImage = profileImage;
+	}
+
+	public void updateProfile(UserProfileUpdateRequest req) {
+		if (req.desiredPosition() != null) {
+			this.desiredPosition = req.desiredPosition();
+		}
+		if (req.experienceLevel() != null) {
+			this.experienceLevel = req.experienceLevel();
+		}
+		if (req.preferredLocations() != null) {
+			this.preferredLocations = req.preferredLocations();
+		}
+		if (req.preferredCompanySize() != null) {
+			this.preferredCompanySize = req.preferredCompanySize();
+		}
+		if (req.openToRemote() != null) {
+			this.openToRemote = req.openToRemote();
+		}
+		this.profileCompleteness = calculateProfileCompleteness();
+	}
+
+	/**
+	 * Calculate profile completeness as a fraction [0.0, 1.0].
+	 * Fields considered: name, desiredPosition, experienceLevel, preferredLocations.
+	 */
+	public Double calculateProfileCompleteness() {
+		int total = 4;
+		int filled = 0;
+		if (name != null && !name.isBlank()) {
+			filled++;
+		}
+		if (desiredPosition != null && !desiredPosition.isBlank()) {
+			filled++;
+		}
+		if (experienceLevel != null && !experienceLevel.isBlank()) {
+			filled++;
+		}
+		if (preferredLocations != null && !preferredLocations.isBlank()) {
+			filled++;
+		}
+		return (double) filled / total;
 	}
 
 }
