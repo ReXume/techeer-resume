@@ -84,7 +84,12 @@ public enum SuccessCode implements BaseStatus {
 	// File Success
 	FILE_UPLOAD_SUCCESS(HttpStatus.OK, "FILE_200", "파일 업로드가 완료되었습니다."),
 	FILE_DELETE_SUCCESS(HttpStatus.OK, "FILE_200", "파일 삭제가 완료되었습니다."),
-	FILE_DOWNLOAD_SUCCESS(HttpStatus.OK, "FILE_200", "파일 다운로드가 완료되었습니다.");
+	FILE_DOWNLOAD_SUCCESS(HttpStatus.OK, "FILE_200", "파일 다운로드가 완료되었습니다."),
+
+	// UserEvent Success
+	USER_EVENT_RECORD_SUCCESS(HttpStatus.CREATED, "EVENT_201", "이벤트가 기록되었습니다."),
+	USER_EVENT_POPULAR_SUCCESS(HttpStatus.OK, "EVENT_200", "인기 채용공고 조회에 성공했습니다."),
+	USER_EVENT_HISTORY_SUCCESS(HttpStatus.OK, "EVENT_200", "이벤트 히스토리 조회에 성공했습니다.");
 
 	private final HttpStatus httpStatus;
 
