@@ -8,6 +8,9 @@ import ProtectedRoute from "./utils/Token";
 import MyInfoPage from "./pages/MyInfoPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AuthCallback from "./pages/AuthCallback";
+import JobListPage from "./pages/JobListPage";
+import JobDetailPage from "./pages/JobDetailPage";
+import JobSearchPage from "./pages/JobSearchPage";
 
 // QueryClient 생성
 const queryClient = new QueryClient();
@@ -23,6 +26,9 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/feedback/:id" element={<ResumeFeedbackPage />} />
+              <Route path="/jobs" element={<JobListPage />} />
+              <Route path="/jobs/search" element={<JobSearchPage />} />
+              <Route path="/jobs/:id" element={<JobDetailPage />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/upload" element={<Upload />} />
                 <Route path="/myInfo" element={<MyInfoPage />} />
