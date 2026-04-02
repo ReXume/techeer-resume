@@ -8,6 +8,7 @@ import com.techeer.backend.api.user.domain.User;
 import com.techeer.backend.api.user.dto.request.LoginRequest;
 import com.techeer.backend.api.user.dto.request.RegisterRequest;
 import com.techeer.backend.api.user.dto.request.SignUpRequest;
+import com.techeer.backend.api.user.dto.request.UserProfileUpdateRequest;
 import com.techeer.backend.api.user.dto.response.UserInfoResponse;
 import com.techeer.backend.api.user.service.UserService;
 import com.techeer.backend.global.dto.ApiResponse;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -103,6 +105,13 @@ public class UserController {
 		String profileImageUrl = profileImageService.updateProfileImage(file);
 
 		return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_PROFILE_IMAGE_UPDATE_OK, profileImageUrl));
+	}
+
+	@Operation(summary = "프로필 업데이트", description = "현재 로그인한 사용자의 프로필 정보를 업데이트합니다.")
+	@PutMapping("/users/profile")
+	public ResponseEntity<ApiResponse<Void>> updateProfile(@RequestBody @Valid UserProfileUpdateRequest request) {
+		userService.updateProfile(request);
+		return ResponseEntity.ok(ApiResponse.success(SuccessCode.USER_ADDITIONAL_INFO_OK));
 	}
 
 }
