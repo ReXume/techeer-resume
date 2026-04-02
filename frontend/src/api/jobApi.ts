@@ -113,3 +113,86 @@ export const recordEvent = async (event: EventPayload): Promise<void> => {
     throw error;
   }
 };
+
+export interface RecommendationItem {
+  id: number;
+  title: string;
+  companyName: string;
+  matchScore: number;
+  matchReasons: string[];
+  source: string;
+  sourceUrl: string;
+  location?: string;
+  experienceLevel?: string;
+}
+
+export interface RecommendationResponse {
+  content: RecommendationItem[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+}
+
+export interface UserProfileData {
+  skills?: string[];
+  desiredPosition?: string;
+  experienceLevel?: string;
+  preferredLocations?: string[];
+  remotePreferred?: boolean;
+}
+
+export interface ApplyHistoryItem {
+  id: number;
+  jobId: number;
+  title: string;
+  companyName: string;
+  sourceUrl: string;
+  clickedAt: string;
+}
+
+export const getRecommendations = async (
+  page = 0,
+  size = 10
+): Promise<RecommendationResponse> => {
+  try {
+    const response = await jsonAxios.get(
+      `/api/v1/recommendations?page=${page}&size=${size}`
+    );
+    return response.data;
+  } catch (error) {
+    Sentry.captureException(error);
+    throw error;
+  }
+};
+
+export const updateProfile = async (data: UserProfileData): Promise<void> => {
+  try {
+    await jsonAxios.put("/api/v1/users/profile", data);
+  } catch (error) {
+    Sentry.captureException(error);
+    throw error;
+  }
+};
+
+export const getPopularJobs = async (): Promise<JobPosting[]> => {
+  try {
+    const response = await jsonAxios.get("/api/v1/events/popular");
+    return response.data;
+  } catch (error) {
+    Sentry.captureException(error);
+    throw error;
+  }
+};
+
+export const getApplyHistory = async (): Promise<ApplyHistoryItem[]> => {
+  try {
+    const response = await jsonAxios.get(
+      "/api/v1/events/history?eventType=APPLY_CLICK"
+    );
+    return response.data;
+  } catch (error) {
+    Sentry.captureException(error);
+    throw error;
+  }
+};
